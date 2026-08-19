@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { verificarToken, verificarAdmin } from '../middlewares/authMiddleware.js';
 
 import {
     registrarUsuario,
@@ -14,7 +15,7 @@ const router = Router();
 router.post('/', registrarUsuario);
 
 // Obtener todos los usuarios
-router.get('/', listarUsuarios);
+router.get('/', verificarToken, verificarAdmin, listarUsuarios);
 
 // Obtener usuario por ID
 router.get('/:id', obtenerUsuario);
