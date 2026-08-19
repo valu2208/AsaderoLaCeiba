@@ -21,7 +21,7 @@ export const crearPedidoBD = async (datosPedido, productos) => {
       numero_mesa,
       total, 
       moneda_pago: moneda_pago || 'COP',
-      total_moneda_extranjera,
+      total_moneda_extrangera,
       metodo_pago,
       telefono, 
       notas,

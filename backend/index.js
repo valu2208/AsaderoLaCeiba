@@ -3,6 +3,7 @@ import 'dotenv/config';
 import { conectaDB } from './config/supabase.js';
 import productoRouter from './routes/producto.js';
 import pedidoRouter from './routes/pedido.js';
+import userRouter from './routes/user.js';
 import cors from 'cors';
 
 // Comentados porque routes/auth.js y routes/user.js están vacíos:
@@ -30,6 +31,7 @@ app.get('/', (req, res) => {
 
 app.use('/productos', productoRouter);
 app.use('/api', pedidoRouter);
+app.use('/usuarios', userRouter);
 
 const PORT = process.env.PORT || 3000;
 
