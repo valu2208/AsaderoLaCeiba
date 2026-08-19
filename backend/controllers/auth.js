@@ -64,5 +64,4 @@ export const iniciarSesion = async (req, res) => {
 };
 //el trabajo es autenticado 
 //controlador para autenticacion e inciio de sesion de los usuarios 
-=======
 
