@@ -4,11 +4,8 @@ import { conectaDB } from './config/supabase.js';
 import productoRouter from './routes/producto.js';
 import pedidoRouter from './routes/pedido.js';
 import userRouter from './routes/user.js';
+import authRouter from './routes/auth.js';
 import cors from 'cors';
-
-// Comentados porque routes/auth.js y routes/user.js están vacíos:
-// import authRoutes from './routes/auth.js';
-// import userRoutes from './routes/user.js';
 
 conectaDB();
 
@@ -25,13 +22,10 @@ app.get('/', (req, res) => {
     });
 });
 
-// Comentados mientras agregas el código de auth y usuarios:
-// app.use('/auth', authRoutes);
-// app.use('/usuario', userRoutes);
-
 app.use('/productos', productoRouter);
 app.use('/api', pedidoRouter);
 app.use('/usuarios', userRouter);
+app.use('/auth', authRouter);
 
 const PORT = process.env.PORT || 3000;
 
