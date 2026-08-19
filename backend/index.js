@@ -1,11 +1,13 @@
 import express from 'express';
 import 'dotenv/config';
-import authRoutes from './routes/auth.js';
 import { conectaDB } from './config/supabase.js';
-import userRoutes from './routes/user.js';
 import productoRouter from './routes/producto.js';
 import pedidoRouter from './routes/pedido.js';
 import cors from 'cors';
+
+// Comentados porque routes/auth.js y routes/user.js están vacíos:
+// import authRoutes from './routes/auth.js';
+// import userRoutes from './routes/user.js';
 
 conectaDB();
 
@@ -22,8 +24,10 @@ app.get('/', (req, res) => {
     });
 });
 
-app.use('/auth', authRoutes);
-app.use('/usuario', userRoutes);
+// Comentados mientras agregas el código de auth y usuarios:
+// app.use('/auth', authRoutes);
+// app.use('/usuario', userRoutes);
+
 app.use('/productos', productoRouter);
 app.use('/api', pedidoRouter);
 
