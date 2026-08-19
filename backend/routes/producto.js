@@ -11,7 +11,7 @@ import {
 import {
     verificarToken,
     verificarAdmin
-} from '../middlewares/authhMiddleware.js';
+} from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
