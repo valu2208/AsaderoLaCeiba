@@ -18,7 +18,7 @@ router.get('/pedidos/mis-pedidos', verificarToken, misPedidos);
 // Endpoint para que el Admin/Personal vea TODOS los pedidos del asadero
 router.get('/pedidos', verificarToken, verificarAdmin, listarPedidos);
 
-// Endpoint para cambiar el estado del pedido (ej. de 'pendiente' a 'entregado')
+// Endpoint para cambiar el estado del pedido
 router.put('/pedidos/:id/estado', verificarToken, verificarAdmin, actualizarEstado);
 
 export default router;
