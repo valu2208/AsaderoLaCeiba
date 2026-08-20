@@ -31,7 +31,7 @@ export const registrarUsuario = async (req, res) => {
             email,
             telefono,
             password: passwordHash,
-            rol: rol || 'usuario'
+            rol: 'usuario'
         });
 
         if (error) {
@@ -105,6 +105,14 @@ export const obtenerUsuario = async (req, res) => {
 export const editarUsuario = async (req, res) => {
     try {
         const { id } = req.params;
+
+        // El usuario solo puede editarse a sí mismo.
+        // El administrador puede editar cualquier usuario.
+        if (req.usuario.rol !== 'admin' && Number(req.usuario.id) !== Number(id)) {
+            return res.status(403).json({
+                error: 'No tienes permiso para editar este usuario'
+            });
+        }
 
         const datosActualizar = {
             nombre: req.body.nombre,
