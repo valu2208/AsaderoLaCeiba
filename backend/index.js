@@ -28,7 +28,6 @@ app.use('/productos', productoRouter);
 app.use('/api', pedidoRouter);
 app.use('/usuarios', userRouter);
 app.use('/auth', authRouter);
-app.use('/auth', authRouter);
 app.use('/recuperar', recuperarRouter);
 
 const PORT = process.env.PORT || 3000;
