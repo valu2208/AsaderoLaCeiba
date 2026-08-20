@@ -13,6 +13,8 @@ import {
     verificarAdmin
 } from '../middlewares/authMiddleware.js';
 
+import { upload } from '../config/cloudinary.js';
+
 const router = express.Router();
 
 // Rutas públicas
@@ -29,12 +31,29 @@ router.get('/categoria/:categoria', obtenerPorCat);
 // Rutas privadas (requieren token y rol de administrador)
 
 // POST - Crear producto
-router.post('/', verificarToken, verificarAdmin, crear);
+router.post(
+    '/',
+    verificarToken,
+    verificarAdmin,
+    upload.single('imagen'),
+    crear
+);
 
 // PUT - Actualizar producto
-router.put('/:id', verificarToken, verificarAdmin, editar);
+router.put(
+    '/:id',
+    verificarToken,
+    verificarAdmin,
+    upload.single('imagen'),
+    editar
+);
 
 // DELETE - Eliminar producto
-router.delete('/:id', verificarToken, verificarAdmin, eliminar);
+router.delete(
+    '/:id',
+    verificarToken,
+    verificarAdmin,
+    eliminar
+);
 
 export default router;

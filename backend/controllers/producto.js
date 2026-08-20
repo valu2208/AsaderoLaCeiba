@@ -12,42 +12,59 @@ export const listarProductos = async (req, res) => {
         const { data, error } = await obtenerTodos();
 
         if (error) {
-            return res.status(500).json({ error: 'Error al obtener productos' });
+            return res.status(500).json({
+                error: 'Error al obtener productos'
+            });
         }
 
         return res.status(200).json(data);
+
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json({
+            error: error.message
+        });
     }
 };
 
 export const obtenerProducto = async (req, res) => {
     try {
         const { id } = req.params;
+
         const { data, error } = await obtenerPorId(id);
 
         if (error || !data) {
-            return res.status(404).json({ error: 'Producto no encontrado' });
+            return res.status(404).json({
+                error: 'Producto no encontrado'
+            });
         }
 
         return res.status(200).json(data);
+
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json({
+            error: error.message
+        });
     }
 };
 
 export const obtenerPorCat = async (req, res) => {
     try {
         const { categoria } = req.params;
+
         const { data, error } = await obtenerPorCategoria(categoria);
 
         if (error) {
-            return res.status(500).json({ error: 'Error al obtener productos' });
+            return res.status(500).json({
+                error: 'Error al obtener productos'
+            });
         }
 
         return res.status(200).json(data);
+
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json({
+            error: error.message
+        });
     }
 };
 
@@ -61,7 +78,6 @@ export const crear = async (req, res) => {
             presentacion,
             precio,
             stock,
-            imagen_url,
             categoria,
             disponible
         } = req.body;
@@ -71,6 +87,8 @@ export const crear = async (req, res) => {
                 error: 'nombre y precio son requeridos'
             });
         }
+
+        const imagen_url = req.file ? req.file.path : null;
 
         const { data, error } = await crearProducto({
             nombre,
@@ -86,16 +104,20 @@ export const crear = async (req, res) => {
         });
 
         if (error) {
-            return res.status(500).json({ error: 'Error al crear producto' });
+            return res.status(500).json({
+                error: 'Error al crear producto'
+            });
         }
 
         return res.status(201).json({
             message: 'Producto creado',
-            producto: data[0]
+            producto: data
         });
 
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json({
+            error: error.message
+        });
     }
 };
 
@@ -103,9 +125,17 @@ export const editar = async (req, res) => {
     try {
         const { id } = req.params;
 
+        const datosActualizados = {
+            ...req.body
+        };
+
+        if (req.file) {
+            datosActualizados.imagen_url = req.file.path;
+        }
+
         const { data, error } = await actualizarProducto(
             id,
-            req.body
+            datosActualizados
         );
 
         if (error) {
@@ -116,11 +146,13 @@ export const editar = async (req, res) => {
 
         return res.status(200).json({
             message: 'Producto actualizado',
-            producto: data[0]
+            producto: data
         });
 
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json({
+            error: error.message
+        });
     }
 };
 
@@ -141,6 +173,8 @@ export const eliminar = async (req, res) => {
         });
 
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json({
+            error: error.message
+        });
     }
 };

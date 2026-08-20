@@ -21,7 +21,7 @@ export const crearPedidoBD = async (datosPedido, productos) => {
       numero_mesa,
       total, 
       moneda_pago: moneda_pago || 'COP',
-      total_moneda_extrangera,
+      total_moneda_extranjera,
       metodo_pago,
       telefono, 
       notas,
@@ -39,7 +39,6 @@ export const crearPedidoBD = async (datosPedido, productos) => {
     producto_id: item.producto_id,
     cantidad: item.cantidad,
     precio_unitario: item.precio_unitario,
-    subtotal: item.cantidad * item.precio_unitario
   }));
 
   const { error: errorDetalle } = await supabase
