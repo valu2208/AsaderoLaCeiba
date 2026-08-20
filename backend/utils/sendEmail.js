@@ -5,8 +5,8 @@ const transporter = nodemailer.createTransport({
     port: Number(process.env.SMTP_PORT) || 587,
     secure: Number(process.env.SMTP_PORT) === 465,
     auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
     }
 });
 
@@ -16,7 +16,7 @@ export const enviarCodigoRecuperacion = async (
     codigo
 ) => {
     await transporter.sendMail({
-        from: process.env.EMAIL_FROM || process.env.SMTP_USER,
+        from: process.env.EMAIL_USER,
         to: email,
         subject: 'Código para recuperar tu contraseña - Asadero La Ceiba',
         html: `
