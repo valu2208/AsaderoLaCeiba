@@ -65,3 +65,42 @@ export const eliminarUsuario = async (id) => {
 
     return { data, error };
 };
+
+// Crear código de recuperación
+export const crearCodigoRecuperacion = async (codigoData) => {
+    const { data, error } = await supabase
+        .from('recovery_codes')
+        .insert(codigoData)
+        .select()
+        .single();
+
+    return { data, error };
+};
+
+// Obtener código de recuperación válido
+export const obtenerCodigoRecuperacion = async (usuarioId, codigo) => {
+    const { data, error } = await supabase
+        .from('recovery_codes')
+        .select('*')
+        .eq('usuario_id', usuarioId)
+        .eq('codigo', codigo)
+        .eq('usado', false)
+        .gt('expires_at', new Date().toISOString())
+        .order('id', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+    return { data, error };
+};
+
+// Marcar código como usado
+export const marcarCodigoUsado = async (id) => {
+    const { data, error } = await supabase
+        .from('recovery_codes')
+        .update({ usado: true })
+        .eq('id', id)
+        .select()
+        .single();
+
+    return { data, error };
+};
