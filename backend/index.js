@@ -6,6 +6,7 @@ import pedidoRouter from './routes/pedido.js';
 import userRouter from './routes/user.js';
 import authRouter from './routes/auth.js';
 import recuperarRouter from './routes/recuperar.js';
+import cocinaRouter from './routes/cocina.js';
 
 import cors from 'cors';
 
@@ -29,6 +30,7 @@ app.use('/api', pedidoRouter);
 app.use('/usuarios', userRouter);
 app.use('/auth', authRouter);
 app.use('/recuperar', recuperarRouter);
+app.use('/cocina', cocinaRouter);
 
 const PORT = process.env.PORT || 3000;
 
