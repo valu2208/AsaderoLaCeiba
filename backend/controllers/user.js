@@ -119,10 +119,6 @@ export const editarUsuario = async (req, res) => {
             );
         }
 
-        if (req.body.rol) {
-            datosActualizar.rol = req.body.rol;
-        }
-
         const { data, error } = await actualizarUsuario(
             id,
             datosActualizar
