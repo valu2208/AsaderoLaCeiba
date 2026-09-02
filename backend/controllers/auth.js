@@ -22,7 +22,8 @@ export const iniciarSesion = async (req, res) => {
             });
         }
 
-        const { data: usuario, error } = await obtenerUsuarioPorEmail(email);
+        const { data: usuario, error } =
+            await obtenerUsuarioPorEmail(email);
 
         if (error || !usuario) {
             return res.status(401).json({
@@ -38,6 +39,13 @@ export const iniciarSesion = async (req, res) => {
         if (!passwordValida) {
             return res.status(401).json({
                 error: 'Email o contraseña incorrectos'
+            });
+        }
+
+        // Verificar que el correo haya sido confirmado
+        if (!usuario.isVerified) {
+            return res.status(403).json({
+                error: 'Tu cuenta no ha sido verificada. Por favor, ingresa el código enviado a tu correo antes de iniciar sesión.'
             });
         }
 
@@ -61,16 +69,20 @@ export const iniciarSesion = async (req, res) => {
                 nombre: usuario.nombre,
                 email: usuario.email,
                 telefono: usuario.telefono,
-                rol: usuario.rol
+                rol: usuario.rol,
+                isVerified: usuario.isVerified
             }
         });
 
     } catch (error) {
+        console.error('Error en iniciarSesion:', error);
+
         return res.status(500).json({
             error: error.message
         });
     }
 };
+
 
 // Solicitar código de recuperación
 export const solicitarRecuperacion = async (req, res) => {
@@ -83,7 +95,8 @@ export const solicitarRecuperacion = async (req, res) => {
             });
         }
 
-        const { data: usuario, error } = await obtenerUsuarioPorEmail(email);
+        const { data: usuario, error } =
+            await obtenerUsuarioPorEmail(email);
 
         if (error || !usuario) {
             return res.status(404).json({
@@ -91,18 +104,21 @@ export const solicitarRecuperacion = async (req, res) => {
             });
         }
 
-        const codigo = Math.floor(100000 + Math.random() * 900000).toString();
+        const codigo = Math.floor(
+            100000 + Math.random() * 900000
+        ).toString();
 
         const expiresAt = new Date(
             Date.now() + 10 * 60 * 1000
         ).toISOString();
 
-        const { error: errorCodigo } = await crearCodigoRecuperacion({
-            usuario_id: usuario.id,
-            codigo,
-            expires_at: expiresAt,
-            usado: false
-        });
+        const { error: errorCodigo } =
+            await crearCodigoRecuperacion({
+                usuario_id: usuario.id,
+                codigo,
+                expires_at: expiresAt,
+                usado: false
+            });
 
         if (errorCodigo) {
             return res.status(500).json({
@@ -121,16 +137,23 @@ export const solicitarRecuperacion = async (req, res) => {
         });
 
     } catch (error) {
+        console.error('Error en solicitarRecuperacion:', error);
+
         return res.status(500).json({
             error: error.message
         });
     }
 };
 
+
 // Restablecer contraseña
 export const restablecerContrasena = async (req, res) => {
     try {
-        const { email, codigo, nuevaPassword } = req.body;
+        const {
+            email,
+            codigo,
+            nuevaPassword
+        } = req.body;
 
         if (!email || !codigo || !nuevaPassword) {
             return res.status(400).json({
@@ -138,8 +161,10 @@ export const restablecerContrasena = async (req, res) => {
             });
         }
 
-        const { data: usuario, error: errorUsuario } =
-            await obtenerUsuarioPorEmail(email);
+        const {
+            data: usuario,
+            error: errorUsuario
+        } = await obtenerUsuarioPorEmail(email);
 
         if (errorUsuario || !usuario) {
             return res.status(404).json({
@@ -147,11 +172,13 @@ export const restablecerContrasena = async (req, res) => {
             });
         }
 
-        const { data: codigoValido, error: errorCodigo } =
-            await obtenerCodigoRecuperacion(
-                usuario.id,
-                codigo
-            );
+        const {
+            data: codigoValido,
+            error: errorCodigo
+        } = await obtenerCodigoRecuperacion(
+            usuario.id,
+            codigo
+        );
 
         if (errorCodigo || !codigoValido) {
             return res.status(400).json({
@@ -164,13 +191,14 @@ export const restablecerContrasena = async (req, res) => {
             10
         );
 
-        const { error: errorActualizacion } =
-            await actualizarUsuario(
-                usuario.id,
-                {
-                    password: passwordHash
-                }
-            );
+        const {
+            error: errorActualizacion
+        } = await actualizarUsuario(
+            usuario.id,
+            {
+                password: passwordHash
+            }
+        );
 
         if (errorActualizacion) {
             return res.status(500).json({
@@ -185,6 +213,8 @@ export const restablecerContrasena = async (req, res) => {
         });
 
     } catch (error) {
+        console.error('Error en restablecerContrasena:', error);
+
         return res.status(500).json({
             error: error.message
         });

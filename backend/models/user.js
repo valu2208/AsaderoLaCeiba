@@ -93,13 +93,68 @@ export const obtenerCodigoRecuperacion = async (usuarioId, codigo) => {
     return { data, error };
 };
 
-// Marcar código como usado
+// Marcar código de recuperación como usado
 export const marcarCodigoUsado = async (id) => {
     const { data, error } = await supabase
         .from('recovery_codes')
         .update({ usado: true })
         .eq('id', id)
         .select()
+        .single();
+
+    return { data, error };
+};
+
+// Obtener usuario con código de verificación válido
+export const obtenerUsuarioPorCodigoVerificacion = async (
+    email,
+    codigo
+) => {
+    const { data, error } = await supabase
+        .from('usuarios')
+        .select('*')
+        .eq('email', email)
+        .eq('codigoVerificacion', codigo)
+        .eq('isVerified', false)
+        .gt(
+            'codigoVerificacionExpiracion',
+            new Date().toISOString()
+        )
+        .maybeSingle();
+
+    return { data, error };
+};
+// Marcar usuario como verificado
+export const verificarUsuario = async (id) => {
+    const { data, error } = await supabase
+        .from('usuarios')
+        .update({
+            isVerified: true,
+            codigoVerificacion: null,
+            codigoVerificacionExpiracion: null
+        })
+        .eq('id', id)
+        .select('id, nombre, email, telefono, rol, isVerified, creado_en')
+        .single();
+
+    return { data, error };
+};
+
+// Actualizar código de verificación
+export const actualizarCodigoVerificacion = async (
+    email,
+    codigoVerificacion,
+    codigoVerificacionExpiracion
+) => {
+    const { data, error } = await supabase
+        .from('usuarios')
+        .update({
+            codigoVerificacion,
+            codigoVerificacionExpiracion
+        })
+        .eq('email', email)
+        .eq('isVerified', false)
+        .select('id, nombre, email, isVerified, codigoVerificacion, codigoVerificacionExpiracion')
         .single();
 
     return { data, error };

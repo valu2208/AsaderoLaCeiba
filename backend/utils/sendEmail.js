@@ -10,6 +10,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+// Enviar código para recuperar contraseña
 export const enviarCodigoRecuperacion = async (
     email,
     nombre,
@@ -39,6 +40,46 @@ export const enviarCodigoRecuperacion = async (
 
             <p>
                 Si tú no solicitaste este cambio, puedes ignorar este correo.
+            </p>
+
+            <p>
+                Asadero La Ceiba
+            </p>
+        `
+    });
+};
+
+// Enviar código para verificar correo
+export const enviarCodigoVerificacion = async (
+    email,
+    nombre,
+    codigo
+) => {
+    await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: 'Verifica tu correo - Asadero La Ceiba',
+        html: `
+            <h2>Verificación de correo</h2>
+
+            <p>Hola ${nombre},</p>
+
+            <p>
+                Gracias por registrarte en Asadero La Ceiba.
+            </p>
+
+            <p>
+                Tu código de verificación es:
+            </p>
+
+            <h1>${codigo}</h1>
+
+            <p>
+                Este código tiene una duración de 10 minutos.
+            </p>
+
+            <p>
+                Si tú no creaste esta cuenta, puedes ignorar este correo.
             </p>
 
             <p>
