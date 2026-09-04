@@ -7,6 +7,8 @@ import userRouter from './routes/user.js';
 import authRouter from './routes/auth.js';
 import recuperarRouter from './routes/recuperar.js';
 import cocinaRouter from './routes/cocina.js';
+import chatRouter from './routes/chats.js';
+import tasasCambioRouter from './routes/tasasCambio.js';
 
 import cors from 'cors';
 
@@ -31,6 +33,8 @@ app.use('/usuarios', userRouter);
 app.use('/auth', authRouter);
 app.use('/recuperar', recuperarRouter);
 app.use('/cocina', cocinaRouter);
+app.use('/chat', chatRouter);
+app.use('/tasas-cambio', tasasCambioRouter);
 
 const PORT = process.env.PORT || 3000;
 
