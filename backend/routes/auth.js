@@ -6,10 +6,17 @@ import {
     restablecerContrasena
 } from '../controllers/auth.js';
 
+import {
+    autenticarConGoogle
+} from '../controllers/googleAuth.controller.js';
+
 const router = Router();
 
-// Iniciar sesión
+// Iniciar sesión   
 router.post('/login', iniciarSesion);
+
+// Autenticación con Google
+router.post('/google', autenticarConGoogle);
 
 // Solicitar código de recuperación
 router.post('/recuperar', solicitarRecuperacion);

@@ -159,3 +159,30 @@ export const actualizarCodigoVerificacion = async (
 
     return { data, error };
 };
+// Crear usuario autenticado con Google
+export const crearUsuarioGoogle = async ({
+    nombre,
+    email,
+    googleId,
+    avatar = null,
+    rol = 'usuario'
+}) => {
+    const { data, error } = await supabase
+        .from('usuarios')
+        .insert({
+            nombre,
+            email,
+            telefono: '', 
+            password: null,
+            rol,
+            isVerified: true,
+            googleId,
+            avatar,
+            codigoVerificacion: null,
+            codigoVerificacionExpiracion: null
+        })
+        .select()
+        .single();
+
+    return { data, error };
+};
