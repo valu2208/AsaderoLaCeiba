@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  //definimos los colores
-  //color primario
-  static const Color primary = Color(0xFF000000);
-  //color secundario
-  static const Color secondary = Color(0xFF1F0345);
-  //color destacado
-  static const Color accent = Color(0xFFFFC400);
+  // Colores principales de Asadero La Ceiba
+  static const Color asphalt = Color(0xFF1C0A0A);
+  static const Color earthBrown = Color(0xFF550D08);
+  static const Color demonicPresence = Color(0xFF7B1103);
+  static const Color redPrayerFlag = Color(0xFFB81202);
+  static const Color goldSand = Color(0xFFF8ECAC);
 
-  //BACKGROUNDS
-  static const Color fondo = Color(0xFF0E0F20);
-  static const Color fondoComponentes = Color(0xFF0E0F20);
-  static const Color fondoComponentesSeleccionado = Color(0xFF4E0F20);
+  // Colores de la aplicación
+  static const Color primary = redPrayerFlag;
+  static const Color secondary = earthBrown;
+  static const Color accent = goldSand;
+
+  // Fondos
+  static const Color fondo = asphalt;
+  static const Color fondoComponentes = earthBrown;
+  static const Color fondoComponentesSeleccionado = demonicPresence;
 }
