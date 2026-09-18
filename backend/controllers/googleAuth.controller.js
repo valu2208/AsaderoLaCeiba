@@ -116,7 +116,7 @@ export const autenticarConGoogle = async (req, res) => {
             {
                 id: usuarioFinal.id,
                 email: usuarioFinal.email,
-                rol: usuarioFinal.rol
+                rol: usuarioFinal.rol.toLowerCase()
             },
             process.env.JWT_SECRET,
             {

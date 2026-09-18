@@ -81,6 +81,7 @@ export const crear = async (req, res) => {
             categoria,
             disponible
         } = req.body;
+        console.log('DATOS RECIBIDOS', req.body);
 
         if (!nombre || !precio) {
             return res.status(400).json({
