@@ -9,6 +9,8 @@ class Bienvenida extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
@@ -24,46 +26,55 @@ class Bienvenida extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Spacer(),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // Se adapta al tamaño de la pantalla
+              final double tamanoLogo =
+                  (constraints.maxWidth * 0.78).clamp(220.0, 309.0);
 
-              ClipOval(
-                child: 
-              Image.asset(
-                'assets/imagenes/logo_ceiba.jpeg',
-                width: 309,
-                height: 309,
-                fit: BoxFit.cover
-              ),
-              ),
-              const SizedBox(height: 20),
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Spacer(),
 
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const Inicio(),
+                  ClipOval(
+                    child: Image.asset(
+                      'assets/imagenes/logo_ceiba.jpeg',
+                      width: tamanoLogo,
+                      height: tamanoLogo,
+                      fit: BoxFit.cover,
                     ),
-                  );
-                },
-                child: const Text(
-                  '¡haz click aquí!',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontStyle: FontStyle.italic,
                   ),
-                ),
-              ),
 
-              const Spacer(),
-            ],
+                  const SizedBox(height: 20),
+
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Inicio(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      '¡haz click aquí!',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+
+                  const Spacer(),
+                ],
+              );
+            },
           ),
         ),
       ),
     );
   }
 }
+
