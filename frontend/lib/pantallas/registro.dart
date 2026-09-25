@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/componentes/barra_navegacion.dart';
+import 'package:asadero/componentes/campo_texto.dart';
+import 'package:asadero/componentes/boton_principal.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:asadero/pantallas/verificar_correo.dart';
 
 class Registro extends StatefulWidget {
   const Registro({super.key});
@@ -11,172 +15,88 @@ class Registro extends StatefulWidget {
 
 class _RegistroState extends State<Registro> {
   bool mostrarContrasena = false;
-  bool mostrarConfirmarContrasena = false;
-
-  // Método reutilizable para no repetir el estilo en cada campo
-  Widget _buildTextField({
-    required String label,
-    required IconData icon,
-    bool isPassword = false,
-    bool obscureText = false,
-    VoidCallback? onToggleVisibility,
-  }) {
-    return TextField(
-      obscureText: isPassword ? obscureText : false,
-      style: const TextStyle(
-        color: AppColors.goldSand,
-      ),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(
-          color: AppColors.goldSand,
-        ),
-        filled: true,
-        fillColor: AppColors.earthBrown,
-        prefixIcon: Icon(
-          icon,
-          size: 29,
-          color: AppColors.redPrayerFlag,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(
-            color: AppColors.redPrayerFlag,
-            width: 1.5,
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(
-            color: AppColors.goldSand,
-            width: 2,
-          ),
-        ),
-        suffixIcon: isPassword
-            ? IconButton(
-                onPressed: onToggleVisibility,
-                icon: Icon(
-                  obscureText ? Icons.visibility_off : Icons.visibility,
-                  color: AppColors.redPrayerFlag,
-                ),
-              )
-            : null,
-      ),
-    );
-  }
+  bool mostrarConfirmar = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-            stops: [1.0],
-            colors: [AppColors.asphalt],
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(25),
-            child: Column(
-              children: [
-                const BarraNavegacion(),
-                const SizedBox(height: 30),
-
-                const Text(
-                  'Registrate',
-                  style: TextStyle(
-                    color: AppColors.goldSand,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
+      backgroundColor: AppColors.asphalt,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              const BarraNavegacion(),
+              const SizedBox(height: 5),
+              const Icon(
+                Icons.account_circle,
+                color: AppColors.goldSand,
+                size: 90,
+              ),
+              const SizedBox(height: 30),
+              Text(
+                'Regístrate',
+                style: GoogleFonts.kronaOne(
+                  color: AppColors.goldSand,
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
                 ),
-
-                const SizedBox(height: 35),
-
-                _buildTextField(
-                  label: 'Nombre',
-                  icon: Icons.person,
-                ),
-
-                const SizedBox(height: 18),
-
-                _buildTextField(
-                  label: 'Teléfono',
-                  icon: Icons.phone,
-                ),
-
-                const SizedBox(height: 18),
-
-                _buildTextField(
-                  label: 'Correo Electrónico',
-                  icon: Icons.email,
-                ),
-
-                const SizedBox(height: 18),
-
-                _buildTextField(
-                  label: 'Contraseña',
-                  icon: Icons.password,
-                  isPassword: true,
-                  obscureText: !mostrarContrasena,
-                  onToggleVisibility: () {
-                    setState(() {
-                      mostrarContrasena = !mostrarContrasena;
-                    });
-                  },
-                ),
-
-                const SizedBox(height: 18),
-
-                _buildTextField(
-                  label: 'Confirmar contraseña',
-                  icon: Icons.lock_outline,
-                  isPassword: true,
-                  obscureText: !mostrarConfirmarContrasena,
-                  onToggleVisibility: () {
-                    setState(() {
-                      mostrarConfirmarContrasena = !mostrarConfirmarContrasena;
-                    });
-                  },
-                ),
-
-                const SizedBox(height: 25),
-
-                // BOTÓN CREAR CUENTA
-                Container(
-                  width: double.infinity,
-                  height: 55,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [AppColors.redPrayerFlag, AppColors.earthBrown],
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: const [
-                      BoxShadow(blurRadius: 8, offset: Offset(0, 4)),
-                    ],
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      'Crear cuenta',
-                      style: TextStyle(color: AppColors.goldSand, fontSize: 20),
+              ),
+              const SizedBox(height: 55),
+              const CampoTexto(texto: 'Nombre', icono: Icons.person),
+              const SizedBox(height: 20),
+              const CampoTexto(texto: 'Teléfono', icono: Icons.phone),
+              const SizedBox(height: 20),
+              const CampoTexto(texto: 'Correo Electrónico', icono: Icons.email),
+              const SizedBox(height: 20),
+              CampoTexto(
+                texto: 'Contraseña',
+                icono: Icons.lock,
+                ocultar: !mostrarContrasena,
+                onPressed: () =>
+                    setState(() => mostrarContrasena = !mostrarContrasena),
+              ),
+              const SizedBox(height: 20),
+              CampoTexto(
+                texto: 'Confirmar contraseña',
+                icono: Icons.lock_outline,
+                ocultar: !mostrarConfirmar,
+                onPressed: () =>
+                    setState(() => mostrarConfirmar = !mostrarConfirmar),
+              ),
+              const SizedBox(height: 35),
+              BotonPrincipal(
+                texto: 'Crear Cuenta',
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const VerificarCorreo()),
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  const Expanded(child: Divider(color: AppColors.goldSand)),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      'O Continuar Con',
+                      style: TextStyle(color: AppColors.goldSand),
                     ),
                   ),
+                  const Expanded(child: Divider(color: AppColors.goldSand)),
+                ],
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.g_mobiledata,
+                  color: AppColors.goldSand,
+                  size: 41,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

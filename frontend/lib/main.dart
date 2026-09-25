@@ -1,5 +1,5 @@
-import 'package:asadero/pantallas/bienvenida.dart';
 import 'package:flutter/material.dart';
+import 'package:asadero/pantallas/bienvenida.dart';
 
 void main() {
   runApp(const MyApp());

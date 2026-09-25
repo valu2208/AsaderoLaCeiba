@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/componentes/barra_navegacion.dart';
+import 'package:asadero/componentes/campo_texto.dart';
+import 'package:asadero/componentes/boton_principal.dart';
+import 'package:asadero/pantallas/recuperar_contrasena.dart';
+import 'package:asadero/pantallas/registro.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -9,134 +15,105 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  bool mostrarContrasena = false;
+  bool mostrar = false;
+  bool recordar = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-            stops: [0.05, 0.32, 0.46, 0.76, 1.0],
-            colors: [
-              AppColors.goldSand,
-              AppColors.redPrayerFlag,
-              AppColors.demonicPresence,
-              AppColors.earthBrown,
-              AppColors.asphalt,
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(25),
-            child: Column(
-              children: [
-                const SizedBox(height: 30),
-
-                const Text(
-                  'Iniciar Sesión',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
+      backgroundColor: AppColors.asphalt,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(25),
+          child: Column(
+            children: [
+              const BarraNavegacion(),
+              const SizedBox(height: 20),
+              const Icon(Icons.account_circle,
+                  color: AppColors.goldSand, size: 80),
+              const SizedBox(height: 10),
+              Text(
+                'Iniciar Sesión',
+                style: GoogleFonts.kronaOne(
+                  color: AppColors.goldSand,
+                  fontSize: 30,
+                ),
+              ),
+              const SizedBox(height: 60),
+              const CampoTexto(texto: 'Nombre', icono: Icons.person),
+              const SizedBox(height: 15),
+              const CampoTexto(
+                  texto: 'Correo Electrónico', icono: Icons.email),
+              const SizedBox(height: 15),
+              CampoTexto(
+                texto: 'Contraseña',
+                icono: Icons.lock,
+                ocultar: !mostrar,
+                onPressed: () => setState(() => mostrar = !mostrar),
+              ),
+              Row(
+                children: [
+                  Checkbox(
+                    value: recordar,
+                    onChanged: (valor) =>
+                        setState(() => recordar = valor ?? false),
                   ),
-                ),
-
-                const SizedBox(height: 40),
-
-                TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Correo Electrónico',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                TextField(
-                  obscureText: !mostrarContrasena,
-                  decoration: InputDecoration(
-                    labelText: 'Contraseña',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          mostrarContrasena = !mostrarContrasena;
-                        });
-                      },
-                      icon: Icon(
-                        mostrarContrasena
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 10),
-
-                Row(
-                  children: [
-                    Checkbox(
-                      value: false,
-                      onChanged: (valor) {},
-                    ),
-                    const Text(
-                      'Recuérdame',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    const Spacer(),
-                    TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        '¿Olvidaste tu contraseña?',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                SizedBox(
-                  width: double.infinity,
-                  height: 55,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(
-                        AppColors.asphalt,
-                      ),
-                      shape: WidgetStatePropertyAll(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                  const Text('Recordarme',
+                      style: TextStyle(color: AppColors.goldSand)),
+                  const Spacer(),
+                  TextButton(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const RecuperarContrasena(),
                       ),
                     ),
                     child: const Text(
-                      'Iniciar Sesión',
-                      style: TextStyle(
-                        color: AppColors.goldSand,
-                        fontSize: 20,
-                      ),
+                      '¿Olvidaste Contraseña?',
+                      style: TextStyle(color: AppColors.goldSand),
                     ),
                   ),
+                ],
+              ),
+              const SizedBox(height: 30),
+              BotonPrincipal(texto: 'Iniciar Sesión', onPressed: () {}),
+              TextButton(
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const Registro()),
                 ),
-              ],
-            ),
+                child: const Text(
+                  '¿No tienes cuenta? Regístrate',
+                  style: TextStyle(
+                    color: AppColors.goldSand,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                  const Expanded(
+                      child: Divider(color: AppColors.goldSand)),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      'O Continuar Con',
+                      style: TextStyle(color: AppColors.goldSand),
+                    ),
+                  ),
+                  const Expanded(
+                      child: Divider(color: AppColors.goldSand)),
+                ],
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.g_mobiledata,
+                  color: AppColors.goldSand,
+                  size: 45,
+                ),
+              ),
+            ],
           ),
         ),
       ),
