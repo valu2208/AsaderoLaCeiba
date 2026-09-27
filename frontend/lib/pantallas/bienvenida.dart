@@ -77,4 +77,3 @@ class Bienvenida extends StatelessWidget {
     );
   }
 }
-

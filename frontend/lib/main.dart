@@ -1,4 +1,6 @@
 import 'package:asadero/pantallas/bienvenida.dart';
+//import 'package:asadero/pantallas/home.dart';
+//import 'package:asadero/pantallas/chat.dart';
 import 'package:flutter/material.dart';
 
 void main() {

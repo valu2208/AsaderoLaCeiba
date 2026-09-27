@@ -15,9 +15,7 @@ class Inicio extends StatelessWidget {
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
             stops: [1.0],
-            colors: [
-              AppColors.asphalt,
-            ],
+            colors: [AppColors.asphalt],
           ),
         ),
         child: SafeArea(
@@ -26,9 +24,7 @@ class Inicio extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: 35),
-
                 const SizedBox(height: 70),
-
                 const Text(
                   'Tu próxima gran idea empieza aqui! 💫',
                   textAlign: TextAlign.center,
@@ -38,18 +34,13 @@ class Inicio extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
                 const Text(
                   'Crea tu cuenta en 30 segundos y descubre todo lo que tenemos para ti',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: AppColors.goldSand, fontSize: 18),
                 ),
-
                 const Spacer(),
-
-                // BOTÓN COMENZAR AHORA
                 Container(
                   width: double.infinity,
                   height: 60,
@@ -90,10 +81,7 @@ class Inicio extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 15),
-
-                // INICIAR SESIÓN
                 TextButton(
                   onPressed: () {
                     Navigator.push(
@@ -117,16 +105,12 @@ class Inicio extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 25),
-
                 const Text(
                   '── O Continua Con ──',
                   style: TextStyle(color: AppColors.goldSand, fontSize: 15),
                 ),
-
                 const SizedBox(height: 20),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -138,9 +122,7 @@ class Inicio extends StatelessWidget {
                         size: 32,
                       ),
                     ),
-
                     const SizedBox(width: 20),
-
                     IconButton(
                       onPressed: () {},
                       icon: const Icon(
@@ -149,9 +131,7 @@ class Inicio extends StatelessWidget {
                         size: 38,
                       ),
                     ),
-
                     const SizedBox(width: 20),
-
                     IconButton(
                       onPressed: () {},
                       icon: const Icon(
@@ -162,7 +142,6 @@ class Inicio extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 20),
               ],
             ),
