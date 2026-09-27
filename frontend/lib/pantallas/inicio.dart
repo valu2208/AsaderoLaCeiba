@@ -4,6 +4,7 @@ import 'package:asadero/core/colores.dart';
 import 'package:asadero/componentes/barra_navegacion.dart';
 import 'package:asadero/componentes/boton_principal.dart';
 import 'package:asadero/pantallas/login.dart';
+import 'package:asadero/pantallas/registro.dart';
 
 class Inicio extends StatelessWidget {
   const Inicio({super.key});
@@ -18,7 +19,7 @@ class Inicio extends StatelessWidget {
           child: Column(
             children: [
               const BarraNavegacion(),
-              const SizedBox(height: 100),
+              const SizedBox(height: 70),
               Text(
                 'Tu próxima gran idea empieza aquí! 💫',
                 textAlign: TextAlign.center,
@@ -27,7 +28,7 @@ class Inicio extends StatelessWidget {
                   fontSize: 28,
                 ),
               ),
-              const SizedBox(height: 95),
+              const SizedBox(height: 20),
               Text(
                 'Crea tu cuenta en 30 segundos y descubre todo lo que tenemos para ti',
                 textAlign: TextAlign.center,
@@ -42,9 +43,33 @@ class Inicio extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
+                    MaterialPageRoute(builder: (_) => const Registro()),
+                  );
+                },
+              ),
+              const SizedBox(height: 15),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
                     MaterialPageRoute(builder: (_) => const Login()),
                   );
                 },
+                child: RichText(
+                  text: const TextSpan(
+                    style: TextStyle(color: AppColors.goldSand, fontSize: 16),
+                    children: [
+                      TextSpan(text: '¿Ya tiene cuenta? '),
+                      TextSpan(
+                        text: 'Inicia Sesión',
+                        style: TextStyle(
+                          color: AppColors.goldSand,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),

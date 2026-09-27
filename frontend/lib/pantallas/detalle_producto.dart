@@ -5,119 +5,144 @@ import 'package:asadero/pantallas/carrito.dart';
 class DetalleProducto extends StatelessWidget {
   final String nombre;
   final String precio;
-  final IconData icono;
+  final String? imagen;
+  final String? descripcion;
+  final IconData? icono;
 
   const DetalleProducto({
     super.key,
     required this.nombre,
     required this.precio,
-    required this.icono,
+    this.imagen,
+    this.descripcion,
+    this.icono,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.asphalt,
-
+      backgroundColor: AppColors.goldSand,
       appBar: AppBar(
-        backgroundColor: AppColors.earthBrown,
+        backgroundColor: AppColors.goldSand,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: AppColors.goldSand,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          icon: const Icon(Icons.arrow_back, color: AppColors.redPrayerFlag),
+          onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'Detalle del producto',
+          'Lo más pedido',
           style: TextStyle(
-            color: AppColors.goldSand,
+            color: AppColors.asphalt,
+            fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
       ),
-
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(
           children: [
-            const SizedBox(height: 30),
-
-            Icon(
-              icono,
-              size: 130,
-              color: AppColors.goldSand,
-            ),
-
-            const SizedBox(height: 30),
-
-            Text(
-              nombre,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.goldSand,
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            const SizedBox(height: 15),
-
-            Text(
-              '\$$precio',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            const SizedBox(height: 25),
-
-            const Text(
-              'Delicioso producto preparado especialmente para ti.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: 16,
-              ),
-            ),
-
-            const Spacer(),
-
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Carrito(
-                        nombre: nombre,
-                        precio: precio,
-                      ),
+            Expanded(
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Container(
+                    padding: const EdgeInsets.all(22),
+                    decoration: BoxDecoration(
+                      color: AppColors.earthBrown,
+                      borderRadius: BorderRadius.circular(18),
                     ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.redPrayerFlag,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Text(
-                  'Agregar al carrito',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          nombre,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: AppColors.goldSand,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        _imagenProducto(),
+                        const SizedBox(height: 20),
+                        Text(
+                          descripcion ??
+                              'Delicioso producto preparado especialmente para ti.',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            height: 1.4,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          precio,
+                          style: const TextStyle(
+                            color: AppColors.redPrayerFlag,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
+            _botonCarrito(context),
+            const SizedBox(height: 10),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _imagenProducto() {
+    if (imagen != null) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(14),
+        child: Image.asset(
+          imagen!,
+          width: double.infinity,
+          height: 230,
+          fit: BoxFit.cover,
+        ),
+      );
+    }
+
+    return Icon(
+      icono ?? Icons.restaurant,
+      size: 150,
+      color: AppColors.goldSand,
+    );
+  }
+
+  Widget _botonCarrito(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Carrito(nombre: nombre, precio: precio),
+            ),
+          );
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.redPrayerFlag,
+          padding: const EdgeInsets.symmetric(vertical: 15),
+        ),
+        child: const Text(
+          'Agregar al carrito',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
