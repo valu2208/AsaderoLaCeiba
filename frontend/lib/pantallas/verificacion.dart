@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/colores.dart';
-import 'package:asadero/componentes/barra_navegacion.dart';
 import 'package:asadero/componentes/boton_principal.dart';
 import 'package:asadero/pantallas/nueva_contrasena.dart';
 
@@ -30,8 +29,6 @@ class Verificacion extends StatelessWidget {
             padding: const EdgeInsets.all(25),
             child: Column(
               children: [
-                const BarraNavegacion(),
-                const SizedBox(height: 25),
                 Text(
                   'Verificar el código de recuperación',
                   textAlign: TextAlign.center,
@@ -41,11 +38,7 @@ class Verificacion extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 15),
-                const Icon(
-                  Icons.email,
-                  color: AppColors.goldSand,
-                  size: 75,
-                ),
+                const Icon(Icons.email, color: AppColors.goldSand, size: 75),
                 const SizedBox(height: 40),
                 Text(
                   'Ingresa el código de verificación',

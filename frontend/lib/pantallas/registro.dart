@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:asadero/core/colores.dart';
-import 'package:asadero/componentes/barra_navegacion.dart';
 import 'package:asadero/componentes/campo_texto.dart';
 import 'package:asadero/componentes/boton_principal.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26,8 +25,6 @@ class _RegistroState extends State<Registro> {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              const BarraNavegacion(),
-              const SizedBox(height: 5),
               const Icon(
                 Icons.account_circle,
                 color: AppColors.goldSand,
