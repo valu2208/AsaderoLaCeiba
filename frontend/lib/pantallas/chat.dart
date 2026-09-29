@@ -3,6 +3,7 @@ import 'package:asadero/core/colores.dart';
 import 'package:asadero/componentes/burbuja_mensaje.dart';
 import 'package:asadero/componentes/encabezado_chat.dart';
 import 'package:asadero/componentes/campo_mensaje.dart';
+import 'package:asadero/services/chat_service.dart';
 
 class Chat extends StatefulWidget {
   const Chat({super.key});
@@ -20,7 +21,8 @@ class _ChatState extends State<Chat> {
     },
   ];
   bool _cargando = false;
-  void _enviarMensaje() async {
+  String? _sesionId;
+    void _enviarMensaje() async {
     final texto = _controller.text.trim();
     if (texto.isEmpty || _cargando) {
       return;
@@ -34,22 +36,23 @@ class _ChatState extends State<Chat> {
       _cargando = true;
     });
     _scrollHaciaAbajo();
-    await Future.delayed(
-      const Duration(seconds: 1),
+    final respuesta = await ChatService.enviarMensaje(
+      texto,
+      sesionId: _sesionId,
     );
     if (!mounted) {
       return;
     }
     setState(() {
+      _sesionId = respuesta.sesionId ?? _sesionId;
       _mensajes.add({
         'role': 'bot',
-        'text':
-            'Gracias por tu mensaje. Soy el asistente de Asadero La Ceiba. Pronto podré ayudarte con nuestro menú, precios y pedidos.',
+        'text': respuesta.texto,
       });
       _cargando = false;
     });
     _scrollHaciaAbajo();
-  }
+  } 
   void _scrollHaciaAbajo() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
@@ -69,8 +72,10 @@ class _ChatState extends State<Chat> {
   }
   @override
   Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
     return Container(
-      height: 600,
+      height: MediaQuery.of(context).size.height * 0.78,
+      margin: EdgeInsets.only(bottom: bottomInset),
       decoration: const BoxDecoration(
         color: AppColors.asphalt,
         borderRadius: BorderRadius.vertical(

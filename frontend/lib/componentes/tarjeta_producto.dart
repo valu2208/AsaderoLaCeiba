@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/componentes/imagen_producto.dart';
+import 'package:asadero/componentes/boton_agregar.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class TarjetaProducto extends StatefulWidget {
   final String nombre;
@@ -22,23 +25,40 @@ class TarjetaProducto extends StatefulWidget {
 class _TarjetaProductoState extends State<TarjetaProducto> {
   int cantidad = 0;
 
+  // Alto de la imagen: proporcional al ancho de la tarjeta
+  double _altoImagen(double ancho) => ancho * 0.6;
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        _cuerpo(),
-        _imagenFlotante(),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final ancho = constraints.maxWidth;
+
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            _cuerpo(ancho),
+            Positioned(
+              top: 0,
+              left: ancho * 0.13,
+              right: ancho * 0.13,
+              child: ImagenProducto(
+                imagen: widget.imagen,
+                alto: _altoImagen(ancho),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
-  Widget _cuerpo() {
+  Widget _cuerpo(double ancho) {
     return Container(
       margin: const EdgeInsets.only(top: 34),
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppColors.earthBrown,
+        color: AppColors.demonicPresence,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -48,17 +68,19 @@ class _TarjetaProductoState extends State<TarjetaProducto> {
           ),
         ],
       ),
-      padding: const EdgeInsets.fromLTRB(12, 76, 12, 10),
+      // El texto empieza 12 px debajo de la imagen:
+      // alto de la imagen - 34 (lo que sobresale) + 12
+      padding: EdgeInsets.fromLTRB(12, _altoImagen(ancho) - 22, 12, 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+            Text(
             widget.nombre,
             maxLines: 2,
-            style: const TextStyle(
-              color: Colors.white,
+            style: GoogleFonts.josefinSans(
+              color: AppColors.goldSand,
               fontWeight: FontWeight.bold,
-              fontSize: 14,
+              fontSize: 15,
             ),
           ),
           const Spacer(),
@@ -72,78 +94,33 @@ class _TarjetaProductoState extends State<TarjetaProducto> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        TextButton(
-          onPressed: widget.onInformacion,
-          style: TextButton.styleFrom(
-            padding: EdgeInsets.zero,
-            minimumSize: const Size(0, 30),
-          ),
-          child: const Text(
-            'Más información',
-            style: TextStyle(
-              color: AppColors.goldSand,
-              fontSize: 11,
+        Expanded(
+          child: TextButton(
+            onPressed: widget.onInformacion,
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.zero,
+              minimumSize: const Size(0, 30),
+              alignment: Alignment.centerLeft,
+            ),
+            child: Text(
+              'Más información',
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.josefinSans(
+                color: AppColors.goldSand,
+                fontSize: 12,
+              ),
             ),
           ),
         ),
-        Row(
-          children: [
-            if (cantidad > 0)
-              Padding(
-                padding: const EdgeInsets.only(right: 4),
-                child: Text(
-                  '$cantidad',
-                  style: const TextStyle(
-                    color: AppColors.goldSand,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  cantidad++;
-                });
-              },
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              icon: const Icon(
-                Icons.add_circle,
-                color: AppColors.redPrayerFlag,
-                size: 22,
-              ),
-            ),
-          ],
+        BotonAgregar(
+          cantidad: cantidad,
+          onAgregar: () {
+            setState(() {
+              cantidad++;
+            });
+          },
         ),
       ],
-    );
-  }
-
-  Widget _imagenFlotante() {
-    return Positioned(
-      top: 0,
-      left: 10,
-      right: 10,
-      child: Container(
-        height: 96,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.35),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(14),
-          child: Image.asset(
-            widget.imagen,
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
     );
   }
 }
