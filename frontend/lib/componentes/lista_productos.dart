@@ -13,48 +13,40 @@ class ListaProductos extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: GridView.builder(
-        itemCount: productos.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          childAspectRatio: 0.72,
-        ),
-        itemBuilder: (context, index) {
-          final producto = productos[index];
+      child: LayoutBuilder(//mide el ancho disponible para calcular de cada tarjeta
+          builder: (context, constraints) {
+          const espacio = 12.0;
 
-          return _tarjeta(context, producto, index);
+          // En el primer cuadro Flutter puede dar ancho 0: no se dibuja nada
+          if (constraints.maxWidth <= espacio) {
+            return const SizedBox.shrink();
+          }
+
+          final anchoTarjeta =
+              ((constraints.maxWidth - espacio) / 2).floorToDouble();
+          final altoTarjeta = anchoTarjeta / 0.78;//proporción de las tarjetas
+
+          return SingleChildScrollView(//conserva su diseño cuando haya mas productos a la pantalla
+            child: Wrap( //acomoda las tarjetas por filas
+              alignment: WrapAlignment.center, //me centra la ultima fila
+              spacing: espacio,
+              runSpacing: espacio,
+              children: productos.map((producto) {
+                return SizedBox(
+                  width: anchoTarjeta,
+                  height: altoTarjeta,
+                  child: TarjetaProducto(
+                    nombre: producto['nombre']!,
+                    precio: producto['precio']!,
+                    imagen: producto['imagen']!,
+                    onInformacion: () => _abrirDetalle(context, producto),
+                  ),
+                );
+              }).toList(),
+            ),
+          );
         },
       ),
-    );
-  }
-
-  Widget _tarjeta(
-    BuildContext context,
-    Map<String, String> producto,
-    int index,
-  ) {
-    if (index == productos.length - 1 && productos.length.isOdd) {
-      return Center(
-        child: SizedBox(
-          width: 150,
-          height: 260,
-          child: TarjetaProducto(
-            nombre: producto['nombre']!,
-            precio: producto['precio']!,
-            imagen: producto['imagen']!,
-            onInformacion: () => _abrirDetalle(context, producto),
-          ),
-        ),
-      );
-    }
-
-    return TarjetaProducto(
-      nombre: producto['nombre']!,
-      precio: producto['precio']!,
-      imagen: producto['imagen']!,
-      onInformacion: () => _abrirDetalle(context, producto),
     );
   }
 

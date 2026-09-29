@@ -64,7 +64,7 @@ class Home extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _titulo(),
             const SizedBox(height: 15),
@@ -77,7 +77,7 @@ class Home extends StatelessWidget {
 
   Widget _titulo() {
     return Text(
-      'Lo más pedido!',
+      '¡Lo más pedido!',
       style: GoogleFonts.kronaOne(
         color: AppColors.earthBrown,
         fontSize: 22,
