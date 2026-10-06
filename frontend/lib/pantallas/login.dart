@@ -10,6 +10,7 @@ import 'package:asadero/componentes/campo_texto.dart';
 import 'package:asadero/componentes/boton_principal.dart';
 import 'package:asadero/pantallas/recuperar_contrasena.dart';
 import 'package:asadero/pantallas/registro.dart';
+import 'package:asadero/pantallas/home.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -23,7 +24,7 @@ class _LoginState extends State<Login> {
   bool recordar = false;
 
   final GoogleSignIn googleSignIn = GoogleSignIn.instance;
-  late final Future<void> googleInicializado;
+  late Future<void> googleInicializado;
 
   @override
   void initState() {
@@ -42,59 +43,22 @@ class _LoginState extends State<Login> {
       final usuario = await googleSignIn.authenticate();
       final idToken = usuario.authentication.idToken;
 
-      if (idToken == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No se pudo obtener el token de Google'),
-          ),
-        );
-        return;
-      }
+      if (idToken == null) return;
 
       final respuesta = await http.post(
         Uri.parse('http://10.0.2.2:3000/auth/google'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'idToken': idToken,
-        }),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'idToken': idToken}),
       );
 
       if (respuesta.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Inicio de sesión con Google exitoso'),
-          ),
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const Home()),
         );
-
-        print(respuesta.body);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No se pudo iniciar sesión con Google'),
-          ),
-        );
-
-        print(respuesta.body);
       }
-    } on GoogleSignInException catch (e) {
-      print('Error de Google: ${e.code}');
-      print(e.description);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Error al iniciar sesión con Google'),
-        ),
-      );
     } catch (e) {
-      print('Error: $e');
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Ocurrió un error al iniciar sesión'),
-        ),
-      );
+      print(e);
     }
   }
 
