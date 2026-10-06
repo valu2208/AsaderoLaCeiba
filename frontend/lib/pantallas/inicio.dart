@@ -4,7 +4,7 @@ import 'package:asadero/core/colores.dart';
 import 'package:asadero/componentes/barra_navegacion.dart';
 import 'package:asadero/componentes/boton_principal.dart';
 import 'package:asadero/pantallas/login.dart';
-import 'package:asadero/pantallas/registro.dart';
+
 
 class Inicio extends StatelessWidget {
   const Inicio({super.key});
@@ -43,7 +43,7 @@ class Inicio extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const Registro()),
+                    MaterialPageRoute(builder: (_) => const Login()),
                   );
                 },
               ),
