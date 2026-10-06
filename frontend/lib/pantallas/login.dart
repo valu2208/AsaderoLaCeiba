@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/componentes/barra_navegacion.dart';
 import 'package:asadero/componentes/campo_texto.dart';
@@ -18,6 +22,82 @@ class _LoginState extends State<Login> {
   bool mostrar = false;
   bool recordar = false;
 
+  final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+  late final Future<void> googleInicializado;
+
+  @override
+  void initState() {
+    super.initState();
+
+    googleInicializado = googleSignIn.initialize(
+      serverClientId:
+          '1048054296808-qmul3sdksffmij6scb9rs71o16rjnm84.apps.googleusercontent.com',
+    );
+  }
+
+  Future<void> iniciarSesionGoogle() async {
+    try {
+      await googleInicializado;
+
+      final usuario = await googleSignIn.authenticate();
+      final idToken = usuario.authentication.idToken;
+
+      if (idToken == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No se pudo obtener el token de Google'),
+          ),
+        );
+        return;
+      }
+
+      final respuesta = await http.post(
+        Uri.parse('http://10.0.2.2:3000/auth/google'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'idToken': idToken,
+        }),
+      );
+
+      if (respuesta.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Inicio de sesión con Google exitoso'),
+          ),
+        );
+
+        print(respuesta.body);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No se pudo iniciar sesión con Google'),
+          ),
+        );
+
+        print(respuesta.body);
+      }
+    } on GoogleSignInException catch (e) {
+      print('Error de Google: ${e.code}');
+      print(e.description);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error al iniciar sesión con Google'),
+        ),
+      );
+    } catch (e) {
+      print('Error: $e');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Ocurrió un error al iniciar sesión'),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,8 +109,11 @@ class _LoginState extends State<Login> {
             children: [
               const BarraNavegacion(),
               const SizedBox(height: 20),
-              const Icon(Icons.account_circle,
-                  color: AppColors.goldSand, size: 80),
+              const Icon(
+                Icons.account_circle,
+                color: AppColors.goldSand,
+                size: 80,
+              ),
               const SizedBox(height: 10),
               Text(
                 'Iniciar Sesión',
@@ -40,10 +123,15 @@ class _LoginState extends State<Login> {
                 ),
               ),
               const SizedBox(height: 60),
-              const CampoTexto(texto: 'Nombre', icono: Icons.person),
+              const CampoTexto(
+                texto: 'Nombre',
+                icono: Icons.person,
+              ),
               const SizedBox(height: 15),
               const CampoTexto(
-                  texto: 'Correo Electrónico', icono: Icons.email),
+                texto: 'Correo Electrónico',
+                icono: Icons.email,
+              ),
               const SizedBox(height: 15),
               CampoTexto(
                 texto: 'Contraseña',
@@ -58,8 +146,10 @@ class _LoginState extends State<Login> {
                     onChanged: (valor) =>
                         setState(() => recordar = valor ?? false),
                   ),
-                  const Text('Recordarme',
-                      style: TextStyle(color: AppColors.goldSand)),
+                  const Text(
+                    'Recordarme',
+                    style: TextStyle(color: AppColors.goldSand),
+                  ),
                   const Spacer(),
                   TextButton(
                     onPressed: () => Navigator.push(
@@ -76,11 +166,16 @@ class _LoginState extends State<Login> {
                 ],
               ),
               const SizedBox(height: 30),
-              BotonPrincipal(texto: 'Iniciar Sesión', onPressed: () {}),
+              BotonPrincipal(
+                texto: 'Iniciar Sesión',
+                onPressed: () {},
+              ),
               TextButton(
                 onPressed: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const Registro()),
+                  MaterialPageRoute(
+                    builder: (_) => const Registro(),
+                  ),
                 ),
                 child: const Text(
                   '¿No tienes cuenta? Regístrate',
@@ -93,7 +188,8 @@ class _LoginState extends State<Login> {
               Row(
                 children: [
                   const Expanded(
-                      child: Divider(color: AppColors.goldSand)),
+                    child: Divider(color: AppColors.goldSand),
+                  ),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12),
                     child: Text(
@@ -102,11 +198,12 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                   const Expanded(
-                      child: Divider(color: AppColors.goldSand)),
+                    child: Divider(color: AppColors.goldSand),
+                  ),
                 ],
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: iniciarSesionGoogle,
                 icon: const Icon(
                   Icons.g_mobiledata,
                   color: AppColors.goldSand,
