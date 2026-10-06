@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/componentes/barra_navegacion.dart';
@@ -5,6 +7,8 @@ import 'package:asadero/componentes/campo_texto.dart';
 import 'package:asadero/componentes/boton_principal.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/pantallas/verificar_correo.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
 
 class Registro extends StatefulWidget {
   const Registro({super.key});
@@ -16,6 +20,40 @@ class Registro extends StatefulWidget {
 class _RegistroState extends State<Registro> {
   bool mostrarContrasena = false;
   bool mostrarConfirmar = false;
+
+  final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+  late Future<void> googleInicializado;
+
+  @override
+  void initState() {
+    super.initState();
+
+    googleInicializado = googleSignIn.initialize(
+      serverClientId:
+          '1048054296808-qmul3sdksffmij6scb9rs71o16rjnm84.apps.googleusercontent.com',
+    );
+  }
+
+  Future<void> registrarConGoogle() async {
+    try {
+      await googleInicializado;
+
+      final usuario = await googleSignIn.authenticate();
+      final idToken = usuario.authentication.idToken;
+
+      if (idToken == null) return;
+
+      final respuesta = await http.post(
+        Uri.parse('http://10.0.2.2:3000/auth/google'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'idToken': idToken}),
+      );
+
+      print(respuesta.body);
+    } catch (e) {
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +127,7 @@ class _RegistroState extends State<Registro> {
                 ],
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: registrarConGoogle,
                 icon: const Icon(
                   Icons.g_mobiledata,
                   color: AppColors.goldSand,
