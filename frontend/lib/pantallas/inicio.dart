@@ -47,30 +47,6 @@ class Inicio extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(height: 15),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const Login()),
-                  );
-                },
-                child: RichText(
-                  text: const TextSpan(
-                    style: TextStyle(color: AppColors.goldSand, fontSize: 16),
-                    children: [
-                      TextSpan(text: '¿Ya tiene cuenta? '),
-                      TextSpan(
-                        text: 'Inicia Sesión',
-                        style: TextStyle(
-                          color: AppColors.goldSand,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
             ],
           ),
         ),
