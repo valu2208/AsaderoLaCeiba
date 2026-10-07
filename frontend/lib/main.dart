@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:asadero/pantallas/bienvenida.dart';
-
-// import 'package:asadero/pantallas/home.dart';
-// import 'package:asadero/pantallas/chat.dart';
+//import 'package:asadero/pantallas/bienvenida.dart';
+import 'package:asadero/pantallas/home.dart';
+//import 'package:asadero/pantallas/chat.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const Bienvenida(),
+      home: const Home(),
     );
   }
 }

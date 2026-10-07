@@ -3,6 +3,7 @@ import 'package:asadero/core/colores.dart';
 import 'package:asadero/componentes/burbuja_mensaje.dart';
 import 'package:asadero/componentes/encabezado_chat.dart';
 import 'package:asadero/componentes/campo_mensaje.dart';
+import 'package:asadero/componentes/indicador_escribiendo.dart';
 import 'package:asadero/services/chat_service.dart';
 
 class Chat extends StatefulWidget {
@@ -22,7 +23,8 @@ class _ChatState extends State<Chat> {
   ];
   bool _cargando = false;
   String? _sesionId;
-    void _enviarMensaje() async {
+
+  void _enviarMensaje() async {
     final texto = _controller.text.trim();
     if (texto.isEmpty || _cargando) {
       return;
@@ -52,7 +54,8 @@ class _ChatState extends State<Chat> {
       _cargando = false;
     });
     _scrollHaciaAbajo();
-  } 
+  }
+
   void _scrollHaciaAbajo() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
@@ -64,12 +67,14 @@ class _ChatState extends State<Chat> {
       }
     });
   }
+
   @override
   void dispose() {
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
@@ -107,7 +112,6 @@ class _ChatState extends State<Chat> {
                 itemCount: _mensajes.length,
                 itemBuilder: (context, index) {
                   final mensaje = _mensajes[index];
-
                   return BurbujaMensaje(
                     texto: mensaje['text']!,
                     esUsuario: mensaje['role'] == 'user',
@@ -115,33 +119,7 @@ class _ChatState extends State<Chat> {
                 },
               ),
             ),
-            if (_cargando)
-              const Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 6,
-                ),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 14,
-                      height: 14,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: AppColors.goldSand,
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Text(
-                      'El asistente está respondiendo...',
-                      style: TextStyle(
-                        color: Colors.white54,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            if (_cargando) const IndicadorEscribiendo(),
             CampoMensaje(
               controller: _controller,
               cargando: _cargando,

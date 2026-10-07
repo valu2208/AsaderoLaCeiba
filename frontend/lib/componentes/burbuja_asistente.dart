@@ -27,8 +27,8 @@ class BurbujaAsistente extends StatelessWidget {
       onTap: () => _abrirChat(context),
       child: Image.asset(
         'assets/imagenes/chatbot.png',
-        width: 72,
-        height: 72,
+        width: 64,
+        height: 64,
         fit: BoxFit.contain,
       ),
     );
