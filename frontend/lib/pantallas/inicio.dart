@@ -19,7 +19,7 @@ class Inicio extends StatelessWidget {
           child: Column(
             children: [
               const BarraNavegacion(),
-              const SizedBox(height: 70),
+              const SizedBox(height: 65),
               Text(
                 'Tu próxima gran idea empieza aquí! 💫',
                 textAlign: TextAlign.center,
@@ -28,7 +28,7 @@ class Inicio extends StatelessWidget {
                   fontSize: 28,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 80),
               Text(
                 'Crea tu cuenta en 30 segundos y descubre todo lo que tenemos para ti',
                 textAlign: TextAlign.center,

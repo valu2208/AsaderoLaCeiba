@@ -5,8 +5,45 @@ import 'package:asadero/componentes/barra_navegacion.dart';
 import 'package:asadero/componentes/boton_principal.dart';
 import 'package:asadero/pantallas/nueva_contrasena.dart';
 
-class Verificacion extends StatelessWidget {
-  const Verificacion({super.key});
+class Verificacion extends StatefulWidget {
+  final String email;
+
+  const Verificacion({
+    super.key,
+    required this.email,
+  });
+
+  @override
+  State<Verificacion> createState() => _VerificacionState();
+}
+
+class _VerificacionState extends State<Verificacion> {
+  final campos = List.generate(
+    6,
+    (_) => TextEditingController(),
+  );
+
+  void verificar() {
+    final codigo = campos.map((campo) => campo.text).join();
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => NuevaContrasena(
+          email: widget.email,
+          codigo: codigo,
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    for (final campo in campos) {
+      campo.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,11 +96,12 @@ class Verificacion extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: List.generate(
-                    5,
+                    6,
                     (index) => SizedBox(
-                      width: 50,
-                      height: 55,
+                      width: 45,
+                      height: 50,
                       child: TextField(
+                        controller: campos[index],
                         keyboardType: TextInputType.number,
                         textAlign: TextAlign.center,
                         maxLength: 1,
@@ -86,18 +124,13 @@ class Verificacion extends StatelessWidget {
                 const SizedBox(height: 45),
                 BotonPrincipal(
                   texto: 'Verificar y Proceder',
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const NuevaContrasena(),
-                      ),
-                    );
-                  },
+                  onPressed: verificar,
                 ),
                 const SizedBox(height: 15),
-
-                BotonPrincipal(texto: 'Reenviar código', onPressed: () {}),
+                BotonPrincipal(
+                  texto: 'Reenviar código',
+                  onPressed: () {},
+                ),
               ],
             ),
           ),

@@ -1,12 +1,76 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/componentes/barra_navegacion.dart';
 import 'package:asadero/componentes/boton_principal.dart';
 import 'package:asadero/pantallas/login.dart';
 
-class VerificarCorreo extends StatelessWidget {
-  const VerificarCorreo({super.key});
+class VerificarCorreo extends StatefulWidget {
+  final String email;
+
+  const VerificarCorreo({
+    super.key,
+    required this.email,
+  });
+
+  @override
+  State<VerificarCorreo> createState() => _VerificarCorreoState();
+}
+
+class _VerificarCorreoState extends State<VerificarCorreo> {
+  final List<TextEditingController> campos = List.generate(
+    6,
+    (_) => TextEditingController(),
+  );
+
+  Future<void> verificar() async {
+    final codigo = campos.map((campo) => campo.text).join();
+
+    try {
+      final respuesta = await http.post(
+        Uri.parse('http://10.0.2.2:3000/usuarios/verificar'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': widget.email,
+          'codigo': codigo,
+        }),
+      );
+
+      if (!mounted) return;
+
+      if (respuesta.statusCode == 200) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const Login(),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Código incorrecto'),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No se pudo conectar con el servidor'),
+        ),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    for (final campo in campos) {
+      campo.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +105,11 @@ class VerificarCorreo extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 15),
-                const Icon(Icons.email, color: AppColors.goldSand, size: 65),
+                const Icon(
+                  Icons.email,
+                  color: AppColors.goldSand,
+                  size: 65,
+                ),
                 const SizedBox(height: 20),
                 Text(
                   'Ingresa el código de verificación',
@@ -55,11 +123,12 @@ class VerificarCorreo extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: List.generate(
-                    5,
+                    6,
                     (index) => SizedBox(
-                      width: 50,
-                      height: 55,
+                      width: 45,
+                      height: 50,
                       child: TextField(
+                        controller: campos[index],
                         keyboardType: TextInputType.number,
                         textAlign: TextAlign.center,
                         maxLength: 1,
@@ -79,20 +148,16 @@ class VerificarCorreo extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 60),
                 BotonPrincipal(
                   texto: 'Verificar y Proceder',
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => const Login()),
-                    );
-                  },
+                  onPressed: verificar,
                 ),
                 const SizedBox(height: 20),
-
-                BotonPrincipal(texto: 'Reenviar código', onPressed: () {}),
+                BotonPrincipal(
+                  texto: 'Reenviar código',
+                  onPressed: () {},
+                ),
               ],
             ),
           ),

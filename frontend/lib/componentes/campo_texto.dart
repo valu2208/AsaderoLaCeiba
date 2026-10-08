@@ -10,6 +10,7 @@ class CampoTexto extends StatelessWidget {
   final int? maxLength;
   final TextAlign alineacion;
   final bool estiloNuevo;
+  final TextEditingController? controller;
 
   const CampoTexto({
     super.key,
@@ -21,6 +22,7 @@ class CampoTexto extends StatelessWidget {
     this.maxLength,
     this.alineacion = TextAlign.start,
     this.estiloNuevo = false,
+    this.controller,
   });
 
   @override
@@ -39,9 +41,10 @@ class CampoTexto extends StatelessWidget {
               )
             : null,
         color: estiloNuevo ? null : AppColors.earthBrown,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: TextField(
+        controller: controller,
         obscureText: ocultar,
         keyboardType: teclado,
         maxLength: maxLength,
@@ -68,14 +71,16 @@ class CampoTexto extends StatelessWidget {
           ),
           counterText: maxLength == null ? null : '',
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(25),
           ),
           suffixIcon: onPressed == null
               ? null
               : IconButton(
                   onPressed: onPressed,
                   icon: Icon(
-                    ocultar ? Icons.visibility_off : Icons.visibility,
+                    ocultar
+                        ? Icons.visibility_off
+                        : Icons.visibility,
                     color: estiloNuevo
                         ? const Color(0xFFFFE093)
                         : AppColors.redPrayerFlag,

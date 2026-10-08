@@ -1,15 +1,25 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+
 import 'package:google_fonts/google_fonts.dart';
+
 import 'package:http/http.dart' as http;
+
 import 'package:google_sign_in/google_sign_in.dart';
+
 import 'package:asadero/core/colores.dart';
+
 import 'package:asadero/componentes/barra_navegacion.dart';
+
 import 'package:asadero/componentes/campo_texto.dart';
+
 import 'package:asadero/componentes/boton_principal.dart';
+
 import 'package:asadero/pantallas/recuperar_contrasena.dart';
+
 import 'package:asadero/pantallas/registro.dart';
+
 import 'package:asadero/pantallas/home.dart';
 
 class Login extends StatefulWidget {
@@ -20,6 +30,9 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final TextEditingController correoController = TextEditingController();
+  final TextEditingController contrasenaController = TextEditingController();
+
   bool mostrar = false;
   bool recordar = false;
 
@@ -62,23 +75,51 @@ class _LoginState extends State<Login> {
     }
   }
 
+  Future<void> iniciarSesion() async {
+    try {
+      final respuesta = await http.post(
+        Uri.parse('http://10.0.2.2:3000/auth/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': correoController.text,
+          'password': contrasenaController.text,
+        }),
+      );
+
+      if (respuesta.statusCode == 200) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const Home()),
+        );
+      } else {
+        print(respuesta.body);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.asphalt,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(25),
+          padding: const EdgeInsets.all(20),
           child: Column(
             children: [
               const BarraNavegacion(),
+
               const SizedBox(height: 20),
+
               const Icon(
                 Icons.account_circle,
                 color: AppColors.goldSand,
-                size: 80,
+                size: 100,
               ),
-              const SizedBox(height: 10),
+
+              const SizedBox(height: 5),
+
               Text(
                 'Iniciar Sesión',
                 style: GoogleFonts.kronaOne(
@@ -86,23 +127,32 @@ class _LoginState extends State<Login> {
                   fontSize: 30,
                 ),
               ),
-              const SizedBox(height: 60),
+
+              const SizedBox(height: 58),
+
               const CampoTexto(
                 texto: 'Nombre',
                 icono: Icons.person,
               ),
-              const SizedBox(height: 15),
-              const CampoTexto(
+
+              const SizedBox(height: 20),
+
+              CampoTexto(
                 texto: 'Correo Electrónico',
                 icono: Icons.email,
+                controller: correoController,
               ),
-              const SizedBox(height: 15),
+
+              const SizedBox(height: 20),
+
               CampoTexto(
                 texto: 'Contraseña',
                 icono: Icons.lock,
                 ocultar: !mostrar,
                 onPressed: () => setState(() => mostrar = !mostrar),
+                controller: contrasenaController,
               ),
+
               Row(
                 children: [
                   Checkbox(
@@ -110,11 +160,14 @@ class _LoginState extends State<Login> {
                     onChanged: (valor) =>
                         setState(() => recordar = valor ?? false),
                   ),
+
                   const Text(
                     'Recordarme',
                     style: TextStyle(color: AppColors.goldSand),
                   ),
+
                   const Spacer(),
+
                   TextButton(
                     onPressed: () => Navigator.push(
                       context,
@@ -129,17 +182,18 @@ class _LoginState extends State<Login> {
                   ),
                 ],
               ),
-              const SizedBox(height: 30),
+
+              const SizedBox(height: 28),
+
               BotonPrincipal(
                 texto: 'Iniciar Sesión',
-                onPressed: () {},
+                onPressed: iniciarSesion,
               ),
+
               TextButton(
                 onPressed: () => Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => const Registro(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const Registro()),
                 ),
                 child: const Text(
                   '¿No tienes cuenta? Regístrate',
@@ -149,11 +203,13 @@ class _LoginState extends State<Login> {
                   ),
                 ),
               ),
+
               Row(
                 children: [
                   const Expanded(
                     child: Divider(color: AppColors.goldSand),
                   ),
+
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12),
                     child: Text(
@@ -161,17 +217,19 @@ class _LoginState extends State<Login> {
                       style: TextStyle(color: AppColors.goldSand),
                     ),
                   ),
+
                   const Expanded(
                     child: Divider(color: AppColors.goldSand),
                   ),
                 ],
               ),
+
               IconButton(
                 onPressed: iniciarSesionGoogle,
                 icon: const Icon(
                   Icons.g_mobiledata,
                   color: AppColors.goldSand,
-                  size: 45,
+                  size: 50,
                 ),
               ),
             ],

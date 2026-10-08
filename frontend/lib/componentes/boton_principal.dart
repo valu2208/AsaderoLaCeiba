@@ -31,7 +31,7 @@ class BotonPrincipal extends StatelessWidget {
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(85),
           ),
         ),
         child: Text(
