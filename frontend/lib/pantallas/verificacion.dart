@@ -4,6 +4,7 @@ import 'package:asadero/core/colores.dart';
 import 'package:asadero/componentes/barra_navegacion.dart';
 import 'package:asadero/componentes/boton_principal.dart';
 import 'package:asadero/pantallas/nueva_contrasena.dart';
+import 'package:asadero/core/traducciones.dart';
 
 class Verificacion extends StatelessWidget {
   const Verificacion({super.key});
@@ -33,7 +34,7 @@ class Verificacion extends StatelessWidget {
                 const BarraNavegacion(),
                 const SizedBox(height: 25),
                 Text(
-                  'Verificar el código de recuperación',
+                  texto('verificar_codigo_recuperacion'),
                   textAlign: TextAlign.center,
                   style: GoogleFonts.kronaOne(
                     color: AppColors.goldSand,
@@ -48,7 +49,7 @@ class Verificacion extends StatelessWidget {
                 ),
                 const SizedBox(height: 40),
                 Text(
-                  'Ingresa el código de verificación',
+                  texto('ingresa_codigo'),
                   textAlign: TextAlign.center,
                   style: GoogleFonts.josefinSans(
                     color: AppColors.goldSand,
@@ -85,6 +86,7 @@ class Verificacion extends StatelessWidget {
                 ),
                 const SizedBox(height: 45),
                 BotonPrincipal(
+<<<<<<< Updated upstream
                   texto: 'Verificar y Proceder',
                   onPressed: () {
                     Navigator.push(
@@ -98,6 +100,16 @@ class Verificacion extends StatelessWidget {
                 const SizedBox(height: 15),
 
                 BotonPrincipal(texto: 'Reenviar código', onPressed: () {}),
+=======
+                  texto: texto('verificar_proceder'),
+                  onPressed: verificar,
+                ),
+                const SizedBox(height: 15),
+                BotonPrincipal(
+                  texto: texto('reenviar_codigo'),
+                  onPressed: () {},
+                ),
+>>>>>>> Stashed changes
               ],
             ),
           ),

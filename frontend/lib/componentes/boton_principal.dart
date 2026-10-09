@@ -23,7 +23,7 @@ class BotonPrincipal extends StatelessWidget {
             AppColors.earthBrown,
           ],
         ),
-        borderRadius: BorderRadius.circular(85),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: ElevatedButton(
         onPressed: onPressed,
@@ -31,7 +31,11 @@ class BotonPrincipal extends StatelessWidget {
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
+<<<<<<< Updated upstream
             borderRadius: BorderRadius.circular(25),
+=======
+            borderRadius: BorderRadius.circular(10),
+>>>>>>> Stashed changes
           ),
         ),
         child: Text(
