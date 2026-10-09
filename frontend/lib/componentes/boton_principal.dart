@@ -18,12 +18,9 @@ class BotonPrincipal extends StatelessWidget {
       height: 55,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [
-            AppColors.redPrayerFlag,
-            AppColors.earthBrown,
-          ],
+          colors: [AppColors.redPrayerFlag, AppColors.earthBrown],
         ),
-        borderRadius: BorderRadius.circular(85),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: ElevatedButton(
         onPressed: onPressed,
@@ -31,7 +28,7 @@ class BotonPrincipal extends StatelessWidget {
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(85),
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
         child: Text(

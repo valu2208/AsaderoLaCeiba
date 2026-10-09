@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/core/traducciones.dart';
 import 'package:asadero/componentes/barra_navegacion.dart';
 import 'package:asadero/componentes/boton_principal.dart';
 import 'package:asadero/pantallas/nueva_contrasena.dart';
@@ -8,31 +9,29 @@ import 'package:asadero/pantallas/nueva_contrasena.dart';
 class Verificacion extends StatefulWidget {
   final String email;
 
-  const Verificacion({
-    super.key,
-    required this.email,
-  });
+  const Verificacion({super.key, required this.email});
 
   @override
   State<Verificacion> createState() => _VerificacionState();
 }
 
 class _VerificacionState extends State<Verificacion> {
-  final campos = List.generate(
-    6,
-    (_) => TextEditingController(),
-  );
+  final campos = List.generate(6, (_) => TextEditingController());
 
   void verificar() {
     final codigo = campos.map((campo) => campo.text).join();
 
+    if (codigo.length != 6) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(texto('ingresa_codigo'))));
+      return;
+    }
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => NuevaContrasena(
-          email: widget.email,
-          codigo: codigo,
-        ),
+        builder: (_) => NuevaContrasena(email: widget.email, codigo: codigo),
       ),
     );
   }
@@ -63,14 +62,14 @@ class _VerificacionState extends State<Verificacion> {
           ),
         ),
         child: SafeArea(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.all(25),
             child: Column(
               children: [
                 const BarraNavegacion(),
                 const SizedBox(height: 25),
                 Text(
-                  'Verificar el código de recuperación',
+                  texto('verificar_codigo_recuperacion'),
                   textAlign: TextAlign.center,
                   style: GoogleFonts.kronaOne(
                     color: AppColors.goldSand,
@@ -78,14 +77,10 @@ class _VerificacionState extends State<Verificacion> {
                   ),
                 ),
                 const SizedBox(height: 15),
-                const Icon(
-                  Icons.email,
-                  color: AppColors.goldSand,
-                  size: 75,
-                ),
+                const Icon(Icons.email, color: AppColors.goldSand, size: 75),
                 const SizedBox(height: 40),
                 Text(
-                  'Ingresa el código de verificación',
+                  texto('ingresa_codigo'),
                   textAlign: TextAlign.center,
                   style: GoogleFonts.josefinSans(
                     color: AppColors.goldSand,
@@ -123,12 +118,12 @@ class _VerificacionState extends State<Verificacion> {
                 ),
                 const SizedBox(height: 45),
                 BotonPrincipal(
-                  texto: 'Verificar y Proceder',
+                  texto: texto('verificar_proceder'),
                   onPressed: verificar,
                 ),
                 const SizedBox(height: 15),
                 BotonPrincipal(
-                  texto: 'Reenviar código',
+                  texto: texto('reenviar_codigo'),
                   onPressed: () {},
                 ),
               ],

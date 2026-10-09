@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/core/traducciones.dart';
 import 'package:asadero/componentes/barra_navegacion.dart';
 import 'package:asadero/componentes/campo_texto.dart';
 import 'package:asadero/componentes/boton_principal.dart';
@@ -18,16 +19,13 @@ class RecuperarContrasena extends StatefulWidget {
 
 class _RecuperarContrasenaState extends State<RecuperarContrasena> {
   final correo = TextEditingController();
-  final telefono = TextEditingController();
 
   Future<void> recuperar() async {
     try {
       final respuesta = await http.post(
         Uri.parse('http://10.0.2.2:3000/recuperar/solicitar'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': correo.text,
-        }),
+        body: jsonEncode({'email': correo.text.trim()}),
       );
 
       if (!mounted) return;
@@ -36,31 +34,26 @@ class _RecuperarContrasenaState extends State<RecuperarContrasena> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => Verificacion(
-              email: correo.text,
-            ),
+            builder: (_) => Verificacion(email: correo.text.trim()),
           ),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No se pudo enviar el código'),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(texto('no_se_pudo_enviar'))));
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No se pudo conectar con el servidor'),
-        ),
-      );
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(texto('error_servidor'))));
     }
   }
 
   @override
   void dispose() {
     correo.dispose();
-    telefono.dispose();
     super.dispose();
   }
 
@@ -75,14 +68,10 @@ class _RecuperarContrasenaState extends State<RecuperarContrasena> {
             children: [
               const BarraNavegacion(),
               const SizedBox(height: 10),
-              const Icon(
-                Icons.key,
-                color: AppColors.goldSand,
-                size: 110,
-              ),
+              const Icon(Icons.key, color: AppColors.goldSand, size: 110),
               const SizedBox(height: 30),
               Text(
-                'Recuperar Contraseña',
+                texto('recuperar_contrasena'),
                 textAlign: TextAlign.center,
                 style: GoogleFonts.kronaOne(
                   color: AppColors.goldSand,
@@ -91,19 +80,15 @@ class _RecuperarContrasenaState extends State<RecuperarContrasena> {
               ),
               const SizedBox(height: 90),
               CampoTexto(
-                texto: 'Correo Electrónico',
+                texto: texto('correo_electronico'),
                 icono: Icons.email,
                 controller: correo,
+                teclado: TextInputType.emailAddress,
               ),
               const SizedBox(height: 25),
-              CampoTexto(
-                texto: 'Teléfono',
-                icono: Icons.phone,
-                controller: telefono,
-              ),
               const SizedBox(height: 145),
               BotonPrincipal(
-                texto: 'Recuperar contraseña',
+                texto: texto('recuperar_contrasena'),
                 onPressed: recuperar,
               ),
             ],

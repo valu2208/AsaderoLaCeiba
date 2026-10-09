@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/core/traducciones.dart';
 import 'package:asadero/componentes/barra_navegacion.dart';
 import 'package:asadero/componentes/campo_texto.dart';
 import 'package:asadero/componentes/boton_principal.dart';
@@ -33,7 +34,6 @@ class _RegistroState extends State<Registro> {
   @override
   void initState() {
     super.initState();
-
     googleInicializado = googleSignIn.initialize(
       serverClientId:
           '1048054296808-qmul3sdksffmij6scb9rs71o16rjnm84.apps.googleusercontent.com',
@@ -42,27 +42,23 @@ class _RegistroState extends State<Registro> {
 
   Future<void> registrar() async {
     if (clave.text != confirmar.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Las contraseñas no coinciden')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(texto('error_contrasenas'))));
       return;
     }
 
     try {
-      print('CORREO ENVIADO: ${correo.text}');
       final respuesta = await http.post(
         Uri.parse('http://10.0.2.2:3000/usuarios'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'nombre': nombre.text,
-          'telefono': telefono.text,
-          'email': correo.text,
+          'nombre': nombre.text.trim(),
+          'telefono': telefono.text.trim(),
+          'email': correo.text.trim(),
           'password': clave.text,
         }),
       );
-
-      print('STATUS: ${respuesta.statusCode}');
-      print('RESPUESTA: ${respuesta.body}');
 
       if (!mounted) return;
 
@@ -70,20 +66,20 @@ class _RegistroState extends State<Registro> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => VerificarCorreo(email: correo.text),
+            builder: (_) => VerificarCorreo(email: correo.text.trim()),
           ),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ese correo ya está registrado')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(texto('correo_registrado'))));
       }
     } catch (e) {
-      print('ERROR: $e');
+      if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No se pudo conectar con el servidor')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(texto('error_servidor'))));
     }
   }
 
@@ -102,9 +98,9 @@ class _RegistroState extends State<Registro> {
         body: jsonEncode({'idToken': idToken}),
       );
 
-      print(respuesta.body);
+      debugPrint(respuesta.body);
     } catch (e) {
-      print(e);
+      debugPrint('Error al registrarse con Google: $e');
     }
   }
 
@@ -136,7 +132,7 @@ class _RegistroState extends State<Registro> {
               ),
               const SizedBox(height: 26),
               Text(
-                'Regístrate',
+                texto('registrarse'),
                 style: GoogleFonts.kronaOne(
                   color: AppColors.goldSand,
                   fontSize: 30,
@@ -145,25 +141,27 @@ class _RegistroState extends State<Registro> {
               ),
               const SizedBox(height: 51),
               CampoTexto(
-                texto: 'Nombre',
+                texto: texto('nombre'),
                 icono: Icons.person,
                 controller: nombre,
               ),
               const SizedBox(height: 20),
               CampoTexto(
-                texto: 'Teléfono',
+                texto: texto('telefono'),
                 icono: Icons.phone,
                 controller: telefono,
+                teclado: TextInputType.phone,
               ),
               const SizedBox(height: 20),
               CampoTexto(
-                texto: 'Correo Electrónico',
+                texto: texto('correo_electronico'),
                 icono: Icons.email,
                 controller: correo,
+                teclado: TextInputType.emailAddress,
               ),
               const SizedBox(height: 20),
               CampoTexto(
-                texto: 'Contraseña',
+                texto: texto('contrasena'),
                 icono: Icons.lock,
                 ocultar: !mostrar,
                 controller: clave,
@@ -173,25 +171,30 @@ class _RegistroState extends State<Registro> {
               ),
               const SizedBox(height: 20),
               CampoTexto(
-                texto: 'Confirmar contraseña',
+                texto: texto('confirmar_contrasena'),
                 icono: Icons.lock_outline,
                 ocultar: !mostrarConfirmar,
                 controller: confirmar,
                 onPressed: () {
-                  setState(() => mostrarConfirmar = !mostrarConfirmar);
+                  setState(() {
+                    mostrarConfirmar = !mostrarConfirmar;
+                  });
                 },
               ),
               const SizedBox(height: 35),
-              BotonPrincipal(texto: 'Crear Cuenta', onPressed: registrar),
+              BotonPrincipal(
+                texto: texto('crear_cuenta_boton'),
+                onPressed: registrar,
+              ),
               const SizedBox(height: 20),
               Row(
                 children: [
                   const Expanded(child: Divider(color: AppColors.goldSand)),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Text(
-                      'O Continuar Con',
-                      style: TextStyle(color: AppColors.goldSand),
+                      texto('continuar_con'),
+                      style: const TextStyle(color: AppColors.goldSand),
                     ),
                   ),
                   const Expanded(child: Divider(color: AppColors.goldSand)),

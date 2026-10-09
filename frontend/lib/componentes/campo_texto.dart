@@ -41,7 +41,7 @@ class CampoTexto extends StatelessWidget {
               )
             : null,
         color: estiloNuevo ? null : AppColors.earthBrown,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: TextField(
         controller: controller,
@@ -71,7 +71,7 @@ class CampoTexto extends StatelessWidget {
           ),
           counterText: maxLength == null ? null : '',
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(10),
           ),
           suffixIcon: onPressed == null
               ? null

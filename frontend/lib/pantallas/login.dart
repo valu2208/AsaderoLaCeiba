@@ -1,25 +1,16 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-
 import 'package:google_fonts/google_fonts.dart';
-
 import 'package:http/http.dart' as http;
-
 import 'package:google_sign_in/google_sign_in.dart';
-
 import 'package:asadero/core/colores.dart';
-
+import 'package:asadero/core/traducciones.dart';
 import 'package:asadero/componentes/barra_navegacion.dart';
-
 import 'package:asadero/componentes/campo_texto.dart';
-
 import 'package:asadero/componentes/boton_principal.dart';
-
 import 'package:asadero/pantallas/recuperar_contrasena.dart';
-
 import 'package:asadero/pantallas/registro.dart';
-
 import 'package:asadero/pantallas/home.dart';
 
 class Login extends StatefulWidget {
@@ -30,6 +21,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final TextEditingController nombreController = TextEditingController();
   final TextEditingController correoController = TextEditingController();
   final TextEditingController contrasenaController = TextEditingController();
 
@@ -42,7 +34,6 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
-
     googleInicializado = googleSignIn.initialize(
       serverClientId:
           '1048054296808-qmul3sdksffmij6scb9rs71o16rjnm84.apps.googleusercontent.com',
@@ -52,7 +43,6 @@ class _LoginState extends State<Login> {
   Future<void> iniciarSesionGoogle() async {
     try {
       await googleInicializado;
-
       final usuario = await googleSignIn.authenticate();
       final idToken = usuario.authentication.idToken;
 
@@ -64,14 +54,18 @@ class _LoginState extends State<Login> {
         body: jsonEncode({'idToken': idToken}),
       );
 
+      if (!mounted) return;
+
       if (respuesta.statusCode == 200) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const Home()),
         );
+      } else {
+        debugPrint(respuesta.body);
       }
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
     }
   }
 
@@ -86,17 +80,27 @@ class _LoginState extends State<Login> {
         }),
       );
 
+      if (!mounted) return;
+
       if (respuesta.statusCode == 200) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const Home()),
         );
       } else {
-        print(respuesta.body);
+        debugPrint(respuesta.body);
       }
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
     }
+  }
+
+  @override
+  void dispose() {
+    nombreController.dispose();
+    correoController.dispose();
+    contrasenaController.dispose();
+    super.dispose();
   }
 
   @override
@@ -109,121 +113,107 @@ class _LoginState extends State<Login> {
           child: Column(
             children: [
               const BarraNavegacion(),
-
               const SizedBox(height: 20),
-
               const Icon(
                 Icons.account_circle,
                 color: AppColors.goldSand,
                 size: 100,
               ),
-
               const SizedBox(height: 5),
-
               Text(
-                'Iniciar Sesión',
+                texto('iniciar_sesion_titulo'),
                 style: GoogleFonts.kronaOne(
                   color: AppColors.goldSand,
                   fontSize: 30,
                 ),
               ),
-
-              const SizedBox(height: 58),
-
-              const CampoTexto(
-                texto: 'Nombre',
-                icono: Icons.person,
-              ),
-
-              const SizedBox(height: 20),
-
+              const SizedBox(height: 30),
               CampoTexto(
-                texto: 'Correo Electrónico',
+                texto: texto('nombre'),
+                icono: Icons.person,
+                controller: nombreController,
+              ),
+              const SizedBox(height: 20),
+              CampoTexto(
+                texto: texto('correo_electronico'),
                 icono: Icons.email,
+                teclado: TextInputType.emailAddress,
                 controller: correoController,
               ),
-
               const SizedBox(height: 20),
-
               CampoTexto(
-                texto: 'Contraseña',
+                texto: texto('contrasena'),
                 icono: Icons.lock,
                 ocultar: !mostrar,
                 onPressed: () => setState(() => mostrar = !mostrar),
                 controller: contrasenaController,
               ),
-
               Row(
                 children: [
                   Checkbox(
                     value: recordar,
-                    onChanged: (valor) =>
-                        setState(() => recordar = valor ?? false),
+                    onChanged: (valor) {
+                      setState(() => recordar = valor ?? false);
+                    },
                   ),
-
-                  const Text(
-                    'Recordarme',
-                    style: TextStyle(color: AppColors.goldSand),
+                  Text(
+                    texto('recordarme'),
+                    style: const TextStyle(color: AppColors.goldSand),
                   ),
-
                   const Spacer(),
-
                   TextButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const RecuperarContrasena(),
-                      ),
-                    ),
-                    child: const Text(
-                      '¿Olvidaste Contraseña?',
-                      style: TextStyle(color: AppColors.goldSand),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const RecuperarContrasena(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      texto('olvidaste_contrasena'),
+                      style: const TextStyle(color: AppColors.goldSand),
                     ),
                   ),
                 ],
               ),
-
               const SizedBox(height: 28),
-
               BotonPrincipal(
-                texto: 'Iniciar Sesión',
+                texto: texto('iniciar_sesion_titulo'),
                 onPressed: iniciarSesion,
               ),
-
               TextButton(
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const Registro()),
-                ),
-                child: const Text(
-                  '¿No tienes cuenta? Regístrate',
-                  style: TextStyle(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const Registro()),
+                  );
+                },
+                child: Text(
+                  texto('no_tienes_cuenta'),
+                  style: const TextStyle(
                     color: AppColors.goldSand,
                     fontSize: 16,
                   ),
                 ),
               ),
-
               Row(
                 children: [
                   const Expanded(
                     child: Divider(color: AppColors.goldSand),
                   ),
-
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Text(
-                      'O Continuar Con',
-                      style: TextStyle(color: AppColors.goldSand),
+                      texto('continuar_con'),
+                      style: const TextStyle(color: AppColors.goldSand),
                     ),
                   ),
-
                   const Expanded(
                     child: Divider(color: AppColors.goldSand),
                   ),
                 ],
               ),
-
               IconButton(
                 onPressed: iniciarSesionGoogle,
                 icon: const Icon(

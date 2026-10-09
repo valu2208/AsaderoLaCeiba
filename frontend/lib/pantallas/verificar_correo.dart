@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/core/traducciones.dart';
 import 'package:asadero/componentes/barra_navegacion.dart';
 import 'package:asadero/componentes/boton_principal.dart';
 import 'package:asadero/pantallas/login.dart';
@@ -11,10 +12,7 @@ import 'package:asadero/pantallas/login.dart';
 class VerificarCorreo extends StatefulWidget {
   final String email;
 
-  const VerificarCorreo({
-    super.key,
-    required this.email,
-  });
+  const VerificarCorreo({super.key, required this.email});
 
   @override
   State<VerificarCorreo> createState() => _VerificarCorreoState();
@@ -29,14 +27,18 @@ class _VerificarCorreoState extends State<VerificarCorreo> {
   Future<void> verificar() async {
     final codigo = campos.map((campo) => campo.text).join();
 
+    if (codigo.length != 6) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(texto('ingresa_codigo'))));
+      return;
+    }
+
     try {
       final respuesta = await http.post(
         Uri.parse('http://10.0.2.2:3000/usuarios/verificar'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': widget.email,
-          'codigo': codigo,
-        }),
+        body: jsonEncode({'email': widget.email, 'codigo': codigo}),
       );
 
       if (!mounted) return;
@@ -44,23 +46,19 @@ class _VerificarCorreoState extends State<VerificarCorreo> {
       if (respuesta.statusCode == 200) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (_) => const Login(),
-          ),
+          MaterialPageRoute(builder: (_) => const Login()),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Código incorrecto'),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(texto('codigo_incorrecto'))));
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No se pudo conectar con el servidor'),
-        ),
-      );
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(texto('error_servidor'))));
     }
   }
 
@@ -90,14 +88,14 @@ class _VerificarCorreoState extends State<VerificarCorreo> {
           ),
         ),
         child: SafeArea(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.all(25),
             child: Column(
               children: [
                 const BarraNavegacion(),
                 const SizedBox(height: 25),
                 Text(
-                  'Verificando el Correo',
+                  texto('verificando_correo'),
                   textAlign: TextAlign.center,
                   style: GoogleFonts.kronaOne(
                     color: AppColors.goldSand,
@@ -105,14 +103,10 @@ class _VerificarCorreoState extends State<VerificarCorreo> {
                   ),
                 ),
                 const SizedBox(height: 15),
-                const Icon(
-                  Icons.email,
-                  color: AppColors.goldSand,
-                  size: 65,
-                ),
+                const Icon(Icons.email, color: AppColors.goldSand, size: 65),
                 const SizedBox(height: 20),
                 Text(
-                  'Ingresa el código de verificación',
+                  texto('ingresa_codigo'),
                   textAlign: TextAlign.center,
                   style: GoogleFonts.josefinSans(
                     color: AppColors.goldSand,
@@ -150,12 +144,12 @@ class _VerificarCorreoState extends State<VerificarCorreo> {
                 ),
                 const SizedBox(height: 60),
                 BotonPrincipal(
-                  texto: 'Verificar y Proceder',
+                  texto: texto('verificar_proceder'),
                   onPressed: verificar,
                 ),
                 const SizedBox(height: 20),
                 BotonPrincipal(
-                  texto: 'Reenviar código',
+                  texto: texto('reenviar_codigo'),
                   onPressed: () {},
                 ),
               ],
