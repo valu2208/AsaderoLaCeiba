@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:asadero/componentes/imagen_adaptable.dart';
 
 class ImagenProducto extends StatelessWidget {
   final String imagen;
@@ -26,10 +27,7 @@ class ImagenProducto extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(14),
-        child: Image.asset(
-          imagen,
-          fit: BoxFit.cover,
-        ),
+        child: ImagenAdaptable(ruta: imagen),
       ),
     );
   }

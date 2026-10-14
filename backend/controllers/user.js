@@ -194,8 +194,7 @@ export const editarUsuario = async (req, res) => {
             nombre,
             email,
             telefono,
-            password,
-            rol
+            password
         } = req.body;
 
         const datosActualizados = {};
@@ -203,7 +202,7 @@ export const editarUsuario = async (req, res) => {
         if (nombre) datosActualizados.nombre = nombre;
         if (email) datosActualizados.email = email;
         if (telefono) datosActualizados.telefono = telefono;
-        if (rol) datosActualizados.rol = rol;
+        // El rol NO se cambia aquí: solo el admin lo asigna (ruta aparte, paso 3)
 
         if (password) {
             datosActualizados.password =
@@ -333,6 +332,55 @@ export const reenviarCodigo = async (req, res) => {
 
     } catch (error) {
         console.error('ERROR EN reenviarCodigo:', error);
+
+        return res.status(500).json({
+            error: error.message
+        });
+    }
+};
+
+// Roles que se pueden asignar
+const ROLES_PERMITIDOS = ['usuario', 'mesero', 'cocinero', 'admin'];
+
+// Cambiar el rol de un usuario (solo admin; la ruta ya lo exige)
+export const cambiarRolUsuario = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const rol = String(req.body.rol || '').toLowerCase();
+
+        if (!ROLES_PERMITIDOS.includes(rol)) {
+            return res.status(400).json({
+                error: `Rol no válido. Roles permitidos: ${ROLES_PERMITIDOS.join(', ')}`
+            });
+        }
+
+        if (String(req.usuario.id) === String(id)) {
+            return res.status(400).json({
+                error: 'No puedes cambiar tu propio rol'
+            });
+        }
+
+        const { data, error } = await actualizarUsuario(id, { rol });
+
+        if (error) {
+            if (error.code === 'PGRST116') {
+                return res.status(404).json({
+                    error: 'Usuario no encontrado'
+                });
+            }
+
+            return res.status(500).json({
+                error: error.message
+            });
+        }
+
+        return res.status(200).json({
+            message: 'Rol actualizado correctamente',
+            usuario: data
+        });
+
+    } catch (error) {
+        console.error('ERROR EN cambiarRolUsuario:', error);
 
         return res.status(500).json({
             error: error.message

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/pantallas/carrito.dart';
+import 'package:asadero/componentes/imagen_adaptable.dart';
 
 class DetalleProducto extends StatelessWidget {
   final String nombre;
@@ -104,11 +105,10 @@ class DetalleProducto extends StatelessWidget {
     if (imagen != null) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(14),
-        child: Image.asset(
-          imagen!,
-          width: double.infinity,
-          height: 230,
-          fit: BoxFit.cover,
+        child: ImagenAdaptable(
+          ruta: imagen!,
+          ancho: double.infinity,
+          alto: 230,
         ),
       );
     }
