@@ -3,37 +3,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/componentes/burbuja_asistente.dart';
 import 'package:asadero/componentes/encabezado_home.dart';
-import 'package:asadero/componentes/lista_productos.dart';
+import 'package:asadero/componentes/carta_productos.dart';
 import 'package:asadero/componentes/barra_nav_inferior.dart';
 import 'package:asadero/pantallas/historial.dart';
 import 'package:asadero/pantallas/carrito.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
-
-  final List<Map<String, String>> productos = const [
-    {
-      'nombre': 'Pollo Asado completo',
-      'precio': '\$35.000',
-      'imagen': 'assets/imagenes/pollo_completo.jpg',
-      'descripcion':
-          'Delicioso pollo asado, jugoso por dentro y crocante por fuera.',
-    },
-    {
-      'nombre': 'Medio Pollo Asado',
-      'precio': '\$20.000',
-      'imagen': 'assets/imagenes/medio_pollo.jpg',
-      'descripcion':
-          'Media porción de pollo asado acompañada con papas y arepa.',
-    },
-    {
-      'nombre': 'Un Cuarto de Pollo Asado',
-      'precio': '\$12.000',
-      'imagen': 'assets/imagenes/uncuarto_pollo.avif',
-      'descripcion':
-          'Porción individual de pollo asado con papa, arepa y ensalada fresca.',
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +57,7 @@ class Home extends StatelessWidget {
           children: [
             _titulo(),
             const SizedBox(height: 15),
-            ListaProductos(productos: productos),
+            const CartaProductos(),
           ],
         ),
       ),

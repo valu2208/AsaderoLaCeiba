@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/pantallas/carrito.dart';
+import 'package:asadero/componentes/imagen_adaptable.dart';
 
 class DetalleProducto extends StatelessWidget {
   final String nombre;
@@ -25,10 +27,7 @@ class DetalleProducto extends StatelessWidget {
         backgroundColor: AppColors.goldSand,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: AppColors.redPrayerFlag,
-          ),
+          icon: const Icon(Icons.arrow_back, color: AppColors.redPrayerFlag),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
@@ -41,57 +40,62 @@ class DetalleProducto extends StatelessWidget {
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 10,
-        ),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(22),
-              decoration: BoxDecoration(
-                color: AppColors.earthBrown,
-                borderRadius: BorderRadius.circular(18),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    nombre,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: AppColors.goldSand,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: Column(
+          children: [
+            Expanded(
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Container(
+                    padding: const EdgeInsets.all(22),
+                    decoration: BoxDecoration(
+                      color: AppColors.earthBrown,
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          nombre,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: AppColors.goldSand,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        _imagenProducto(),
+                        const SizedBox(height: 20),
+                        Text(
+                          descripcion ??
+                              'Delicioso producto preparado especialmente para ti.',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            height: 1.4,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          precio,
+                          style: const TextStyle(
+                            color: AppColors.redPrayerFlag,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  _imagenProducto(),
-                  const SizedBox(height: 20),
-                  Text(
-                    descripcion ??
-                        'Delicioso producto preparado especialmente para ti.',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      height: 1.4,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    precio,
-                    style: const TextStyle(
-                      color: AppColors.redPrayerFlag,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
+            const SizedBox(height: 16),
+            _botonCarrito(context),
+            const SizedBox(height: 10),
+          ],
         ),
       ),
     );
@@ -101,11 +105,10 @@ class DetalleProducto extends StatelessWidget {
     if (imagen != null) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(14),
-        child: Image.asset(
-          imagen!,
-          width: double.infinity,
-          height: 230,
-          fit: BoxFit.cover,
+        child: ImagenAdaptable(
+          ruta: imagen!,
+          ancho: double.infinity,
+          alto: 230,
         ),
       );
     }
@@ -114,6 +117,34 @@ class DetalleProducto extends StatelessWidget {
       icono ?? Icons.restaurant,
       size: 150,
       color: AppColors.goldSand,
+    );
+  }
+
+  Widget _botonCarrito(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Carrito(nombre: nombre, precio: precio),
+            ),
+          );
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.redPrayerFlag,
+          padding: const EdgeInsets.symmetric(vertical: 15),
+        ),
+        child: const Text(
+          'Agregar al carrito',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
     );
   }
 }
