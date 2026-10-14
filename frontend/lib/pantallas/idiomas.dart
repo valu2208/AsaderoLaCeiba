@@ -9,8 +9,6 @@ class Idiomas extends StatefulWidget {
 }
 
 class _IdiomasState extends State<Idiomas> {
-  String? idiomaSeleccionado;
-
   final List<Map<String, String>> idiomas = [
     {
       'bandera': '🇨🇴',
@@ -32,32 +30,34 @@ class _IdiomasState extends State<Idiomas> {
       appBar: AppBar(
         title: const Text('Selecciona tu idioma'),
       ),
-      body: ListView.builder(
-        itemCount: idiomas.length,
-        itemBuilder: (context, index) {
-          final idioma = idiomas[index]['nombre']!;
+      body: ValueListenableBuilder<String>(
+        valueListenable: Idioma.seleccionado,
+        builder: (context, seleccionado, child) {
+          return ListView.builder(
+            itemCount: idiomas.length,
+            itemBuilder: (context, index) {
+              final idioma = idiomas[index]['nombre']!;
 
-          return ListTile(
-            leading: Text(
-              idiomas[index]['bandera']!,
-              style: const TextStyle(fontSize: 28),
-            ),
-            title: Text(
-              idioma,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            trailing: idiomaSeleccionado == idioma
-                ? const Icon(Icons.check)
-                : null,
-            onTap: () {
-              setState(() {
-                idiomaSeleccionado = idioma;
-                Idioma.seleccionado= idioma;
-              });
-              Navigator.pop( context);
+              return ListTile(
+                leading: Text(
+                  idiomas[index]['bandera']!,
+                  style: const TextStyle(fontSize: 28),
+                ),
+                title: Text(
+                  idioma,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                trailing: seleccionado == idioma
+                    ? const Icon(Icons.check)
+                    : null,
+                onTap: () {
+                  Idioma.seleccionado.value = idioma;
+                  Navigator.pop(context);
+                },
+              );
             },
           );
         },

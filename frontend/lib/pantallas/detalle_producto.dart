@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/core/carrito_estado.dart';
 import 'package:asadero/pantallas/carrito.dart';
 import 'package:asadero/componentes/imagen_adaptable.dart';
 
@@ -27,7 +28,10 @@ class DetalleProducto extends StatelessWidget {
         backgroundColor: AppColors.goldSand,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.redPrayerFlag),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: AppColors.redPrayerFlag,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
@@ -40,7 +44,10 @@ class DetalleProducto extends StatelessWidget {
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 10,
+        ),
         child: Column(
           children: [
             Expanded(
@@ -125,10 +132,12 @@ class DetalleProducto extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
+          CarritoEstado.agregar(nombre, precio, imagen ?? '');
+
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => Carrito(nombre: nombre, precio: precio),
+              builder: (_) => const Carrito(),
             ),
           );
         },
