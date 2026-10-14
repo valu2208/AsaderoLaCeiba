@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:asadero/componentes/fondo_barranavegacion.dart';
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/core/carrito_estado.dart';
 
 class BarraNavegacionInferior extends StatelessWidget {
   final int indiceActual;
   final ValueChanged<int>? onTap;
 
-  const BarraNavegacionInferior({
-    super.key,
-    this.indiceActual = 0,
-    this.onTap,
-  });
+  const BarraNavegacionInferior({super.key, this.indiceActual = 0, this.onTap});
 
   static const double _margen = 24;
 
@@ -19,7 +16,7 @@ class BarraNavegacionInferior extends StatelessWidget {
     Icons.person_outline,
     Icons.grid_view,
     Icons.history,
-    Icons.sms_outlined,
+    Icons.shopping_cart_outlined,
   ];
 
   @override
@@ -40,9 +37,7 @@ class BarraNavegacionInferior extends StatelessWidget {
                   centro: _margen + ancho * (indiceActual + 0.5),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: _margen,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: _margen),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: List.generate(_iconos.length, _item),
@@ -65,16 +60,58 @@ class BarraNavegacionInferior extends StatelessWidget {
         onTap: () => onTap?.call(indice),
         child: Stack(
           alignment: Alignment.center,
+          clipBehavior: Clip.none,
           children: [
             if (activo) _circuloActivo(),
-            Icon(
-              _iconos[indice],
-              size: 26,
-              color: AppColors.goldSand,
-            ),
+            if (indice == 4)
+              ValueListenableBuilder(
+                valueListenable: CarritoEstado.items,
+                builder: (context, items, child) {
+                  return _iconoCarrito();
+                },
+              )
+            else
+              Icon(_iconos[indice], size: 26, color: AppColors.goldSand),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _iconoCarrito() {
+    final total = CarritoEstado.total;
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        const Icon(
+          Icons.shopping_cart_outlined,
+          size: 26,
+          color: AppColors.goldSand,
+        ),
+        if (total > 0)
+          Positioned(
+            right: -10,
+            top: -8,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+              decoration: const BoxDecoration(
+                color: AppColors.redPrayerFlag,
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                '$total',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: AppColors.goldSand,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/core/carrito_estado.dart';
 import 'package:asadero/componentes/imagen_producto.dart';
 import 'package:asadero/componentes/boton_agregar.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class TarjetaProducto extends StatefulWidget {
+class TarjetaProducto extends StatelessWidget {
   final String nombre;
   final String precio;
   final String imagen;
@@ -18,14 +19,6 @@ class TarjetaProducto extends StatefulWidget {
     required this.onInformacion,
   });
 
-  @override
-  State<TarjetaProducto> createState() => _TarjetaProductoState();
-}
-
-class _TarjetaProductoState extends State<TarjetaProducto> {
-  int cantidad = 0;
-
-  // Alto de la imagen: proporcional al ancho de la tarjeta
   double _altoImagen(double ancho) => ancho * 0.6;
 
   @override
@@ -42,10 +35,7 @@ class _TarjetaProductoState extends State<TarjetaProducto> {
               top: 0,
               left: ancho * 0.13,
               right: ancho * 0.13,
-              child: ImagenProducto(
-                imagen: widget.imagen,
-                alto: _altoImagen(ancho),
-              ),
+              child: ImagenProducto(imagen: imagen, alto: _altoImagen(ancho)),
             ),
           ],
         );
@@ -68,14 +58,12 @@ class _TarjetaProductoState extends State<TarjetaProducto> {
           ),
         ],
       ),
-      // El texto empieza 12 px debajo de la imagen:
-      // alto de la imagen - 34 (lo que sobresale) + 12
       padding: EdgeInsets.fromLTRB(12, _altoImagen(ancho) - 22, 12, 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-            Text(
-            widget.nombre,
+          Text(
+            nombre,
             maxLines: 2,
             style: GoogleFonts.josefinSans(
               color: AppColors.goldSand,
@@ -96,7 +84,7 @@ class _TarjetaProductoState extends State<TarjetaProducto> {
       children: [
         Expanded(
           child: TextButton(
-            onPressed: widget.onInformacion,
+            onPressed: onInformacion,
             style: TextButton.styleFrom(
               padding: EdgeInsets.zero,
               minimumSize: const Size(0, 30),
@@ -112,12 +100,18 @@ class _TarjetaProductoState extends State<TarjetaProducto> {
             ),
           ),
         ),
-        BotonAgregar(
-          cantidad: cantidad,
-          onAgregar: () {
-            setState(() {
-              cantidad++;
-            });
+        ValueListenableBuilder<List<CarritoItem>>(
+          valueListenable: CarritoEstado.items,
+          builder: (context, items, child) {
+            return BotonAgregar(
+              cantidad: CarritoEstado.cantidadDe(nombre),
+              onAgregar: () {
+                CarritoEstado.agregar(nombre, precio, imagen);
+              },
+              onRestar: () {
+                CarritoEstado.restar(nombre);
+              },
+            );
           },
         ),
       ],

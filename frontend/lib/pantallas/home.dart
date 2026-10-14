@@ -5,7 +5,8 @@ import 'package:asadero/componentes/burbuja_asistente.dart';
 import 'package:asadero/componentes/encabezado_home.dart';
 import 'package:asadero/componentes/lista_productos.dart';
 import 'package:asadero/componentes/barra_nav_inferior.dart';
-import 'package:asadero/pantallas/chat.dart';
+import 'package:asadero/pantallas/historial.dart';
+import 'package:asadero/pantallas/carrito.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -47,12 +48,15 @@ class Home extends StatelessWidget {
       floatingActionButton: const BurbujaAsistente(),
       bottomNavigationBar: BarraNavegacionInferior(
         onTap: (indice) {
-          if (indice == 4) {
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              backgroundColor: AppColors.asphalt,
-              builder: (_) => const Chat(),
+          if (indice == 3) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const Historial()),
+            );
+          } else if (indice == 4) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const Carrito()),
             );
           }
         },

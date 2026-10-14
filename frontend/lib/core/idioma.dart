@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+
 class Idioma {
-  static String seleccionado = 'Español';
+  static final ValueNotifier<String> seleccionado =
+      ValueNotifier<String>('Español');
 }
