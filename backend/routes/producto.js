@@ -1,11 +1,15 @@
 import express from 'express';
+
 import {
     listarProductos,
+    listarProductosAdmin,
     obtenerProducto,
     obtenerPorCat,
     crear,
     editar,
-    eliminar
+    eliminar,
+    activar,
+    eliminarDefinitivamente
 } from '../controllers/producto.js';
 
 import {
@@ -18,19 +22,17 @@ import { upload } from '../config/cloudinary.js';
 const router = express.Router();
 
 // Rutas públicas
-
-// GET - Obtener todos los productos
 router.get('/', listarProductos);
-
-// GET - Obtener producto por ID
-router.get('/:id', obtenerProducto);
-
-// GET - Obtener productos por categoría
 router.get('/categoria/:categoria', obtenerPorCat);
 
-// Rutas privadas (requieren token y rol de administrador)
+// Rutas privadas para administradores
+router.get(
+    '/admin/todos',
+    verificarToken,
+    verificarAdmin,
+    listarProductosAdmin
+);
 
-// POST - Crear producto
 router.post(
     '/',
     verificarToken,
@@ -39,7 +41,6 @@ router.post(
     crear
 );
 
-// PUT - Actualizar producto
 router.put(
     '/:id',
     verificarToken,
@@ -48,12 +49,31 @@ router.put(
     editar
 );
 
-// DELETE - Eliminar producto
+// Eliminar definitivamente un producto
+router.delete(
+    '/:id/definitivo',
+    verificarToken,
+    verificarAdmin,
+    eliminarDefinitivamente
+);
+
+// Desactivar un producto
 router.delete(
     '/:id',
     verificarToken,
     verificarAdmin,
     eliminar
 );
+
+// Reactivar un producto desactivado
+router.patch(
+    '/:id/activar',
+    verificarToken,
+    verificarAdmin,
+    activar
+);
+
+// Obtener producto por ID
+router.get('/:id', obtenerProducto);
 
 export default router;

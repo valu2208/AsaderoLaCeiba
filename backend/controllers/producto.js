@@ -1,10 +1,13 @@
 import {
     obtenerTodos,
+    obtenerTodosAdmin,
     obtenerPorId,
     obtenerPorCategoria,
     crearProducto,
     actualizarProducto,
-    eliminarProducto
+    eliminarProducto,
+    activarProducto,
+    eliminarProductoDefinitivamente
 } from '../models/producto.js';
 
 export const listarProductos = async (req, res) => {
@@ -18,7 +21,24 @@ export const listarProductos = async (req, res) => {
         }
 
         return res.status(200).json(data);
+    } catch (error) {
+        return res.status(500).json({
+            error: error.message
+        });
+    }
+};
 
+export const listarProductosAdmin = async (req, res) => {
+    try {
+        const { data, error } = await obtenerTodosAdmin();
+
+        if (error) {
+            return res.status(500).json({
+                error: 'Error al obtener productos'
+            });
+        }
+
+        return res.status(200).json(data);
     } catch (error) {
         return res.status(500).json({
             error: error.message
@@ -29,7 +49,6 @@ export const listarProductos = async (req, res) => {
 export const obtenerProducto = async (req, res) => {
     try {
         const { id } = req.params;
-
         const { data, error } = await obtenerPorId(id);
 
         if (error || !data) {
@@ -39,7 +58,6 @@ export const obtenerProducto = async (req, res) => {
         }
 
         return res.status(200).json(data);
-
     } catch (error) {
         return res.status(500).json({
             error: error.message
@@ -50,7 +68,6 @@ export const obtenerProducto = async (req, res) => {
 export const obtenerPorCat = async (req, res) => {
     try {
         const { categoria } = req.params;
-
         const { data, error } = await obtenerPorCategoria(categoria);
 
         if (error) {
@@ -60,7 +77,6 @@ export const obtenerPorCat = async (req, res) => {
         }
 
         return res.status(200).json(data);
-
     } catch (error) {
         return res.status(500).json({
             error: error.message
@@ -81,6 +97,7 @@ export const crear = async (req, res) => {
             categoria,
             disponible
         } = req.body;
+
         console.log('DATOS RECIBIDOS', req.body);
 
         if (!nombre || !precio) {
@@ -114,7 +131,6 @@ export const crear = async (req, res) => {
             message: 'Producto creado',
             producto: data
         });
-
     } catch (error) {
         return res.status(500).json({
             error: error.message
@@ -125,10 +141,7 @@ export const crear = async (req, res) => {
 export const editar = async (req, res) => {
     try {
         const { id } = req.params;
-
-        const datosActualizados = {
-            ...req.body
-        };
+        const datosActualizados = { ...req.body };
 
         if (req.file) {
             datosActualizados.imagen_url = req.file.path;
@@ -149,7 +162,6 @@ export const editar = async (req, res) => {
             message: 'Producto actualizado',
             producto: data
         });
-
     } catch (error) {
         return res.status(500).json({
             error: error.message
@@ -160,19 +172,83 @@ export const editar = async (req, res) => {
 export const eliminar = async (req, res) => {
     try {
         const { id } = req.params;
-
-        const { error } = await eliminarProducto(id);
+        const { data, error } = await eliminarProducto(id);
 
         if (error) {
             return res.status(500).json({
-                error: 'Error al eliminar producto'
+                error: 'Error al desactivar producto'
+            });
+        }
+
+        if (!data || data.length === 0) {
+            return res.status(404).json({
+                error: 'Producto no encontrado'
             });
         }
 
         return res.status(200).json({
-            message: 'Producto eliminado'
+            message: 'Producto desactivado correctamente'
         });
+    } catch (error) {
+        return res.status(500).json({
+            error: error.message
+        });
+    }
+};
+export const activar = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { data, error } = await activarProducto(id);
 
+        if (error) {
+            return res.status(500).json({
+                error: 'Error al activar producto'
+            });
+        }
+
+        if (!data || data.length === 0) {
+            return res.status(404).json({
+                error: 'Producto no encontrado'
+            });
+        }
+
+        return res.status(200).json({
+            message: 'Producto activado correctamente'
+        });
+    } catch (error) {
+        return res.status(500).json({
+            error: error.message
+        });
+    }
+};
+export const eliminarDefinitivamente = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const { data, error } =
+            await eliminarProductoDefinitivamente(id);
+
+        if (error) {
+            if (error.code === '23503') {
+                return res.status(409).json({
+                    error: 'No se puede eliminar definitivamente porque este producto está asociado a pedidos anteriores. Puedes desactivarlo para ocultarlo del menú.'
+                });
+            }
+
+            return res.status(500).json({
+                error: 'Error al eliminar definitivamente el producto'
+            });
+        }
+
+        if (!data || data.length === 0) {
+            return res.status(404).json({
+                error: 'Producto no encontrado'
+            });
+        }
+
+        return res.status(200).json({
+            message: 'Producto eliminado definitivamente'
+        });
     } catch (error) {
         return res.status(500).json({
             error: error.message

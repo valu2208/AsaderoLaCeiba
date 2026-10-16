@@ -9,69 +9,98 @@ class AdminProductListPage extends StatefulWidget {
   const AdminProductListPage({super.key});
 
   @override
-  State<AdminProductListPage> createState() => _AdminProductListPageState();
+  State<AdminProductListPage> createState() =>
+      _AdminProductListPageState();
 }
 
-class _AdminProductListPageState extends State<AdminProductListPage> {
-  final AdminProductService _productService = AdminProductService();
-  late Future<List<ProductoModel>> _productosFuture;
+class _AdminProductListPageState
+    extends State<AdminProductListPage> {
+  final _service = AdminProductService();
+  late Future<List<ProductoModel>> _productos;
 
   @override
   void initState() {
     super.initState();
-    _cargarProductos();
+    _cargar();
   }
 
-  void _cargarProductos() {
-    setState(() {
-      _productosFuture = _productService.obtenerProductos();
-    });
+  void _cargar() {
+    _productos = _service.obtenerProductos();
   }
 
-  void _abrirFormulario({ProductoModel? producto}) async {
+  Future<void> _formulario({ProductoModel? producto}) async {
     final resultado = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
-      builder: (context) => ProductFormSheet(producto: producto),
+      builder: (_) => ProductFormSheet(producto: producto),
     );
 
-    if (resultado == true) {
-      _cargarProductos(); // Recarga la lista si se creó o editó exitosamente
+    if (resultado == true && mounted) {
+      setState(_cargar);
     }
   }
 
-  void _eliminarProducto(String id) async {
-    final confirmar = await confirmarEliminacion(context);
+  Future<void> _desactivar(String id) async {
+    if (!await confirmarEliminacion(context) || !mounted) return;
 
-    if (confirmar) {
-      try {
-        await _productService.eliminarProducto(id);
-        _cargarProductos();
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Producto eliminado correctamente'), backgroundColor: Colors.green),
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-          );
-        }
-      }
+    try {
+      await _service.eliminarProducto(id);
+      if (mounted) setState(_cargar);
+    } catch (e) {
+      _aviso('$e');
     }
   }
 
-  // Es un ListView (no un Center) para que deslizar-para-recargar también funcione aquí
-  Widget _mensaje(String texto) {
-    return ListView(
-      children: [
-        const SizedBox(height: 160),
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(texto, textAlign: TextAlign.center),
+  Future<void> _activar(String id) async {
+    try {
+      await _service.activarProducto(id);
+      if (mounted) setState(_cargar);
+    } catch (e) {
+      _aviso('$e');
+    }
+  }
+
+  Future<void> _eliminar(String id, String nombre) async {
+    final confirmar = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Eliminar definitivamente'),
+        content: Text(
+          '¿Eliminar "$nombre" permanentemente? '
+          'Si tiene pedidos asociados, no podrá borrarse.',
         ),
-      ],
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text(
+              'Eliminar',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmar != true || !mounted) return;
+
+    try {
+      await _service.eliminarProductoDefinitivamente(id);
+      if (!mounted) return;
+      setState(_cargar);
+      _aviso('Producto eliminado definitivamente');
+    } catch (e) {
+      _aviso('$e');
+    }
+  }
+
+  void _aviso(String mensaje) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(mensaje)),
     );
   }
 
@@ -85,50 +114,89 @@ class _AdminProductListPageState extends State<AdminProductListPage> {
       drawer: const AdminDrawer(),
       body: RefreshIndicator(
         onRefresh: () async {
-          _cargarProductos();
+          setState(_cargar);
           try {
-            await _productosFuture;
+            await _productos;
           } catch (_) {}
         },
         child: FutureBuilder<List<ProductoModel>>(
-          future: _productosFuture,
+          future: _productos,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
+
             if (snapshot.hasError) {
-              return _mensaje('Error al cargar productos:\n${snapshot.error}');
+              return ListView(
+                children: [
+                  Center(child: Text('Error: ${snapshot.error}')),
+                ],
+              );
             }
-            final productos = snapshot.data ?? [];
-            if (productos.isEmpty) {
-              return _mensaje('No hay productos registrados en el backend.');
+
+            final lista = snapshot.data ?? [];
+
+            if (lista.isEmpty) {
+              return const Center(
+                child: Text('No hay productos registrados.'),
+              );
             }
 
             return ListView.builder(
               physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: productos.length,
+              itemCount: lista.length,
               itemBuilder: (context, index) {
-                final producto = productos[index];
+                final p = lista[index];
+
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  margin: const EdgeInsets.all(8),
                   child: ListTile(
-                    leading: producto.imagenUrl != null && producto.imagenUrl!.isNotEmpty
-                        ? Image.network(producto.imagenUrl!, width: 50, height: 50, fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => const Icon(Icons.fastfood, size: 40))
-                        : const Icon(Icons.fastfood, size: 40),
-                    title: Text(producto.nombre, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text('\$${producto.precio.toStringAsFixed(2)}\n${producto.descripcion}'),
+                    leading: p.imagenUrl != null &&
+                            p.imagenUrl!.isNotEmpty
+                        ? Image.network(
+                            p.imagenUrl!,
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) =>
+                                const Icon(Icons.fastfood),
+                          )
+                        : const Icon(Icons.fastfood),
+                    title: Text(p.nombre),
+                    subtitle: Text(
+                      '\$${p.precio.toStringAsFixed(2)}\n'
+                      '${p.descripcion}\n'
+                      'Estado: ${p.activo ? "Activo" : "Inactivo"}',
+                    ),
                     isThreeLine: true,
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.edit, color: Colors.blue),
-                          onPressed: () => _abrirFormulario(producto: producto),
+                    trailing: PopupMenuButton<String>(
+                      onSelected: (opcion) {
+                        switch (opcion) {
+                          case 'editar':
+                            _formulario(producto: p);
+                          case 'estado':
+                            p.activo
+                                ? _desactivar(p.id)
+                                : _activar(p.id);
+                          case 'eliminar':
+                            _eliminar(p.id, p.nombre);
+                        }
+                      },
+                      itemBuilder: (_) => [
+                        if (p.activo)
+                          const PopupMenuItem(
+                            value: 'editar',
+                            child: Text('Editar'),
+                          ),
+                        PopupMenuItem(
+                          value: 'estado',
+                          child: Text(
+                            p.activo ? 'Desactivar' : 'Reactivar',
+                          ),
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _eliminarProducto(producto.id),
+                        const PopupMenuItem(
+                          value: 'eliminar',
+                          child: Text('Eliminar definitivamente'),
                         ),
                       ],
                     ),
@@ -141,7 +209,7 @@ class _AdminProductListPageState extends State<AdminProductListPage> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.orangeAccent,
-        onPressed: () => _abrirFormulario(),
+        onPressed: () => _formulario(),
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );

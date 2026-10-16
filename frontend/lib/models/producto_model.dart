@@ -4,6 +4,7 @@ class ProductoModel {
   final double precio;
   final String descripcion;
   final String? imagenUrl;
+  final bool activo;
 
   ProductoModel({
     required this.id,
@@ -11,6 +12,7 @@ class ProductoModel {
     required this.precio,
     required this.descripcion,
     this.imagenUrl,
+    this.activo = true,
   });
 
   factory ProductoModel.fromJson(Map<String, dynamic> json) {
@@ -19,8 +21,10 @@ class ProductoModel {
       nombre: json['nombre'] ?? '',
       precio: (json['precio'] as num?)?.toDouble() ?? 0.0,
       descripcion: json['descripcion'] ?? '',
-      // Soporta diferentes nombres de campos que pueda retornar el backend de Node
-      imagenUrl: json['imagenUrl'] ?? json['imagen_url'] ?? json['imagen'],
+      imagenUrl: json['imagenUrl'] ??
+          json['imagen_url'] ??
+          json['imagen'],
+      activo: json['activo'] as bool? ?? true,
     );
   }
 
@@ -30,6 +34,7 @@ class ProductoModel {
       'nombre': nombre,
       'precio': precio,
       'descripcion': descripcion,
+      'activo': activo,
       if (imagenUrl != null) 'imagenUrl': imagenUrl,
     };
   }
