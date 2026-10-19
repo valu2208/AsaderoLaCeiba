@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:asadero/core/colores.dart';
-import 'package:asadero/core/carrito_estado.dart';
-import 'package:asadero/pantallas/carrito.dart';
 import 'package:asadero/componentes/imagen_adaptable.dart';
 
 class DetalleProducto extends StatelessWidget {
@@ -28,10 +26,7 @@ class DetalleProducto extends StatelessWidget {
         backgroundColor: AppColors.goldSand,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: AppColors.redPrayerFlag,
-          ),
+          icon: const Icon(Icons.arrow_back, color: AppColors.redPrayerFlag),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
@@ -44,10 +39,7 @@ class DetalleProducto extends StatelessWidget {
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 10,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(
           children: [
             Expanded(
@@ -99,9 +91,6 @@ class DetalleProducto extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-            _botonCarrito(context),
-            const SizedBox(height: 10),
           ],
         ),
       ),
@@ -124,36 +113,6 @@ class DetalleProducto extends StatelessWidget {
       icono ?? Icons.restaurant,
       size: 150,
       color: AppColors.goldSand,
-    );
-  }
-
-  Widget _botonCarrito(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () {
-          CarritoEstado.agregar(nombre, precio, imagen ?? '');
-
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => const Carrito(),
-            ),
-          );
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.redPrayerFlag,
-          padding: const EdgeInsets.symmetric(vertical: 15),
-        ),
-        child: const Text(
-          'Agregar al carrito',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
     );
   }
 }

@@ -19,7 +19,9 @@ class TarjetaPedido extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: AppColors.asphalt,
+      color: AppColors.demonicPresence,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(

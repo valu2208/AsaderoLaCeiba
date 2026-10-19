@@ -132,7 +132,7 @@ class _RegistroState extends State<Registro> {
               ),
               const SizedBox(height: 26),
               Text(
-                texto('registrarse'),
+                texto('registrese'),
                 style: GoogleFonts.kronaOne(
                   color: AppColors.goldSand,
                   fontSize: 30,
@@ -161,7 +161,7 @@ class _RegistroState extends State<Registro> {
               ),
               const SizedBox(height: 20),
               CampoTexto(
-                texto: texto('contrasena'),
+                texto: texto('mensaje_contrasena'),
                 icono: Icons.lock,
                 ocultar: !mostrar,
                 controller: clave,
@@ -171,7 +171,7 @@ class _RegistroState extends State<Registro> {
               ),
               const SizedBox(height: 20),
               CampoTexto(
-                texto: texto('confirmar_contrasena'),
+                texto: texto('mensaje_contrasena'),
                 icono: Icons.lock_outline,
                 ocultar: !mostrarConfirmar,
                 controller: confirmar,

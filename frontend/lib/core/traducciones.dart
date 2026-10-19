@@ -1,3 +1,4 @@
+
 import 'idioma.dart';
 
 String texto(String clave) {
@@ -14,7 +15,7 @@ String texto(String clave) {
 
 final Map<String, String> espanol = {
   'haz_click_aqui': 'Haz click aquí!',
-  'tu_proxima_gran_idea': 'Tu próxima gran idea comienza aquí!💫',
+  'tu_proxima_gran_idea': '¡Ven y disfruta el auténtico sabor de Asadero La Ceiba!🍗',
   'mensaje_inicio':
       'Crea tu cuenta en 30 segundos y descubre todo lo que tenemos para ti',
   'comenzar': 'Comenzar ahora',
@@ -24,6 +25,7 @@ final Map<String, String> espanol = {
   'correo': 'Correo electrónico',
   'correo_electronico': 'Correo Electrónico',
   'contrasena': 'Contraseña',
+  'mensaje_contrasena': 'La contraseña debe tener mínimo 6 dígitos',
   'confirmar_contrasena': 'Confirmar contraseña',
   'olvidaste_contrasena': '¿Olvidaste Contraseña?',
   'nombre': 'Nombre',
@@ -37,7 +39,7 @@ final Map<String, String> espanol = {
   'perfil': 'Perfil',
   'mensajes': 'Mensajes',
   'cerrar_sesion': 'Cerrar sesión',
-  'registro': 'Regístrate',
+  'registro': 'Regístrese',
   'crear_cuenta_boton': 'Crear Cuenta',
   'error_contrasenas': 'Las contraseñas no coinciden',
   'correo_registrado': 'Ese correo ya está registrado',
@@ -56,29 +58,29 @@ final Map<String, String> espanol = {
   'confirmar_nueva_contrasena': 'Confirmar nueva contraseña',
   'continuar': 'Continuar',
   'lo_mas_pedido': '¡Lo más pedido!',
-'pollo_completo': 'Pollo Asado completo',
-'descripcion_pollo_completo':
-    'Delicioso pollo asado, jugoso por dentro y crocante por fuera.',
-'medio_pollo': 'Medio Pollo Asado',
-'descripcion_medio_pollo':
-    'Media porción de pollo asado acompañada con papas y arepa.',
-'cuarto_pollo': 'Un Cuarto de Pollo Asado',
-'descripcion_cuarto_pollo':
-    'Porción individual de pollo asado con papa, arepa y ensalada fresca.',
-    'bienvenido_usuario': '¡Bienvenido, usuario! 👋',
-'buscar': 'Buscar...',
-'carrito': 'Carrito',
-'carrito_vacio': 'Tu carrito está vacío',
-'agrega_favoritos': 'Agrega tus productos favoritos para verlos aquí.',
-'cantidad': 'Cantidad',
-'eliminar_producto': 'Eliminar producto',
-'realizar_pedido': 'Realizar pedido',
-'descripcion_generica': 'Delicioso producto preparado especialmente para ti.',
+  'pollo_completo': 'Pollo Asado completo',
+  'descripcion_pollo_completo':
+      'Delicioso pollo asado, jugoso por dentro y crocante por fuera.',
+  'medio_pollo': 'Medio Pollo Asado',
+  'descripcion_medio_pollo':
+      'Media porción de pollo asado acompañada con papas y arepa.',
+  'cuarto_pollo': 'Un Cuarto de Pollo Asado',
+  'descripcion_cuarto_pollo':
+      'Porción individual de pollo asado con papa, arepa y ensalada fresca.',
+  'bienvenido_usuario': '¡Bienvenido, usuario! 👋',
+  'buscar': 'Buscar...',
+  'carrito': 'Carrito de compras',
+  'carrito_vacio': 'Tu carrito está vacío',
+  'agrega_favoritos': 'Agrega tus productos favoritos para verlos aquí.',
+  'cantidad': 'Cantidad',
+  'eliminar_producto': 'Eliminar producto',
+  'realizar_pedido': 'Realizar pedido',
+  'descripcion_generica': 'Delicioso producto preparado especialmente para ti.',
 };
 
 final Map<String, String> ingles = {
   'haz_click_aqui': 'Click here!',
-  'tu_proxima_gran_idea': 'Your next great idea starts here!💫',
+  'tu_proxima_gran_idea': 'Come and enjoy the authentic flavor of Asadero La Ceiba!🍗',
   'mensaje_inicio':
       'Create your account in 30 seconds and discover everything we have for you',
   'comenzar': 'Get started',
@@ -88,6 +90,7 @@ final Map<String, String> ingles = {
   'correo': 'Email',
   'correo_electronico': 'Email',
   'contrasena': 'Password',
+  'mensaje_contrasena': 'Password must be at least 6 digits long',
   'confirmar_contrasena': 'Confirm password',
   'olvidaste_contrasena': 'Forgot Password?',
   'nombre': 'Name',
@@ -120,29 +123,29 @@ final Map<String, String> ingles = {
   'confirmar_nueva_contrasena': 'Confirm new password',
   'continuar': 'Continue',
   'lo_mas_pedido': 'Most Popular!',
-'pollo_completo': 'Whole Roasted Chicken',
-'descripcion_pollo_completo':
-    'Delicious roasted chicken, juicy inside and crispy outside.',
-'medio_pollo': 'Half Roasted Chicken',
-'descripcion_medio_pollo':
-    'Half a roasted chicken served with potatoes and arepa.',
-'cuarto_pollo': 'Quarter Roasted Chicken',
-'descripcion_cuarto_pollo':
-    'Individual serving of roasted chicken with potato, arepa, and fresh salad.',
-    'bienvenido_usuario': 'Welcome, user! 👋',
-'buscar': 'Search...',
-'carrito': 'Shopping Cart',
-'carrito_vacio': 'Your cart is empty',
-'agrega_favoritos': 'Add your favorite products to see them here.',
-'cantidad': 'Quantity',
-'eliminar_producto': 'Remove product',
-'realizar_pedido': 'Place order',
-'descripcion_generica': 'A delicious product prepared especially for you.',
+  'pollo_completo': 'Whole Roasted Chicken',
+  'descripcion_pollo_completo':
+      'Delicious roasted chicken, juicy inside and crispy outside.',
+  'medio_pollo': 'Half Roasted Chicken',
+  'descripcion_medio_pollo':
+      'Half a roasted chicken served with potatoes and arepa.',
+  'cuarto_pollo': 'Quarter Roasted Chicken',
+  'descripcion_cuarto_pollo':
+      'Individual serving of roasted chicken with potato, arepa, and fresh salad.',
+  'bienvenido_usuario': 'Welcome, user! 👋',
+  'buscar': 'Search...',
+  'carrito': 'Shopping Cart',
+  'carrito_vacio': 'Your cart is empty',
+  'agrega_favoritos': 'Add your favorite products to see them here.',
+  'cantidad': 'Quantity',
+  'eliminar_producto': 'Remove product',
+  'realizar_pedido': 'Place order',
+  'descripcion_generica': 'A delicious product prepared especially for you.',
 };
 
 final Map<String, String> portugues = {
   'haz_click_aqui': 'Clique aqui!',
-  'tu_proxima_gran_idea': 'Sua próxima grande ideia começa aqui!💫',
+  'tu_proxima_gran_idea': 'Venha e desfrute do autêntico sabor do Asadero La Ceiba!🍗',
   'mensaje_inicio':
       'Crie sua conta em 30 segundos e descubra tudo o que temos para você',
   'comenzar': 'Começar agora',
@@ -152,6 +155,7 @@ final Map<String, String> portugues = {
   'correo': 'E-mail',
   'correo_electronico': 'E-mail',
   'contrasena': 'Senha',
+  'mensaje_contrasena': 'A senha deve ter no mínimo 6 dígitos',
   'confirmar_contrasena': 'Confirmar senha',
   'olvidaste_contrasena': 'Esqueceu a senha?',
   'nombre': 'Nome',
@@ -184,22 +188,22 @@ final Map<String, String> portugues = {
   'confirmar_nueva_contrasena': 'Confirmar nova senha',
   'continuar': 'Continuar',
   'lo_mas_pedido': 'Mais pedidos!',
-'pollo_completo': 'Frango assado inteiro',
-'descripcion_pollo_completo':
-    'Delicioso frango assado, suculento por dentro e crocante por fora.',
-'medio_pollo': 'Meio frango assado',
-'descripcion_medio_pollo':
-    'Meia porção de frango assado acompanhada de batatas e arepa.',
-'cuarto_pollo': 'Um quarto de frango assado',
-'descripcion_cuarto_pollo':
-    'Porção individual de frango assado com batata, arepa e salada fresca.',
-    'bienvenido_usuario': 'Bem-vindo, usuário! 👋',
-'buscar': 'Buscar...',
-'carrito': 'Carrinho',
-'carrito_vacio': 'Seu carrinho está vazio',
-'agrega_favoritos': 'Adicione seus produtos favoritos para vê-los aqui.',
-'cantidad': 'Quantidade',
-'eliminar_producto': 'Remover produto',
-'realizar_pedido': 'Fazer pedido',
-'descripcion_generica': 'Um produto delicioso preparado especialmente para você.',
+  'pollo_completo': 'Frango assado inteiro',
+  'descripcion_pollo_completo':
+      'Delicioso frango assado, suculento por dentro e crocante por fora.',
+  'medio_pollo': 'Meio frango assado',
+  'descripcion_medio_pollo':
+      'Meia porção de frango assado acompanhada de batatas e arepa.',
+  'cuarto_pollo': 'Um quarto de frango assado',
+  'descripcion_cuarto_pollo':
+      'Porção individual de frango assado com batata, arepa e salada fresca.',
+  'bienvenido_usuario': 'Bem-vindo, usuário! 👋',
+  'buscar': 'Buscar...',
+  'carrito': 'Carrinho de compras',
+  'carrito_vacio': 'Seu carrinho está vazio',
+  'agrega_favoritos': 'Adicione seus produtos favoritos para vê-los aqui.',
+  'cantidad': 'Quantidade',
+  'eliminar_producto': 'Remover produto',
+  'realizar_pedido': 'Fazer pedido',
+  'descripcion_generica': 'Um produto delicioso preparado especialmente para você.',
 };

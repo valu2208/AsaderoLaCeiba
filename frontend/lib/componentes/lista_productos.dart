@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:asadero/core/idioma.dart';
 import 'package:asadero/componentes/tarjeta_producto.dart';
@@ -13,58 +14,46 @@ class ListaProductos extends StatelessWidget {
     return ValueListenableBuilder<String>(
       valueListenable: Idioma.seleccionado,
       builder: (context, idioma, child) {
-        return Expanded(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              const espacio = 12.0;
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            const espacio = 12.0;
+            final ancho =
+                ((constraints.maxWidth - espacio) / 2).floorToDouble();
 
-              if (constraints.maxWidth <= espacio) {
-                return const SizedBox.shrink();
-              }
-
-              final anchoTarjeta = ((constraints.maxWidth - espacio) / 2)
-                  .floorToDouble();
-              final altoTarjeta = anchoTarjeta / 0.78;
-
-              return SingleChildScrollView(
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: espacio,
-                  runSpacing: espacio,
-                  children: productos.map((producto) {
-                    return SizedBox(
-                      width: anchoTarjeta,
-                      height: altoTarjeta,
-                      child: TarjetaProducto(
-                        nombre: producto['nombre']!,
-                        precio: producto['precio']!,
-                        imagen: producto['imagen']!,
-                        onInformacion: () {
-                          _abrirDetalle(context, producto);
-                        },
-                      ),
-                    );
-                  }).toList(),
-                ),
-              );
-            },
-          ),
+            return SingleChildScrollView(
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                spacing: espacio,
+                runSpacing: espacio,
+                children: productos.map((producto) {
+                  return SizedBox(
+                    width: ancho,
+                    height: ancho / 0.78,
+                    child: TarjetaProducto(
+                      nombre: producto['nombre']!,
+                      precio: producto['precio']!,
+                      imagen: producto['imagen']!,
+                      onInformacion: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => DetalleProducto(
+                              nombre: producto['nombre']!,
+                              precio: producto['precio']!,
+                              imagen: producto['imagen']!,
+                              descripcion: producto['descripcion']!,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                }).toList(),
+              ),
+            );
+          },
         );
       },
-    );
-  }
-
-  void _abrirDetalle(BuildContext context, Map<String, String> producto) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DetalleProducto(
-          nombre: producto['nombre']!,
-          precio: producto['precio']!,
-          imagen: producto['imagen']!,
-          descripcion: producto['descripcion']!,
-        ),
-      ),
     );
   }
 }

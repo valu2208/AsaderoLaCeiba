@@ -90,7 +90,7 @@ class Historial extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               children: [
                 Text(
-                  texto('pedidos_anteriores'),
+                  texto('Historial de pedido'),
                   style: GoogleFonts.kronaOne(
                     fontSize: 17,
                     color: AppColors.earthBrown,

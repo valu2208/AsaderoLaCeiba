@@ -6,8 +6,7 @@ import 'package:asadero/pantallas/bienvenida.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Android: usar el Photo Picker moderno, que muestra todas las imágenes del
-  // dispositivo (incluidas las de Descargas, donde llegan las fotos arrastradas al emulador)
+
   final ImagePickerPlatform picker = ImagePickerPlatform.instance;
   if (picker is ImagePickerAndroid) {
     picker.useAndroidPhotoPicker = true;

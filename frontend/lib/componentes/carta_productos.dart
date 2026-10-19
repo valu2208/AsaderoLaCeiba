@@ -5,8 +5,6 @@ import 'package:asadero/models/producto_model.dart';
 import 'package:asadero/services/producto_service.dart';
 import 'package:asadero/componentes/lista_productos.dart';
 
-// Carta del cliente: pide los platos al backend (los mismos que administra el
-// panel) y los muestra con ListaProductos. Va dentro de una Column, como ListaProductos.
 class CartaProductos extends StatefulWidget {
   const CartaProductos({super.key});
 
@@ -23,13 +21,14 @@ class _CartaProductosState extends State<CartaProductos> {
     _productos = ProductoService().obtenerProductos();
   }
 
-  void _recargar() {
+  Future<void> _recargar() async {
     setState(() {
       _productos = ProductoService().obtenerProductos();
     });
+
+    await _productos;
   }
 
-  // ListaProductos trabaja con mapas de texto, así que se convierte cada producto
   Map<String, String> _aMapa(ProductoModel p) => {
         'nombre': p.nombre,
         'precio': formatoPesos(p.precio),
@@ -46,10 +45,16 @@ class _CartaProductosState extends State<CartaProductos> {
             Text(
               texto,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: AppColors.earthBrown, fontSize: 16),
+              style: const TextStyle(
+                color: AppColors.earthBrown,
+                fontSize: 16,
+              ),
             ),
             if (reintentar)
-              TextButton(onPressed: _recargar, child: const Text('Reintentar')),
+              TextButton(
+                onPressed: _recargar,
+                child: const Text('Reintentar'),
+              ),
           ],
         ),
       ),
@@ -64,17 +69,39 @@ class _CartaProductosState extends State<CartaProductos> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Expanded(
             child: Center(
-              child: CircularProgressIndicator(color: AppColors.earthBrown),
+              child: CircularProgressIndicator(
+                color: AppColors.earthBrown,
+              ),
             ),
           );
         }
+
         if (snapshot.hasError) {
-          final error = snapshot.error.toString().replaceAll('Exception: ', '');
+          final error =
+              snapshot.error.toString().replaceAll('Exception: ', '');
           return _mensaje(error, reintentar: true);
         }
+
         final productos = snapshot.data ?? [];
-        if (productos.isEmpty) return _mensaje('Aún no hay platos disponibles');
-        return ListaProductos(productos: productos.map(_aMapa).toList());
+
+        if (productos.isEmpty) {
+          return _mensaje('Aún no hay platos disponibles');
+        }
+
+        return Expanded(
+          child: RefreshIndicator(
+            color: AppColors.earthBrown,
+            onRefresh: _recargar,
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: [
+                ListaProductos(
+                  productos: productos.map(_aMapa).toList(),
+                ),
+              ],
+            ),
+          ),
+        );
       },
     );
   }

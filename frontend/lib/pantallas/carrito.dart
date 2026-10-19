@@ -89,12 +89,41 @@ class Carrito extends StatelessWidget {
                             ),
                             leading: ClipRRect(
                               borderRadius: BorderRadius.circular(8),
-                              child: Image.asset(
-                                item.imagen,
-                                width: 55,
-                                height: 55,
-                                fit: BoxFit.cover,
-                              ),
+                              child: item.imagen.startsWith('http')
+                                  ? Image.network(
+                                      item.imagen,
+                                      width: 55,
+                                      height: 55,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                            return const SizedBox(
+                                              width: 55,
+                                              height: 55,
+                                              child: Icon(
+                                                Icons.restaurant,
+                                                color: AppColors.goldSand,
+                                              ),
+                                            );
+                                          },
+                                    )
+                                  : Image.asset(
+                                      item.imagen,
+                                      width: 55,
+                                      height: 55,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                            return const SizedBox(
+                                              width: 55,
+                                              height: 55,
+                                              child: Icon(
+                                                Icons.restaurant,
+                                                color: AppColors.goldSand,
+                                              ),
+                                            );
+                                          },
+                                    ),
                             ),
                             title: Text(
                               nombreProducto(item),
