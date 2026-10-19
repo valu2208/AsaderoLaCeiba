@@ -1,6 +1,7 @@
 //Variable de entorno 
 import 'dotenv/config';
 import { createClient } from '@supabase/supabase-js';
+import WebSocket from 'ws'; // NUEVO: transporte WebSocket para Node.js
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
@@ -10,7 +11,15 @@ if (!supabaseUrl || !supabaseKey) {
   process.exit(1);
 }
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+export const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: {                      // NUEVO
+    persistSession: false,
+    autoRefreshToken: false,
+  },
+  realtime: {                  // NUEVO
+    transport: WebSocket,
+  },
+});
 
 export const conectaDB = () => {
   console.log("✅ Conexión a Supabase establecida correctamente");
