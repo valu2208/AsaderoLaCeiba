@@ -1,4 +1,3 @@
-
 import 'idioma.dart';
 
 String texto(String clave) {
@@ -33,7 +32,7 @@ final Map<String, String> espanol = {
   'recordarme': 'Recordarme',
   'no_tienes_cuenta': '¿No tienes cuenta? Regístrate',
   'continuar_con': 'O Continuar Con',
-  'historial': 'Historial',
+  'historial': 'Historial de pedidos',
   'resenas': 'Reseñas',
   'menu': 'Menú',
   'perfil': 'Perfil',
@@ -98,7 +97,7 @@ final Map<String, String> ingles = {
   'recordarme': 'Remember me',
   'no_tienes_cuenta': 'Don\'t have an account? Sign up',
   'continuar_con': 'Or Continue With',
-  'historial': 'History',
+  'historial': ' Order History',
   'resenas': 'Reviews',
   'menu': 'Menu',
   'perfil': 'Profile',
@@ -163,7 +162,7 @@ final Map<String, String> portugues = {
   'recordarme': 'Lembrar de mim',
   'no_tienes_cuenta': 'Não tem uma conta? Cadastre-se',
   'continuar_con': 'Ou continuar com',
-  'historial': 'Histórico',
+  'historial': 'Histórico de pedidos',
   'resenas': 'Avaliações',
   'menu': 'Menu',
   'perfil': 'Perfil',

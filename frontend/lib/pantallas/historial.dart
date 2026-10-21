@@ -68,7 +68,7 @@ class Historial extends StatelessWidget {
             backgroundColor: AppColors.asphalt,
             foregroundColor: AppColors.goldSand,
             title: Text(
-              texto('mi_historial'),
+              texto('historial'),
               style: GoogleFonts.kronaOne(fontSize: 18),
             ),
             centerTitle: true,
@@ -90,7 +90,7 @@ class Historial extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               children: [
                 Text(
-                  texto('Historial de pedido'),
+                  texto('historial'),
                   style: GoogleFonts.kronaOne(
                     fontSize: 17,
                     color: AppColors.earthBrown,

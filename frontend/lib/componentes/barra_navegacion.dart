@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:asadero/core/colores.dart';
 
@@ -7,6 +8,7 @@ class BarraNavegacion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
           onPressed: () {
@@ -18,7 +20,19 @@ class BarraNavegacion extends StatelessWidget {
             size: 28,
           ),
         ),
+        const Padding(
+          padding: EdgeInsets.only(right: 12),
+          child: Text(
+            'Asadero La Ceiba',
+            style: TextStyle(
+              color: AppColors.goldSand,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
       ],
     );
   }
 }
+

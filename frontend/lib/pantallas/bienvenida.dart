@@ -1,3 +1,5 @@
+
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:asadero/pantallas/inicio.dart';
 import 'package:asadero/pantallas/idiomas.dart';
@@ -42,7 +44,9 @@ class _BienvenidaState extends State<Bienvenida> {
                   onPressed: () async {
                     await Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const Idiomas()),
+                      MaterialPageRoute(
+                        builder: (_) => const Idiomas(),
+                      ),
                     );
                     setState(() {});
                   },
@@ -59,20 +63,35 @@ class _BienvenidaState extends State<Bienvenida> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    ClipOval(
-                      child: Image.asset(
-                        'assets/imagenes/logo_ceiba.jpeg',
-                        width: 300,
-                        height: 300,
-                        fit: BoxFit.cover,
+                    SizedBox(
+                      width: 360,
+                      height: 360,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          CustomPaint(
+                            size: const Size(360, 360),
+                            painter: TextoOvaladoPainter(),
+                          ),
+                          ClipOval(
+                            child: Image.asset(
+                              'assets/imagenes/logo_ceiba.jpeg',
+                              width: 300,
+                              height: 300,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 40),
                     TextButton(
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const Inicio()),
+                          MaterialPageRoute(
+                            builder: (_) => const Inicio(),
+                          ),
                         );
                       },
                       child: Text(
@@ -93,4 +112,88 @@ class _BienvenidaState extends State<Bienvenida> {
       ),
     );
   }
+}
+
+class TextoOvaladoPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final ovalo = Rect.fromCenter(
+      center: Offset(size.width / 2, size.height / 2),
+      width: size.width - 10,
+      height: size.height - 10,
+    );
+
+    final arriba = Path()
+      ..addArc(ovalo, math.pi, math.pi);
+
+    final abajo = Path()
+      ..addArc(ovalo, math.pi, -math.pi);
+
+    const estilo = TextStyle(
+      color: AppColors.goldSand,
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+      letterSpacing: 1.5,
+    );
+
+    dibujarTexto(canvas, 'ASADERO', arriba, estilo);
+    dibujarTexto(canvas, 'LA CEIBA', abajo, estilo);
+  }
+
+  void dibujarTexto(
+    Canvas canvas,
+    String texto,
+    Path camino,
+    TextStyle estilo,
+  ) {
+    final metricas = camino.computeMetrics().toList();
+
+    if (metricas.isEmpty) return;
+
+    final metrica = metricas.first;
+
+    final letras = texto.split('').map((letra) {
+      return TextPainter(
+        text: TextSpan(
+          text: letra,
+          style: estilo,
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+    }).toList();
+
+    final anchoTexto = letras.fold<double>(
+      0,
+      (total, letra) => total + letra.width,
+    );
+
+    double distancia = (metrica.length - anchoTexto) / 2;
+
+    for (final letra in letras) {
+      final posicion = distancia + letra.width / 2;
+
+      final tangente = metrica.getTangentForOffset(
+        posicion.clamp(0.0, metrica.length).toDouble(),
+      );
+
+      if (tangente != null) {
+        canvas.save();
+        canvas.translate(
+          tangente.position.dx,
+          tangente.position.dy,
+        );
+        canvas.rotate(tangente.angle);
+        letra.paint(
+          canvas,
+          Offset(-letra.width / 2, -letra.height / 2),
+        );
+        canvas.restore();
+      }
+
+      distancia += letra.width;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

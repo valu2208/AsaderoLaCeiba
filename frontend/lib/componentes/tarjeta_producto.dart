@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/carrito_estado.dart';
@@ -44,22 +43,23 @@ class TarjetaProducto extends StatelessWidget {
                   ),
                 ],
               ),
-              padding: EdgeInsets.fromLTRB(
-                12, altoImagen - 22, 12, 10,
-              ),
+              padding: EdgeInsets.fromLTRB(12, altoImagen - 22, 12, 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     nombre,
                     maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.josefinSans(
                       color: AppColors.goldSand,
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
                     ),
                   ),
-                  const Spacer(),
+
+                  const SizedBox(height: 4),
+
                   Text(
                     precio,
                     style: GoogleFonts.josefinSans(
@@ -67,7 +67,9 @@ class TarjetaProducto extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+
                   const SizedBox(height: 4),
+
                   Row(
                     children: [
                       Expanded(
@@ -76,10 +78,12 @@ class TarjetaProducto extends StatelessWidget {
                           style: TextButton.styleFrom(
                             padding: EdgeInsets.zero,
                             minimumSize: const Size(0, 30),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             alignment: Alignment.centerLeft,
                           ),
                           child: Text(
                             'Más información',
+                            maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.josefinSans(
                               color: AppColors.goldSand,
@@ -88,17 +92,14 @@ class TarjetaProducto extends StatelessWidget {
                           ),
                         ),
                       ),
+
                       ValueListenableBuilder<List<CarritoItem>>(
                         valueListenable: CarritoEstado.items,
                         builder: (context, items, child) {
                           return BotonAgregar(
                             cantidad: CarritoEstado.cantidadDe(nombre),
                             onAgregar: () {
-                              CarritoEstado.agregar(
-                                nombre,
-                                precio,
-                                imagen,
-                              );
+                              CarritoEstado.agregar(nombre, precio, imagen);
                             },
                             onRestar: () {
                               CarritoEstado.restar(nombre);
@@ -111,14 +112,12 @@ class TarjetaProducto extends StatelessWidget {
                 ],
               ),
             ),
+
             Positioned(
               top: 0,
               left: ancho * 0.13,
               right: ancho * 0.13,
-              child: ImagenProducto(
-                imagen: imagen,
-                alto: altoImagen,
-              ),
+              child: ImagenProducto(imagen: imagen, alto: altoImagen),
             ),
           ],
         );
