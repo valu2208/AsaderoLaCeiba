@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:asadero/core/idioma.dart';
 import 'package:asadero/componentes/tarjeta_producto.dart';
@@ -17,8 +16,9 @@ class ListaProductos extends StatelessWidget {
         return LayoutBuilder(
           builder: (context, constraints) {
             const espacio = 12.0;
-            final ancho =
-                ((constraints.maxWidth - espacio) / 2).floorToDouble();
+
+            final ancho = ((constraints.maxWidth - espacio) / 2)
+                .floorToDouble();
 
             return SingleChildScrollView(
               child: Wrap(
@@ -28,7 +28,7 @@ class ListaProductos extends StatelessWidget {
                 children: productos.map((producto) {
                   return SizedBox(
                     width: ancho,
-                    height: ancho / 0.78,
+                    height: ancho / 0.68,
                     child: TarjetaProducto(
                       nombre: producto['nombre']!,
                       precio: producto['precio']!,
