@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:asadero/core/colores.dart';
@@ -19,18 +20,41 @@ class VerificarCorreo extends StatefulWidget {
 }
 
 class _VerificarCorreoState extends State<VerificarCorreo> {
-  final List<TextEditingController> campos = List.generate(
-    6,
-    (_) => TextEditingController(),
-  );
+  final codigoController = TextEditingController();
+  final codigoFoco = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    codigoController.addListener(() => setState(() {}));
+    codigoFoco.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    codigoController.dispose();
+    codigoFoco.dispose();
+    super.dispose();
+  }
+
+  void aviso(String clave) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(texto(clave))));
+  }
+
+  void enfocarCampo() {
+    codigoFoco.requestFocus();
+    codigoController.selection = TextSelection.collapsed(
+      offset: codigoController.text.length,
+    );
+  }
 
   Future<void> verificar() async {
-    final codigo = campos.map((campo) => campo.text).join();
+    final codigo = codigoController.text;
 
     if (codigo.length != 6) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(texto('ingresa_codigo'))));
+      aviso('ingresa_codigo');
       return;
     }
 
@@ -49,29 +73,48 @@ class _VerificarCorreoState extends State<VerificarCorreo> {
           MaterialPageRoute(builder: (_) => const Login()),
         );
       } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(texto('codigo_incorrecto'))));
+        aviso('codigo_incorrecto');
       }
     } catch (e) {
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(texto('error_servidor'))));
+      if (mounted) aviso('error_servidor');
     }
   }
 
-  @override
-  void dispose() {
-    for (final campo in campos) {
-      campo.dispose();
-    }
-    super.dispose();
+  Widget casilla(int index, List<String> digitos) {
+    final estaActiva =
+        codigoFoco.hasFocus && index == digitos.length.clamp(0, 5);
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: enfocarCampo,
+      child: Container(
+        width: 45,
+        height: 65,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: AppColors.goldSand,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: estaActiva ? AppColors.redPrayerFlag : AppColors.earthBrown,
+            width: estaActiva ? 2 : 1,
+          ),
+        ),
+        child: Text(
+          index < digitos.length ? digitos[index] : '',
+          style: const TextStyle(
+            color: AppColors.asphalt,
+            fontSize: 19,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final digitos = codigoController.text.split('');
+
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -114,34 +157,48 @@ class _VerificarCorreoState extends State<VerificarCorreo> {
                   ),
                 ),
                 const SizedBox(height: 45),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: List.generate(
-                    6,
-                    (index) => SizedBox(
-                      width: 45,
-                      height: 50,
-                      child: TextField(
-                        controller: campos[index],
-                        keyboardType: TextInputType.number,
-                        textAlign: TextAlign.center,
-                        maxLength: 1,
-                        style: const TextStyle(
-                          color: AppColors.asphalt,
-                          fontSize: 22,
-                        ),
-                        decoration: InputDecoration(
-                          counterText: '',
-                          filled: true,
-                          fillColor: AppColors.goldSand,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
+
+                // Un solo campo de texto con seis casillas visuales
+                SizedBox(
+                  height: 65,
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: TextField(
+                          controller: codigoController,
+                          focusNode: codigoFoco,
+                          autofocus: true,
+                          enableInteractiveSelection: false,
+                          keyboardType: TextInputType.number,
+                          textInputAction: TextInputAction.done,
+                          textAlign: TextAlign.center,
+                          maxLength: 6,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(6),
+                          ],
+                          style: const TextStyle(
+                            color: Colors.transparent,
+                            fontSize: 1,
+                          ),
+                          cursorColor: Colors.transparent,
+                          showCursor: false,
+                          decoration: const InputDecoration(
+                            counterText: '',
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.zero,
+                            isCollapsed: true,
                           ),
                         ),
                       ),
-                    ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: List.generate(6, (i) => casilla(i, digitos)),
+                      ),
+                    ],
                   ),
                 ),
+
                 const SizedBox(height: 60),
                 BotonPrincipal(
                   texto: texto('verificar_proceder'),
