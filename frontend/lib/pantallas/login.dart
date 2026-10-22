@@ -43,8 +43,6 @@ class _LoginState extends State<Login> {
       SnackBar(content: Text(texto), backgroundColor: AppColors.redPrayerFlag),
     );
   }
-
-  // Ejecuta un login (correo o Google): guarda la sesión y va a la pantalla del rol
   Future<void> _entrar(Future<UserModel> Function() autenticar) async {
     if (cargando) return;
     setState(() => cargando = true);
@@ -80,69 +78,100 @@ class _LoginState extends State<Login> {
     return Scaffold(
       backgroundColor: AppColors.asphalt,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              const BarraNavegacion(),
-              const SizedBox(height: 20),
-              const Icon(Icons.account_circle, color: AppColors.goldSand, size: 100),
-              const SizedBox(height: 5),
-              Text(
-                texto('iniciar_sesion_titulo'),
-                style: GoogleFonts.kronaOne(color: AppColors.goldSand, fontSize: 30),
-              ),
-              const SizedBox(height: 30),
-              CampoTexto(
-                texto: texto('nombre'),
-                icono: Icons.person,
-                controller: nombreController,
-              ),
-              const SizedBox(height: 20),
-              CampoTexto(
-                texto: texto('correo_electronico'),
-                icono: Icons.email,
-                teclado: TextInputType.emailAddress,
-                controller: correoController,
-              ),
-              const SizedBox(height: 20),
-              CampoTexto(
-                texto: texto('contrasena'),
-                icono: Icons.lock,
-                ocultar: !mostrar,
-                onPressed: () => setState(() => mostrar = !mostrar),
-                controller: contrasenaController,
-              ),
-              FilaRecordar(
-                recordar: recordar,
-                onCambio: (v) => setState(() => recordar = v),
-                onOlvido: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const RecuperarContrasena()),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        const BarraNavegacion(),
+                        const SizedBox(height: 20),
+                        const Icon(
+                          Icons.account_circle,
+                          color: AppColors.goldSand,
+                          size: 100,
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          texto('iniciar_sesion_titulo'),
+                          style: GoogleFonts.kronaOne(
+                            color: AppColors.goldSand,
+                            fontSize: 30,
+                          ),
+                        ),
+                        const SizedBox(height: 30),
+                        CampoTexto(
+                          texto: texto('nombre'),
+                          icono: Icons.person,
+                          controller: nombreController,
+                        ),
+                        const SizedBox(height: 20),
+                        CampoTexto(
+                          texto: texto('correo_electronico'),
+                          icono: Icons.email,
+                          teclado: TextInputType.emailAddress,
+                          controller: correoController,
+                        ),
+                        const SizedBox(height: 20),
+                        CampoTexto(
+                          texto: texto('contrasena'),
+                          icono: Icons.lock,
+                          ocultar: !mostrar,
+                          onPressed: () => setState(() => mostrar = !mostrar),
+                          controller: contrasenaController,
+                        ),
+                        FilaRecordar(
+                          recordar: recordar,
+                          onCambio: (v) => setState(() => recordar = v),
+                          onOlvido: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const RecuperarContrasena(),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 28),
+                        BotonPrincipal(
+                          texto: cargando
+                              ? '...'
+                              : texto('iniciar_sesion_titulo'),
+                          onPressed: iniciarSesion,
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const Registro()),
+                          ),
+                          child: Text(
+                            texto('no_tienes_cuenta'),
+                            style: const TextStyle(
+                              color: AppColors.goldSand,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        const SizedBox(height: 20),
+                        const SeparadorContinuar(),
+                        IconButton(
+                          onPressed: iniciarSesionGoogle,
+                          icon: const Icon(
+                            Icons.g_mobiledata,
+                            color: AppColors.goldSand,
+                            size: 50,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(height: 28),
-              BotonPrincipal(
-                texto: cargando ? '...' : texto('iniciar_sesion_titulo'),
-                onPressed: iniciarSesion,
-              ),
-              TextButton(
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const Registro()),
-                ),
-                child: Text(
-                  texto('no_tienes_cuenta'),
-                  style: const TextStyle(color: AppColors.goldSand, fontSize: 16),
-                ),
-              ),
-              const SeparadorContinuar(),
-              IconButton(
-                onPressed: iniciarSesionGoogle,
-                icon: const Icon(Icons.g_mobiledata, color: AppColors.goldSand, size: 50),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
