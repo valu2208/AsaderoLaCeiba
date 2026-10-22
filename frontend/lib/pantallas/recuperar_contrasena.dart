@@ -23,7 +23,7 @@ class _RecuperarContrasenaState extends State<RecuperarContrasena> {
   Future<void> recuperar() async {
     try {
       final respuesta = await http.post(
-        Uri.parse('http://10.0.2.2:3000/recuperar/solicitar'),
+        Uri.parse('http://localhost:3000/recuperar/solicitar'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': correo.text.trim()}),
       );
@@ -98,3 +98,4 @@ class _RecuperarContrasenaState extends State<RecuperarContrasena> {
     );
   }
 }
+

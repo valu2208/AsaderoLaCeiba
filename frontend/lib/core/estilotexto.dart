@@ -4,3 +4,4 @@ class Estilotexto {
   static TextStyle  estilosLetra =  TextStyle(color: Colors.white, fontSize: 18);
   
 }
+

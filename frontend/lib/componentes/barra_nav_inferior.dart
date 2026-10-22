@@ -126,3 +126,4 @@ class BarraNavegacionInferior extends StatelessWidget {
     );
   }
 }
+

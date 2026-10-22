@@ -60,7 +60,7 @@ class _VerificarCorreoState extends State<VerificarCorreo> {
 
     try {
       final respuesta = await http.post(
-        Uri.parse('http://10.0.2.2:3000/usuarios/verificar'),
+        Uri.parse('http://localhost:3000/usuarios/verificar'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': widget.email, 'codigo': codigo}),
       );
@@ -217,3 +217,4 @@ class _VerificarCorreoState extends State<VerificarCorreo> {
     );
   }
 }
+

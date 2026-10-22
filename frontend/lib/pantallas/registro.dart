@@ -50,7 +50,7 @@ class _RegistroState extends State<Registro> {
 
     try {
       final respuesta = await http.post(
-        Uri.parse('http://10.0.2.2:3000/usuarios'),
+        Uri.parse('http://localhost:3000/usuarios'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'nombre': nombre.text.trim(),
@@ -93,7 +93,7 @@ class _RegistroState extends State<Registro> {
       if (idToken == null) return;
 
       final respuesta = await http.post(
-        Uri.parse('http://10.0.2.2:3000/auth/google'),
+        Uri.parse('http://localhost:3000/auth/google'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'idToken': idToken}),
       );
@@ -215,3 +215,4 @@ class _RegistroState extends State<Registro> {
     );
   }
 }
+
