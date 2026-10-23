@@ -57,14 +57,18 @@ export const registrarUsuario = async (req, res) => {
             });
         }
 
-        await enviarCodigoVerificacion(
+        const resultadoCorreo = await enviarCodigoVerificacion(
             email,
             nombre,
             codigoVerificacion
         );
+        const correoEnviado = Boolean(resultadoCorreo.exito);
 
         return res.status(201).json({
-            message: 'Usuario creado exitosamente. Se envió un código de verificación al correo.',
+            message: correoEnviado
+                ? 'Usuario creado exitosamente. Se envió un código de verificación al correo.'
+                : 'Usuario creado, pero no se pudo enviar el código. Usa la opción de reenviar código.',
+                correoEnviado,
             usuario: {
                 id: data.id,
                 nombre: data.nombre,
