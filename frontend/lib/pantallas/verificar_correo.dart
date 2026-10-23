@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/traducciones.dart';
+import 'package:asadero/services/api_config.dart';
 import 'package:asadero/componentes/barra_navegacion.dart';
 import 'package:asadero/componentes/boton_principal.dart';
 import 'package:asadero/pantallas/login.dart';
@@ -22,6 +24,10 @@ class _VerificarCorreoState extends State<VerificarCorreo> {
   final codigoController = TextEditingController();
   final codigoFoco = FocusNode();
 
+  int segundos = 0;
+  bool reenviando = false;
+  Timer? temporizador;
+
   @override
   void initState() {
     super.initState();
@@ -31,6 +37,7 @@ class _VerificarCorreoState extends State<VerificarCorreo> {
 
   @override
   void dispose() {
+    temporizador?.cancel();
     codigoController.dispose();
     codigoFoco.dispose();
     super.dispose();
@@ -49,6 +56,50 @@ class _VerificarCorreoState extends State<VerificarCorreo> {
     );
   }
 
+  void iniciarEspera() {
+    setState(() => segundos = 30);
+    temporizador?.cancel();
+    temporizador = Timer.periodic(const Duration(seconds: 1), (t) {
+      if (!mounted) {
+        t.cancel();
+        return;
+      }
+      if (segundos <= 1) {
+        t.cancel();
+        setState(() => segundos = 0);
+      } else {
+        setState(() => segundos--);
+      }
+    });
+  }
+
+  Future<void> reenviar() async {
+    if (segundos > 0 || reenviando) return;
+    setState(() => reenviando = true);
+
+    try {
+
+      final respuesta = await http.post(
+        Uri.parse('${ApiConfig.baseUrl}/usuarios/reenviar-codigo'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': widget.email}),
+      );
+
+      if (!mounted) return;
+
+      if (respuesta.statusCode == 200) {
+        aviso('codigo_reenviado');
+        iniciarEspera();
+      } else {
+        aviso('no_se_pudo_enviar');
+      }
+    } catch (e) {
+      if (mounted) aviso('error_servidor');
+    } finally {
+      if (mounted) setState(() => reenviando = false);
+    }
+  }
+
   Future<void> verificar() async {
     final codigo = codigoController.text;
 
@@ -59,7 +110,7 @@ class _VerificarCorreoState extends State<VerificarCorreo> {
 
     try {
       final respuesta = await http.post(
-        Uri.parse('http://localhost:3000/usuarios/verificar'),
+        Uri.parse('${ApiConfig.baseUrl}/usuarios/verificar'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': widget.email, 'codigo': codigo}),
       );
@@ -156,8 +207,6 @@ class _VerificarCorreoState extends State<VerificarCorreo> {
                   ),
                 ),
                 const SizedBox(height: 45),
-
-                // Un solo campo de texto con seis casillas visuales
                 SizedBox(
                   height: 65,
                   child: Stack(
@@ -205,8 +254,10 @@ class _VerificarCorreoState extends State<VerificarCorreo> {
                 ),
                 const SizedBox(height: 20),
                 BotonPrincipal(
-                  texto: texto('reenviar_codigo'),
-                  onPressed: () {},
+                  texto: segundos > 0
+                      ? '${texto('reenviar_codigo')} (${segundos}s)'
+                      : texto('reenviar_codigo'),
+                  onPressed: reenviar,
                 ),
               ],
             ),

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -10,10 +9,10 @@ import 'package:asadero/componentes/barra_navegacion.dart';
 import 'package:asadero/componentes/campo_texto.dart';
 import 'package:asadero/componentes/boton_principal.dart';
 import 'package:asadero/pantallas/verificar_correo.dart';
+import 'package:asadero/services/api_config.dart';
 
 class Registro extends StatefulWidget {
   const Registro({super.key});
-
   @override
   State<Registro> createState() => _RegistroState();
 }
@@ -50,7 +49,7 @@ class _RegistroState extends State<Registro> {
 
     try {
       final respuesta = await http.post(
-        Uri.parse('http://localhost:3000/usuarios'),
+        Uri.parse('${ApiConfig.baseUrl}/usuarios'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'nombre': nombre.text.trim(),
@@ -93,7 +92,7 @@ class _RegistroState extends State<Registro> {
       if (idToken == null) return;
 
       final respuesta = await http.post(
-        Uri.parse('http://localhost:3000/auth/google'),
+        Uri.parse('${ApiConfig.baseUrl}/auth/google'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'idToken': idToken}),
       );
@@ -215,4 +214,3 @@ class _RegistroState extends State<Registro> {
     );
   }
 }
-

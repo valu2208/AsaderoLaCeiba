@@ -110,9 +110,10 @@ export const enviarCodigoVerificacion = async (
         };
 
     } catch (error) { 
+        console.error('Error enviado correo (brevo):', error.message);
         return {
             exito: false,
-            error
+            error: error.message
         };
-    }
+}
 };

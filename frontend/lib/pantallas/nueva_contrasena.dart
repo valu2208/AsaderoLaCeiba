@@ -9,6 +9,7 @@ import 'package:asadero/componentes/barra_navegacion.dart';
 import 'package:asadero/componentes/campo_texto.dart';
 import 'package:asadero/componentes/boton_principal.dart';
 import 'package:asadero/pantallas/login.dart';
+import 'package:asadero/services/api_config.dart';
 
 class NuevaContrasena extends StatefulWidget {
   final String email;
@@ -36,7 +37,7 @@ class _NuevaContrasenaState extends State<NuevaContrasena> {
 
     try {
       final respuesta = await http.post(
-        Uri.parse('http://localhost:3000/recuperar/restablecer'),
+        Uri.parse('${ApiConfig.baseUrl}/recuperar/restablecer'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': widget.email,
@@ -164,4 +165,3 @@ class _NuevaContrasenaState extends State<NuevaContrasena> {
     );
   }
 }
-

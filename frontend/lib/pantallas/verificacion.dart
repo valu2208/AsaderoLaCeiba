@@ -1,8 +1,12 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/traducciones.dart';
+import 'package:asadero/services/api_config.dart';
 import 'package:asadero/componentes/barra_navegacion.dart';
 import 'package:asadero/componentes/boton_principal.dart';
 import 'package:asadero/pantallas/nueva_contrasena.dart';
@@ -20,6 +24,10 @@ class _VerificacionState extends State<Verificacion> {
   final codigoController = TextEditingController();
   final codigoFoco = FocusNode();
 
+  int segundos = 0;
+  bool reenviando = false;
+  Timer? temporizador;
+
   @override
   void initState() {
     super.initState();
@@ -29,12 +37,17 @@ class _VerificacionState extends State<Verificacion> {
 
   @override
   void dispose() {
+    temporizador?.cancel();
     codigoController.dispose();
     codigoFoco.dispose();
     super.dispose();
   }
 
-  // Cursor siempre al final para que el borrado funcione normal
+  void aviso(String clave) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(texto(clave))));
+  }
   void enfocarCampo() {
     codigoFoco.requestFocus();
     codigoController.selection = TextSelection.collapsed(
@@ -42,13 +55,54 @@ class _VerificacionState extends State<Verificacion> {
     );
   }
 
+  void iniciarEspera() {
+    setState(() => segundos = 30);
+    temporizador?.cancel();
+    temporizador = Timer.periodic(const Duration(seconds: 1), (t) {
+      if (!mounted) {
+        t.cancel();
+        return;
+      }
+      if (segundos <= 1) {
+        t.cancel();
+        setState(() => segundos = 0);
+      } else {
+        setState(() => segundos--);
+      }
+    });
+  }
+
+  Future<void> reenviar() async {
+    if (segundos > 0 || reenviando) return;
+    setState(() => reenviando = true);
+
+    try {
+      final respuesta = await http.post(
+        Uri.parse('${ApiConfig.baseUrl}/recuperar/solicitar'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': widget.email}),
+      );
+
+      if (!mounted) return;
+
+      if (respuesta.statusCode == 200) {
+        aviso('codigo_reenviado');
+        iniciarEspera();
+      } else {
+        aviso('no_se_pudo_enviar');
+      }
+    } catch (e) {
+      if (mounted) aviso('error_servidor');
+    } finally {
+      if (mounted) setState(() => reenviando = false);
+    }
+  }
+
   void verificar() {
     final codigo = codigoController.text;
 
     if (codigo.length != 6) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(texto('ingresa_codigo'))));
+      aviso('ingresa_codigo');
       return;
     }
 
@@ -137,8 +191,6 @@ class _VerificacionState extends State<Verificacion> {
                   ),
                 ),
                 const SizedBox(height: 30),
-
-                // Un solo campo de texto con seis casillas visuales
                 SizedBox(
                   height: 55,
                   child: Stack(
@@ -186,8 +238,10 @@ class _VerificacionState extends State<Verificacion> {
                 ),
                 const SizedBox(height: 15),
                 BotonPrincipal(
-                  texto: texto('reenviar_codigo'),
-                  onPressed: () {},
+                  texto: segundos > 0
+                      ? '${texto('reenviar_codigo')} (${segundos}s)'
+                      : texto('reenviar_codigo'),
+                  onPressed: reenviar,
                 ),
               ],
             ),

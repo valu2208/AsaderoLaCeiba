@@ -14,7 +14,8 @@ String texto(String clave) {
 
 final Map<String, String> espanol = {
   'haz_click_aqui': 'Haz click aquí!',
-  'tu_proxima_gran_idea': '¡Ven y disfruta el auténtico sabor de Asadero La Ceiba!🍗',
+  'tu_proxima_gran_idea':
+      '¡Ven y disfruta el auténtico sabor de Asadero La Ceiba!🍗',
   'mensaje_inicio':
       'Crea tu cuenta en 30 segundos y descubre todo lo que tenemos para ti',
   'comenzar': 'Comenzar ahora',
@@ -47,6 +48,7 @@ final Map<String, String> espanol = {
   'ingresa_codigo': 'Ingresa el código de verificación',
   'verificar_proceder': 'Verificar y Proceder',
   'reenviar_codigo': 'Reenviar código',
+  'codigo_reenviado': 'Código reenviado, revisa tu correo',
   'codigo_incorrecto': 'Código incorrecto',
   'recuperar_contrasena': 'Recuperar Contraseña',
   'no_se_pudo_enviar': 'No se pudo enviar el código',
@@ -79,7 +81,8 @@ final Map<String, String> espanol = {
 
 final Map<String, String> ingles = {
   'haz_click_aqui': 'Click here!',
-  'tu_proxima_gran_idea': 'Come and enjoy the authentic flavor of Asadero La Ceiba!🍗',
+  'tu_proxima_gran_idea':
+      'Come and enjoy the authentic flavor of Asadero La Ceiba!🍗',
   'mensaje_inicio':
       'Create your account in 30 seconds and discover everything we have for you',
   'comenzar': 'Get started',
@@ -112,6 +115,7 @@ final Map<String, String> ingles = {
   'ingresa_codigo': 'Enter the verification code',
   'verificar_proceder': 'Verify and Continue',
   'reenviar_codigo': 'Resend code',
+  'codigo_reenviado': 'Code resent, check your email',
   'codigo_incorrecto': 'Incorrect code',
   'recuperar_contrasena': 'Recover Password',
   'no_se_pudo_enviar': 'The code could not be sent',
@@ -144,7 +148,8 @@ final Map<String, String> ingles = {
 
 final Map<String, String> portugues = {
   'haz_click_aqui': 'Clique aqui!',
-  'tu_proxima_gran_idea': 'Venha e desfrute do autêntico sabor do Asadero La Ceiba!🍗',
+  'tu_proxima_gran_idea':
+      'Venha e desfrute do autêntico sabor do Asadero La Ceiba!🍗',
   'mensaje_inicio':
       'Crie sua conta em 30 segundos e descubra tudo o que temos para você',
   'comenzar': 'Começar agora',
@@ -177,6 +182,7 @@ final Map<String, String> portugues = {
   'ingresa_codigo': 'Digite o código de verificação',
   'verificar_proceder': 'Verificar e Continuar',
   'reenviar_codigo': 'Reenviar código',
+  'codigo_reenviado': 'Código reenviado, verifique seu e-mail',
   'codigo_incorrecto': 'Código incorreto',
   'recuperar_contrasena': 'Recuperar Senha',
   'no_se_pudo_enviar': 'Não foi possível enviar o código',
@@ -204,6 +210,6 @@ final Map<String, String> portugues = {
   'cantidad': 'Quantidade',
   'eliminar_producto': 'Remover produto',
   'realizar_pedido': 'Fazer pedido',
-  'descripcion_generica': 'Um produto delicioso preparado especialmente para você.',
+  'descripcion_generica':
+      'Um produto delicioso preparado especialmente para você.',
 };
-

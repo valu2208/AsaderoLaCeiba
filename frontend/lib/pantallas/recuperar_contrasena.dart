@@ -9,6 +9,7 @@ import 'package:asadero/componentes/barra_navegacion.dart';
 import 'package:asadero/componentes/campo_texto.dart';
 import 'package:asadero/componentes/boton_principal.dart';
 import 'package:asadero/pantallas/verificacion.dart';
+import 'package:asadero/services/api_config.dart';
 
 class RecuperarContrasena extends StatefulWidget {
   const RecuperarContrasena({super.key});
@@ -23,7 +24,7 @@ class _RecuperarContrasenaState extends State<RecuperarContrasena> {
   Future<void> recuperar() async {
     try {
       final respuesta = await http.post(
-        Uri.parse('http://localhost:3000/recuperar/solicitar'),
+        Uri.parse('${ApiConfig.baseUrl}/recuperar/solicitar'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': correo.text.trim()}),
       );
@@ -98,4 +99,3 @@ class _RecuperarContrasenaState extends State<RecuperarContrasena> {
     );
   }
 }
-
