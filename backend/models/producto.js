@@ -9,10 +9,29 @@ export const obtenerTodos = async () => {
     return { data, error };
 };
 
-export const obtenerTodosAdmin = async () => {
+// Lista para el admin (activos e inactivos). Filtros opcionales:
+//   masPedido: true -> solo "lo más pedido" | false -> solo los del menú
+//   categoria: 'desayuno' | 'almuerzo' | 'fin_de_semana' | 'gaseosas'
+//   dia: 'lunes' ... 'domingo' (platos que se sirven ese día)
+export const obtenerTodosAdmin = async ({ masPedido, categoria, dia } = {}) => {
+    let consulta = supabase.from('productos').select('*');
+
+    if (masPedido !== undefined) consulta = consulta.eq('mas_pedido', masPedido);
+    if (categoria) consulta = consulta.eq('categoria', categoria);
+    if (dia) consulta = consulta.contains('dias', [dia]);
+
+    const { data, error } = await consulta.order('nombre');
+
+    return { data, error };
+};
+
+// Lo que ve el cliente en el Home: activos marcados como más pedidos
+export const obtenerMasPedidos = async () => {
     const { data, error } = await supabase
         .from('productos')
-        .select('*');
+        .select('*')
+        .eq('activo', true)
+        .eq('mas_pedido', true);
 
     return { data, error };
 };
@@ -27,12 +46,19 @@ export const obtenerPorId = async (id) => {
     return { data, error };
 };
 
-export const obtenerPorCategoria = async (categoria) => {
-    const { data, error } = await supabase
+// Platos del MENÚ activos de una categoría (los "más pedidos" no entran).
+// Si llega 'dia' solo trae los de ese día
+export const obtenerPorCategoria = async (categoria, dia) => {
+    let consulta = supabase
         .from('productos')
         .select('*')
         .eq('categoria', categoria)
+        .eq('mas_pedido', false)
         .eq('activo', true);
+
+    if (dia) consulta = consulta.contains('dias', [dia]);
+
+    const { data, error } = await consulta;
 
     return { data, error };
 };

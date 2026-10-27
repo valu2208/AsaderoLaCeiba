@@ -27,6 +27,12 @@ app.get('/', (req, res) => {
     });
 });
 
+//Montando las rutas Apis
+app.get('/health', (req, res) => {
+    res.status(200).send('OK');
+});
+
+
 app.use('/productos', productoRouter);
 app.use('/api', pedidoRouter);
 app.use('/usuarios', userRouter);

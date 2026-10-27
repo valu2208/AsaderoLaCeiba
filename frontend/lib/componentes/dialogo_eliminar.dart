@@ -31,3 +31,32 @@ Future<bool> confirmarEliminacion(
 
   return resultado == true;
 }
+
+// Borrar para siempre (falla si el producto ya tiene pedidos)
+Future<bool> confirmarEliminacionDefinitiva(
+  BuildContext context,
+  String nombre,
+) async {
+  final resultado = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Eliminar definitivamente'),
+      content: Text(
+        '¿Eliminar "$nombre" permanentemente? '
+        'Si tiene pedidos asociados, no podrá borrarse.',
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: const Text('Cancelar'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(context, true),
+          child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+        ),
+      ],
+    ),
+  );
+
+  return resultado == true;
+}

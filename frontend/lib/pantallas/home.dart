@@ -7,6 +7,7 @@ import 'package:asadero/componentes/carta_productos.dart';
 import 'package:asadero/componentes/barra_nav_inferior.dart';
 import 'package:asadero/pantallas/historial.dart';
 import 'package:asadero/pantallas/carrito.dart';
+import 'package:asadero/pantallas/productos.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -24,7 +25,12 @@ class Home extends StatelessWidget {
       floatingActionButton: const BurbujaAsistente(),
       bottomNavigationBar: BarraNavegacionInferior(
         onTap: (indice) {
-          if (indice == 3) {
+          if (indice == 2) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const Productos()),
+            );
+          } else if (indice == 3) {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const Historial()),
@@ -71,4 +77,3 @@ class Home extends StatelessWidget {
     );
   }
 }
-

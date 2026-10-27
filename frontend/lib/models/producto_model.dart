@@ -5,6 +5,9 @@ class ProductoModel {
   final String descripcion;
   final String? imagenUrl;
   final bool activo;
+  final String categoria; // desayuno, almuerzo, fin_de_semana, gaseosas
+  final bool masPedido; // aparece en "Lo más pedido"
+  final List<String> dias; // días en que se sirve: lunes, martes, ...
 
   ProductoModel({
     required this.id,
@@ -13,6 +16,9 @@ class ProductoModel {
     required this.descripcion,
     this.imagenUrl,
     this.activo = true,
+    this.categoria = '',
+    this.masPedido = false,
+    this.dias = const [],
   });
 
   factory ProductoModel.fromJson(Map<String, dynamic> json) {
@@ -25,6 +31,9 @@ class ProductoModel {
           json['imagen_url'] ??
           json['imagen'],
       activo: json['activo'] as bool? ?? true,
+      categoria: json['categoria']?.toString() ?? '',
+      masPedido: json['mas_pedido'] as bool? ?? false,
+      dias: (json['dias'] as List?)?.map((d) => d.toString()).toList() ?? [],
     );
   }
 
@@ -35,6 +44,9 @@ class ProductoModel {
       'precio': precio,
       'descripcion': descripcion,
       'activo': activo,
+      'categoria': categoria,
+      'mas_pedido': masPedido,
+      'dias': dias,
       if (imagenUrl != null) 'imagenUrl': imagenUrl,
     };
   }

@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/navegacion_rol.dart';
+import 'package:asadero/pantallas/admin_menu_page.dart';
 import 'package:asadero/pantallas/admin_product_list_page.dart';
 import 'package:asadero/pantallas/admin_usuarios_page.dart';
 import 'package:asadero/pantallas/home.dart';
 
 class AdminDrawer extends StatefulWidget {
-  final String actual; // pantalla abierta: 'productos' o 'usuarios'
+  final String actual; // pantalla abierta: 'productos', 'menu' o 'usuarios'
 
   const AdminDrawer({super.key, this.actual = 'productos'});
 
@@ -39,7 +40,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
   Widget _opcion(IconData icono, String titulo, String clave, Widget pagina) {
     final seleccionada = widget.actual == clave;
     return ListTile(
-      leading: Icon(icono, color: seleccionada ? AppColors.redPrayerFlag : null),
+      leading: Icon(icono),
       title: Text(titulo),
       selected: seleccionada,
       onTap: () {
@@ -71,9 +72,15 @@ class _AdminDrawerState extends State<AdminDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
+      backgroundColor: AppColors.goldSand,
+      child: ListTileTheme(
+        iconColor: AppColors.earthBrown,
+        textColor: AppColors.asphalt,
+        selectedColor: AppColors.redPrayerFlag,
+        selectedTileColor: AppColors.redPrayerFlag.withValues(alpha: 0.12),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
           UserAccountsDrawerHeader(
             accountName: Text(
               _nombre,
@@ -92,6 +99,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
           ),
           _opcion(Icons.fastfood, 'Gestionar Productos', 'productos',
               const AdminProductListPage()),
+          _opcion(Icons.restaurant_menu, 'Menú', 'menu', const AdminMenuPage()),
           _opcion(Icons.people, 'Usuarios y roles', 'usuarios',
               const AdminUsuariosPage()),
           ListTile(
@@ -114,7 +122,8 @@ class _AdminDrawerState extends State<AdminDrawer> {
             ),
             onTap: () => cerrarSesionYSalir(context),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

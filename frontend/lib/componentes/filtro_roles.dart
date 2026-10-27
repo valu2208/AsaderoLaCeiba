@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/roles.dart';
 
 // Fila de botones para filtrar la lista de usuarios por rol (null = todos)
@@ -18,6 +19,12 @@ class FiltroRoles extends StatelessWidget {
       child: ChoiceChip(
         label: Text(titulo),
         selected: seleccionado == valor,
+        selectedColor: AppColors.redPrayerFlag,
+        backgroundColor: AppColors.goldSand,
+        checkmarkColor: AppColors.goldSand,
+        labelStyle: TextStyle(
+          color: seleccionado == valor ? AppColors.goldSand : AppColors.earthBrown,
+        ),
         onSelected: (_) => onCambio(valor),
       ),
     );
