@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/colores.dart';
@@ -9,6 +8,7 @@ import 'package:asadero/componentes/barra_nav_inferior.dart';
 import 'package:asadero/pantallas/historial.dart';
 import 'package:asadero/pantallas/carrito.dart';
 import 'package:asadero/pantallas/perfil.dart';
+import 'package:asadero/pantallas/productos.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -48,6 +48,11 @@ class _HomeState extends State<Home> {
         onTap: (indice) {
           if (indice == 1) {
             _abrirPerfil();
+          } else if (indice == 2) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const Productos()),
+            );
           } else if (indice == 3) {
             Navigator.push(
               context,
@@ -91,11 +96,7 @@ class _HomeState extends State<Home> {
   Widget _titulo() {
     return Text(
       '¡Lo más pedido!',
-      style: GoogleFonts.kronaOne(
-        color: AppColors.earthBrown,
-        fontSize: 22,
-      ),
+      style: GoogleFonts.kronaOne(color: AppColors.earthBrown, fontSize: 22),
     );
   }
 }
-

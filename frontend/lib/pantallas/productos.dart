@@ -1,103 +1,136 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/colores.dart';
-import 'package:asadero/pantallas/detalle_producto.dart';
+import 'package:asadero/core/idioma.dart';
+import 'package:asadero/core/traducciones.dart';
+import 'package:asadero/componentes/barra_nav_inferior.dart';
+import 'package:asadero/componentes/burbuja_asistente.dart';
+import 'package:asadero/componentes/fondo_degradado.dart';
+import 'package:asadero/componentes/tarjeta_opcion_menu.dart';
+import 'package:asadero/pantallas/carrito.dart';
+import 'package:asadero/pantallas/historial.dart';
+import 'package:asadero/pantallas/home.dart';
+import 'package:asadero/pantallas/menu_categoria.dart';
 
+// Pantalla Menú (botón del centro de la barra): las opciones de la carta
 class Productos extends StatelessWidget {
   const Productos({super.key});
 
-  final productos = const [
-    ['Pollo Asado', '30000', Icons.restaurant],
-    ['Bandeja Paisa', '25000', Icons.lunch_dining],
-    ['Huevos con Salchicha', '12000', Icons.egg],
-    ['Crema de Auyama', '10000', Icons.soup_kitchen],
-    ['Jugo de Mora', '7000', Icons.local_drink],
-    ['Lentejas', '12000', Icons.ramen_dining],
+  // 'categoria' es el mismo texto que se guarda en la base de datos.
+  // 'porDia': true = el cliente solo ve los platos de hoy (lo que subió el admin para hoy)
+  static const List<Map<String, dynamic>> _opciones = [
+    {
+      'titulo': 'Desayuno',
+      'categoria': 'desayuno',
+      'imagen': 'assets/imagenes/menu_desayuno.jpg',
+      'color': AppColors.redPrayerFlag,
+      'porDia': true,
+      'descripcion': 'Huevos, caldos y bebidas para empezar el día',
+      'icono': Icons.free_breakfast,
+    },
+    {
+      'titulo': 'Almuerzo',
+      'categoria': 'almuerzo',
+      'imagen': 'assets/imagenes/menu_almuerzo.jpg',
+      'color': AppColors.demonicPresence,
+      'porDia': true,
+      'descripcion': 'Platos fuertes y sopas del día',
+      'icono': Icons.lunch_dining,
+    },
+    {
+      'titulo': 'Gaseosas',
+      'categoria': 'gaseosas',
+      'imagen': 'assets/imagenes/menu_gaseosas.jpg',
+      'color': AppColors.earthBrown,
+      'porDia': false,
+      'descripcion': 'Gaseosas y bebidas frías',
+      'icono': Icons.local_drink,
+    },
+    {
+      'titulo': 'Fin de semana',
+      'categoria': 'fin_de_semana',
+      'imagen': 'assets/imagenes/menu_fin_de_semana.jpg',
+      'color': AppColors.asphalt,
+      'porDia': false,
+      'descripcion': 'Especiales de sábado y domingo',
+      'icono': Icons.celebration,
+    },
   ];
+
+  void _ir(BuildContext context, Widget pantalla) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => pantalla),
+    );
+  }
+
+  // Flecha de volver: regresa al Home
+  void _volver(BuildContext context) {
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    } else {
+      _ir(context, const Home());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.asphalt,
-
-      appBar: AppBar(
-        backgroundColor: AppColors.earthBrown,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: AppColors.goldSand,
+    return ValueListenableBuilder<String>(
+      valueListenable: Idioma.seleccionado,
+      builder: (context, idioma, child) {
+        return Scaffold(
+          backgroundColor: AppColors.goldSand,
+          appBar: AppBar(
+            backgroundColor: AppColors.asphalt,
+            foregroundColor: AppColors.goldSand,
+            title: Text(texto('menu'), style: GoogleFonts.kronaOne(fontSize: 18)),
+            centerTitle: true,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => _volver(context),
+            ),
           ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: const Text(
-          'Menú',
-          style: TextStyle(
-            color: AppColors.goldSand,
-          ),
-        ),
-        centerTitle: true,
-      ),
-
-      body: GridView.builder(
-        padding: const EdgeInsets.all(15),
-        itemCount: productos.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-        ),
-        itemBuilder: (context, index) {
-          return Card(
-            color: AppColors.fondoComponentes,
-            child: InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DetalleProducto(
-                      nombre: productos[index][0] as String,
-                      precio: productos[index][1] as String,
-                      icono: productos[index][2] as IconData,
-                    ),
-                  ),
-                );
-              },
+          body: FondoDegradado(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 90),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    productos[index][2] as IconData,
-                    size: 55,
-                    color: AppColors.goldSand,
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  Text(
-                    productos[index][0] as String,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: AppColors.goldSand,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                  // Cada opción ocupa la misma parte de la pantalla
+                  for (final opcion in _opciones)
+                    Expanded(
+                      child: TarjetaOpcionMenu(
+                        titulo: opcion['titulo'] as String,
+                        descripcion: opcion['descripcion'] as String,
+                        imagen: opcion['imagen'] as String,
+                        icono: opcion['icono'] as IconData,
+                        color: opcion['color'] as Color,
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => MenuCategoria(
+                              titulo: opcion['titulo'] as String,
+                              categoria: opcion['categoria'] as String,
+                              porDia: opcion['porDia'] as bool,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-
-                  const SizedBox(height: 5),
-
-                  Text(
-                    '\$${productos[index][1]}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
                 ],
               ),
             ),
-          );
-        },
-      ),
+          ),
+          floatingActionButton: const BurbujaAsistente(),
+          bottomNavigationBar: BarraNavegacionInferior(
+            indiceActual: 2,
+            onTap: (indice) {
+              if (indice == 0) _ir(context, const Home());
+              if (indice == 3) _ir(context, const Historial());
+              if (indice == 4) _ir(context, const Carrito());
+            },
+          ),
+        );
+      },
     );
   }
 }

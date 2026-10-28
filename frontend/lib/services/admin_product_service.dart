@@ -7,37 +7,54 @@ import 'api_config.dart';
 import 'user_service.dart';
 
 class AdminProductService {
-  // Obtener todos los productos, activos e inactivos
-  Future<List<ProductoModel>> obtenerProductos() async {
+  // Cabeceras con el token del administrador
+  Future<Map<String, String>> _cabeceras() async {
     final token = await UserService.getToken();
+    return {
+      ...ApiConfig.headers,
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+  }
 
-    final url = Uri.parse(
-      '${ApiConfig.baseUrl}/productos/admin/todos',
-    );
-
+  // Saca el mensaje de error que manda el backend
+  String _mensajeError(http.Response respuesta, String porDefecto) {
     try {
-      final response = await http.get(
-        url,
-        headers: {
-          ...ApiConfig.headers,
-          if (token != null) 'Authorization': 'Bearer $token',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-
-        return data
-            .map((json) => ProductoModel.fromJson(json))
-            .toList();
-      }
-
-      throw Exception(
-        'Error al cargar los productos: ${response.body}',
-      );
-    } catch (e) {
-      throw Exception('Error de conexión: $e');
+      return jsonDecode(respuesta.body)['error'] ?? porDefecto;
+    } catch (_) {
+      return porDefecto;
     }
+  }
+
+  // Productos activos e inactivos. Filtros opcionales:
+  //   masPedido: true -> solo "Lo más pedido" | false -> solo el menú
+  //   categoria: 'desayuno', 'almuerzo', 'fin_de_semana' o 'gaseosas'
+  //   dia: 'lunes' ... 'domingo'
+  Future<List<ProductoModel>> obtenerProductos({
+    bool? masPedido,
+    String? categoria,
+    String? dia,
+  }) async {
+    final filtros = <String, String>{
+      if (masPedido != null) 'mas_pedido': masPedido.toString(),
+      if (categoria != null) 'categoria': categoria,
+      if (dia != null) 'dia': dia,
+    };
+    final url = Uri.parse('${ApiConfig.baseUrl}/productos/admin/todos')
+        .replace(queryParameters: filtros.isEmpty ? null : filtros);
+
+    final http.Response response;
+    try {
+      response = await http.get(url, headers: await _cabeceras());
+    } catch (_) {
+      throw Exception('No se pudo conectar con el servidor');
+    }
+
+    if (response.statusCode != 200) {
+      throw Exception(_mensajeError(response, 'Error al cargar los productos'));
+    }
+
+    final List<dynamic> data = jsonDecode(response.body);
+    return data.map((json) => ProductoModel.fromJson(json)).toList();
   }
 
   // Preparar la imagen para Cloudinary
@@ -61,130 +78,65 @@ class AdminProductService {
     );
   }
 
-  // Crear o editar un producto
+  // Crear o editar un producto.
+  // categoria / masPedido / dias: si van null no se envían (se conserva lo guardado)
   Future<void> guardarProducto({
     String? id,
     required String nombre,
     required String precio,
     required String descripcion,
     File? imagen,
+    String? categoria,
+    bool? masPedido,
+    List<String>? dias,
   }) async {
-    final token = await UserService.getToken();
     final base = '${ApiConfig.baseUrl}/productos';
-
     final request = http.MultipartRequest(
       id == null ? 'POST' : 'PUT',
       Uri.parse(id == null ? base : '$base/$id'),
     );
 
-    if (token != null) {
-      request.headers['Authorization'] = 'Bearer $token';
-    }
-
+    request.headers.addAll(await _cabeceras());
+    request.headers.remove('Content-Type'); // lo pone el multipart
     request.fields['nombre'] = nombre;
     request.fields['precio'] = precio;
     request.fields['descripcion'] = descripcion;
+    if (categoria != null) request.fields['categoria'] = categoria;
+    if (masPedido != null) request.fields['mas_pedido'] = masPedido.toString();
+    if (dias != null) request.fields['dias'] = dias.join(','); // 'lunes,martes'
 
     if (imagen != null) {
       request.files.add(await _archivoImagen(imagen));
     }
 
-    final respuesta = await http.Response.fromStream(
-      await request.send(),
-    );
+    final respuesta = await http.Response.fromStream(await request.send());
 
-    if (respuesta.statusCode != 200 &&
-        respuesta.statusCode != 201) {
-      String mensaje = 'Error al guardar el producto';
-
-      try {
-        mensaje = jsonDecode(respuesta.body)['error'] ?? mensaje;
-      } catch (_) {}
-
-      throw Exception(mensaje);
+    if (respuesta.statusCode != 200 && respuesta.statusCode != 201) {
+      throw Exception(_mensajeError(respuesta, 'Error al guardar el producto'));
     }
   }
 
-  // Desactivar un producto
-  Future<void> eliminarProducto(String id) async {
-    final url = Uri.parse(
-      '${ApiConfig.baseUrl}/productos/$id',
-    );
+  // Envía DELETE / PATCH a /productos y revisa la respuesta
+  Future<void> _enviar(String metodo, String ruta, String porDefecto) async {
+    final request = http.Request(metodo, Uri.parse('${ApiConfig.baseUrl}/productos$ruta'));
+    request.headers.addAll(await _cabeceras());
 
-    final token = await UserService.getToken();
+    final response = await http.Response.fromStream(await request.send());
 
-    final response = await http.delete(
-      url,
-      headers: {
-        ...ApiConfig.headers,
-        if (token != null) 'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (response.statusCode != 200 &&
-        response.statusCode != 204) {
-      String mensaje = 'No se pudo desactivar el producto';
-
-      try {
-        mensaje = jsonDecode(response.body)['error'] ?? mensaje;
-      } catch (_) {}
-
-      throw Exception(mensaje);
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw Exception(_mensajeError(response, porDefecto));
     }
   }
 
-  // Reactivar un producto
-  Future<void> activarProducto(String id) async {
-    final url = Uri.parse(
-      '${ApiConfig.baseUrl}/productos/$id/activar',
-    );
+  Future<void> eliminarProducto(String id) =>
+      _enviar('DELETE', '/$id', 'No se pudo desactivar el producto');
 
-    final token = await UserService.getToken();
+  Future<void> activarProducto(String id) =>
+      _enviar('PATCH', '/$id/activar', 'No se pudo activar el producto');
 
-    final response = await http.patch(
-      url,
-      headers: {
-        ...ApiConfig.headers,
-        if (token != null) 'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (response.statusCode != 200) {
-      String mensaje = 'No se pudo activar el producto';
-
-      try {
-        mensaje = jsonDecode(response.body)['error'] ?? mensaje;
-      } catch (_) {}
-
-      throw Exception(mensaje);
-    }
-  }
-
-  // Eliminar definitivamente un producto
-  Future<void> eliminarProductoDefinitivamente(String id) async {
-    final url = Uri.parse(
-      '${ApiConfig.baseUrl}/productos/$id/definitivo',
-    );
-
-    final token = await UserService.getToken();
-
-    final response = await http.delete(
-      url,
-      headers: {
-        ...ApiConfig.headers,
-        if (token != null) 'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (response.statusCode != 200) {
-      String mensaje =
-          'No se pudo eliminar el producto definitivamente';
-
-      try {
-        mensaje = jsonDecode(response.body)['error'] ?? mensaje;
-      } catch (_) {}
-
-      throw Exception(mensaje);
-    }
-  }
+  Future<void> eliminarProductoDefinitivamente(String id) => _enviar(
+        'DELETE',
+        '/$id/definitivo',
+        'No se pudo eliminar el producto definitivamente',
+      );
 }

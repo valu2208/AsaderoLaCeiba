@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:asadero/core/colores.dart';
 import '../models/user_model.dart';
 import '../services/admin_user_service.dart';
 import '../componentes/admin_drawer.dart';
 import '../componentes/dialogo_cambio_rol.dart';
 import '../componentes/filtro_roles.dart';
+import '../componentes/fondo_degradado.dart';
 import '../componentes/tarjeta_usuario.dart';
 
 class AdminUsuariosPage extends StatefulWidget {
@@ -90,10 +92,13 @@ class _AdminUsuariosPageState extends State<AdminUsuariosPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Usuarios y roles'),
-        backgroundColor: Colors.orangeAccent,
+        centerTitle: true,
+        backgroundColor: AppColors.earthBrown,
+        foregroundColor: AppColors.goldSand,
       ),
       drawer: const AdminDrawer(actual: 'usuarios'),
-      body: Column(
+      body: FondoDegradado(
+        child: Column(
         children: [
           FiltroRoles(
             seleccionado: _filtro,
@@ -131,6 +136,7 @@ class _AdminUsuariosPageState extends State<AdminUsuariosPage> {
             ),
           ),
         ],
+      ),
       ),
     );
   }

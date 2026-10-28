@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/colores.dart';
-import 'package:asadero/componentes/imagen_adaptable.dart';
+import 'package:asadero/componentes/cabecera_detalle.dart';
+import 'package:asadero/componentes/seccion_detalles.dart';
 
+// Detalle del plato: foto en círculo sobre fondo curvo, nombre, precio y descripción
 class DetalleProducto extends StatelessWidget {
   final String nombre;
   final String precio;
@@ -22,73 +25,48 @@ class DetalleProducto extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.goldSand,
-      appBar: AppBar(
-        backgroundColor: AppColors.goldSand,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.redPrayerFlag),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'Lo más pedido',
-          style: TextStyle(
-            color: AppColors.asphalt,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Container(
-                    padding: const EdgeInsets.all(22),
-                    decoration: BoxDecoration(
-                      color: AppColors.earthBrown,
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
+            CabeceraDetalle(imagen: imagen, icono: icono),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
                           nombre,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: AppColors.goldSand,
-                            fontSize: 24,
+                          style: GoogleFonts.josefinSans(
+                            color: AppColors.asphalt,
+                            fontSize: 26,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        _imagenProducto(),
-                        const SizedBox(height: 20),
-                        Text(
-                          descripcion ??
-                              'Delicioso producto preparado especialmente para ti.',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            height: 1.4,
-                          ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        precio,
+                        style: GoogleFonts.josefinSans(
+                          color: AppColors.redPrayerFlag,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: 20),
-                        Text(
-                          precio,
-                          style: const TextStyle(
-                            color: AppColors.redPrayerFlag,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ),
+                  const SizedBox(height: 16),
+                  SeccionDetalles(
+                    texto: (descripcion ?? '').trim().isEmpty
+                        ? 'Delicioso plato preparado especialmente para ti.'
+                        : descripcion!,
+                  ),
+                  SizedBox(height: MediaQuery.of(context).padding.bottom + 32),
+                ],
               ),
             ),
           ],
@@ -96,24 +74,4 @@ class DetalleProducto extends StatelessWidget {
       ),
     );
   }
-
-  Widget _imagenProducto() {
-    if (imagen != null) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(14),
-        child: ImagenAdaptable(
-          ruta: imagen!,
-          ancho: double.infinity,
-          alto: 230,
-        ),
-      );
-    }
-
-    return Icon(
-      icono ?? Icons.restaurant,
-      size: 150,
-      color: AppColors.goldSand,
-    );
-  }
 }
-

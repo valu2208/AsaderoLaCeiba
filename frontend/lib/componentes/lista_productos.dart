@@ -5,8 +5,9 @@ import 'package:asadero/pantallas/detalle_producto.dart';
 
 class ListaProductos extends StatelessWidget {
   final List<Map<String, String>> productos;
+  final int columnas; // 2 = como en el Home, 1 = una card mediana por fila
 
-  const ListaProductos({super.key, required this.productos});
+  const ListaProductos({super.key, required this.productos, this.columnas = 2});
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +18,12 @@ class ListaProductos extends StatelessWidget {
           builder: (context, constraints) {
             const espacio = 12.0;
 
-            final ancho = ((constraints.maxWidth - espacio) / 2)
-                .floorToDouble();
+            final ancho =
+                (columnas == 1
+                        ? constraints.maxWidth * 0.78
+                        : (constraints.maxWidth - espacio) / 2)
+                    .floorToDouble();
+            final proporcion = columnas == 1 ? 0.9 : 0.68; // ancho / alto
 
             return SingleChildScrollView(
               child: Wrap(
@@ -28,7 +33,7 @@ class ListaProductos extends StatelessWidget {
                 children: productos.map((producto) {
                   return SizedBox(
                     width: ancho,
-                    height: ancho / 0.68,
+                    height: ancho / proporcion,
                     child: TarjetaProducto(
                       productoId: producto['id']!,
                       nombre: producto['nombre']!,
@@ -58,3 +63,4 @@ class ListaProductos extends StatelessWidget {
     );
   }
 }
+  

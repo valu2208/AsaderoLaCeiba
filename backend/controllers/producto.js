@@ -1,6 +1,7 @@
 import {
     obtenerTodos,
     obtenerTodosAdmin,
+    obtenerMasPedidos,
     obtenerPorId,
     obtenerPorCategoria,
     crearProducto,
@@ -28,9 +29,41 @@ export const listarProductos = async (req, res) => {
     }
 };
 
+// "lunes,martes" (así llega desde la app) -> ['lunes', 'martes']
+const listaDias = (valor) =>
+    typeof valor === 'string'
+        ? valor.split(',').map((d) => d.trim()).filter(Boolean)
+        : valor;
+
+export const listarMasPedidos = async (req, res) => {
+    try {
+        const { data, error } = await obtenerMasPedidos();
+
+        if (error) {
+            return res.status(500).json({
+                error: 'Error al obtener los más pedidos'
+            });
+        }
+
+        return res.status(200).json(data);
+    } catch (error) {
+        return res.status(500).json({
+            error: error.message
+        });
+    }
+};
+
 export const listarProductosAdmin = async (req, res) => {
     try {
-        const { data, error } = await obtenerTodosAdmin();
+        // ?mas_pedido=true  y/o  ?categoria=desayuno
+        const { data, error } = await obtenerTodosAdmin({
+            masPedido:
+                req.query.mas_pedido === undefined
+                    ? undefined
+                    : req.query.mas_pedido === 'true',
+            categoria: req.query.categoria,
+            dia: req.query.dia
+        });
 
         if (error) {
             return res.status(500).json({
@@ -68,7 +101,10 @@ export const obtenerProducto = async (req, res) => {
 export const obtenerPorCat = async (req, res) => {
     try {
         const { categoria } = req.params;
-        const { data, error } = await obtenerPorCategoria(categoria);
+        const { data, error } = await obtenerPorCategoria(
+            categoria,
+            req.query.dia
+        );
 
         if (error) {
             return res.status(500).json({
@@ -95,7 +131,9 @@ export const crear = async (req, res) => {
             precio,
             stock,
             categoria,
-            disponible
+            disponible,
+            mas_pedido,
+            dias
         } = req.body;
 
         console.log('DATOS RECIBIDOS', req.body);
@@ -118,7 +156,9 @@ export const crear = async (req, res) => {
             stock,
             imagen_url,
             categoria,
-            disponible
+            disponible,
+            mas_pedido,
+            dias: listaDias(dias) || []
         });
 
         if (error) {
@@ -142,6 +182,10 @@ export const editar = async (req, res) => {
     try {
         const { id } = req.params;
         const datosActualizados = { ...req.body };
+
+        if (datosActualizados.dias !== undefined) {
+            datosActualizados.dias = listaDias(datosActualizados.dias);
+        }
 
         if (req.file) {
             datosActualizados.imagen_url = req.file.path;

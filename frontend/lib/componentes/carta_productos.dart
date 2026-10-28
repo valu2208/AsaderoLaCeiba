@@ -6,7 +6,12 @@ import 'package:asadero/services/producto_service.dart';
 import 'package:asadero/componentes/lista_productos.dart';
 
 class CartaProductos extends StatefulWidget {
-  const CartaProductos({super.key});
+  // Qué lista cargar. Sin nada = "Lo más pedido" (Home).
+  // El Menú le pasa la categoría: () => ProductoService().obtenerPorCategoria('almuerzo')
+  final Future<List<ProductoModel>> Function()? cargar;
+  final int columnas; // 2 = Home, 1 = Menú (cards más grandes, una por fila)
+
+  const CartaProductos({super.key, this.cargar, this.columnas = 2});
 
   @override
   State<CartaProductos> createState() => _CartaProductosState();
@@ -15,15 +20,18 @@ class CartaProductos extends StatefulWidget {
 class _CartaProductosState extends State<CartaProductos> {
   late Future<List<ProductoModel>> _productos;
 
+  Future<List<ProductoModel>> _cargar() =>
+      (widget.cargar ?? ProductoService().obtenerMasPedidos)();
+
   @override
   void initState() {
     super.initState();
-    _productos = ProductoService().obtenerProductos();
+    _productos = _cargar();
   }
 
   Future<void> _recargar() async {
     setState(() {
-      _productos = ProductoService().obtenerProductos();
+      _productos = _cargar();
     });
 
     await _productos;
@@ -87,7 +95,14 @@ class _CartaProductosState extends State<CartaProductos> {
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               children: [
+<<<<<<< HEAD
                 ListaProductos(productos: productos.map(_aMapa).toList()),
+=======
+                ListaProductos(
+                  columnas: widget.columnas,
+                  productos: productos.map(_aMapa).toList(),
+                ),
+>>>>>>> origin/main
               ],
             ),
           ),

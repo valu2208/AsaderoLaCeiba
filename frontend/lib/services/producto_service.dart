@@ -3,10 +3,24 @@ import 'package:http/http.dart' as http;
 import '../models/producto_model.dart';
 import 'api_config.dart';
 
-// Solo CONSULTA los productos (GET /productos); lo usa la carta del cliente
+// Solo CONSULTA los productos que ve el cliente
 class ProductoService {
-  Future<List<ProductoModel>> obtenerProductos() async {
-    final url = Uri.parse('${ApiConfig.baseUrl}/productos');
+  // Home: "Lo más pedido"
+  Future<List<ProductoModel>> obtenerMasPedidos() async =>
+      (await _pedir('/productos'))
+          .where((producto) => producto.masPedido)
+          .toList();
+
+  // Menú: desayuno, almuerzo, fin_de_semana o gaseosas
+  // dia: 'lunes' ... 'domingo' -> solo los platos de ese día
+  Future<List<ProductoModel>> obtenerPorCategoria(String categoria, {String? dia}) =>
+      _pedir('/productos/categoria/$categoria${dia == null ? '' : '?dia=$dia'}');
+
+  // Todos los productos activos
+  Future<List<ProductoModel>> obtenerProductos() => _pedir('/productos');
+
+  Future<List<ProductoModel>> _pedir(String ruta) async {
+    final url = Uri.parse('${ApiConfig.baseUrl}$ruta');
 
     final http.Response response;
     try {

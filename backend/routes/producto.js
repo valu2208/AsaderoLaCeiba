@@ -3,6 +3,7 @@ import express from 'express';
 import {
     listarProductos,
     listarProductosAdmin,
+    listarMasPedidos,
     obtenerProducto,
     obtenerPorCat,
     crear,
@@ -24,6 +25,9 @@ const router = express.Router();
 // Rutas públicas
 router.get('/', listarProductos);
 router.get('/categoria/:categoria', obtenerPorCat);
+
+// Lo más pedido (Home del cliente). Va ANTES de '/:id'
+router.get('/mas-pedidos', listarMasPedidos);
 
 // Rutas privadas para administradores
 router.get(
