@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/colores.dart';
@@ -8,6 +9,7 @@ import 'package:asadero/componentes/burbuja_asistente.dart';
 import 'package:asadero/componentes/tarjeta_pedido.dart';
 import 'package:asadero/componentes/detalle_pedido.dart';
 import 'package:asadero/pantallas/home.dart';
+import 'package:asadero/pantallas/perfil.dart';
 import 'package:asadero/pantallas/carrito.dart';
 import 'package:asadero/pantallas/productos.dart';
 
@@ -100,8 +102,7 @@ class Historial extends StatelessWidget {
                 ...pedidos.map((pedido) {
                   final producto =
                       traducirProducto(pedido['productos']!);
-                  final estado =
-                      traducirEstado(pedido['estado']!);
+                  final estado = traducirEstado(pedido['estado']!);
 
                   return TarjetaPedido(
                     pedido: pedido,
@@ -131,6 +132,13 @@ class Historial extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (_) => const Home(),
+                  ),
+                );
+              } else if (indice == 1) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const Perfil(),
                   ),
                 );
               } else if (indice == 2) {

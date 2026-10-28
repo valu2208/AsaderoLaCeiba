@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
+import { crearNotificacion } from '../models/notificacion.js';
 
 import {
     obtenerUsuarioPorEmail,
@@ -109,6 +110,19 @@ export const autenticarConGoogle = async (req, res) => {
             }
 
             usuarioFinal = nuevoUsuario;
+            const { error: errorNotificacion } = await crearNotificacion({
+    usuario_id: nuevoUsuario.id,
+    tipo: 'bienvenida',
+    titulo: '¡Bienvenido a Asadero La Ceiba!',
+    mensaje: `Hola ${nuevoUsuario.nombre}, tu cuenta se creó correctamente con Google.`
+});
+
+if (errorNotificacion) {
+    console.error(
+        'Error al crear la notificación de bienvenida:',
+        errorNotificacion.message
+    );
+}
         }
 
         // Crear JWT de nuestra aplicación

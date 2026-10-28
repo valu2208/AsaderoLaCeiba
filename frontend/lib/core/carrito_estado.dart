@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-
 class CarritoItem {
+  final String productoId;
   final String nombre;
   final String precio;
   final String imagen;
   final int cantidad;
 
   const CarritoItem({
+    required this.productoId,
     required this.nombre,
     required this.precio,
     required this.imagen,
@@ -15,6 +16,7 @@ class CarritoItem {
 
   CarritoItem copiarConCantidad(int nuevaCantidad) {
     return CarritoItem(
+      productoId: productoId,
       nombre: nombre,
       precio: precio,
       imagen: imagen,
@@ -39,16 +41,31 @@ class CarritoEstado {
     return 0;
   }
 
-  static void agregar(String nombre, String precio, String imagen) {
+  static void agregar(
+    String productoId,
+    String nombre,
+    String precio,
+    String imagen,
+  ) {
     final lista = List<CarritoItem>.from(items.value);
-    final indice = lista.indexWhere((item) => item.nombre == nombre);
+
+    final indice = lista.indexWhere(
+      (item) => item.productoId == productoId,
+    );
 
     if (indice != -1) {
       lista[indice] = lista[indice].copiarConCantidad(
         lista[indice].cantidad + 1,
       );
     } else {
-      lista.add(CarritoItem(nombre: nombre, precio: precio, imagen: imagen));
+      lista.add(
+        CarritoItem(
+          productoId: productoId,
+          nombre: nombre,
+          precio: precio,
+          imagen: imagen,
+        ),
+      );
     }
 
     items.value = lista;
@@ -56,7 +73,10 @@ class CarritoEstado {
 
   static void restar(String nombre) {
     final lista = List<CarritoItem>.from(items.value);
-    final indice = lista.indexWhere((item) => item.nombre == nombre);
+
+    final indice = lista.indexWhere(
+      (item) => item.nombre == nombre,
+    );
 
     if (indice == -1) return;
 
@@ -72,7 +92,13 @@ class CarritoEstado {
   }
 
   static void eliminar(String nombre) {
-    items.value = items.value.where((item) => item.nombre != nombre).toList();
+    items.value = items.value
+        .where((item) => item.nombre != nombre)
+        .toList();
+  }
+
+  static void vaciar() {
+    items.value = [];
   }
 }
 

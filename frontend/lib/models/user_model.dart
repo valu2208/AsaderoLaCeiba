@@ -4,6 +4,8 @@ class UserModel {
   final String email;
   final String password;
   final String rol;
+  final String? avatar;
+  final String telefono;
 
   UserModel({
     this.id,
@@ -11,9 +13,10 @@ class UserModel {
     required this.email,
     required this.password,
     this.rol = 'usuario',
+    this.avatar,
+    this.telefono = '',
   });
 
-  // Getter para verificar si el usuario es administrador
   bool get esAdmin => rol.toLowerCase() == 'admin';
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -23,6 +26,11 @@ class UserModel {
       email: json['email'] ?? '',
       password: json['password'] ?? '',
       rol: json['rol'] ?? 'usuario',
+      telefono: json['telefono'] ?? '',
+      avatar:
+          json['avatar']?.toString() ??
+          json['foto_perfil']?.toString() ??
+          json['foto']?.toString(),
     );
   }
 
@@ -33,6 +41,8 @@ class UserModel {
       'email': email,
       'password': password,
       'rol': rol,
+      'telefono': telefono,
+      if (avatar != null) 'avatar': avatar,
     };
   }
 }

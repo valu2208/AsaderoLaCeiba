@@ -70,6 +70,7 @@ export const iniciarSesion = async (req, res) => {
                 email: usuario.email,
                 telefono: usuario.telefono,
                 rol: usuario.rol,
+                avatar: usuario.avatar ?? null,
                 isVerified: usuario.isVerified
             }
         });

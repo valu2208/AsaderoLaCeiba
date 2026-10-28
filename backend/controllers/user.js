@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import { enviarCodigoVerificacion } from '../utils/emailservice.js';
+import { crearNotificacion } from '../models/notificacion.js';
 
 import {
     crearUsuario,
@@ -90,6 +91,7 @@ export const registrarUsuario = async (req, res) => {
 };
 
 // Verificar correo electrónico
+
 export const verificarCorreo = async (req, res) => {
     try {
         const { email, codigo } = req.body;
@@ -101,10 +103,7 @@ export const verificarCorreo = async (req, res) => {
         }
 
         const { data: usuario, error } =
-            await obtenerUsuarioPorCodigoVerificacion(
-                email,
-                codigo
-            );
+            await obtenerUsuarioPorCodigoVerificacion(email, codigo);
 
         if (error) {
             return res.status(500).json({
@@ -118,15 +117,28 @@ export const verificarCorreo = async (req, res) => {
             });
         }
 
-        const {
-            data,
-            error: errorVerificacion
-        } = await verificarUsuario(usuario.id);
+        const { data, error: errorVerificacion } =
+            await verificarUsuario(usuario.id);
 
         if (errorVerificacion) {
             return res.status(500).json({
                 error: errorVerificacion.message
             });
+        }
+
+        // Notificar cuando el correo se verifica correctamente.
+        const { error: errorNotificacion } = await crearNotificacion({
+            usuario_id: usuario.id,
+            tipo: 'bienvenida',
+            titulo: '¡Bienvenido a Asadero La Ceiba!',
+            mensaje: `Hola ${usuario.nombre}, tu cuenta está verificada. Ya puedes disfrutar de nuestros productos.`
+        });
+
+        if (errorNotificacion) {
+            console.error(
+                'Error al crear la notificación de bienvenida:',
+                errorNotificacion.message
+            );
         }
 
         return res.status(200).json({

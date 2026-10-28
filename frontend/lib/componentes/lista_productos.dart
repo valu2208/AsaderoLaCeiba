@@ -30,6 +30,7 @@ class ListaProductos extends StatelessWidget {
                     width: ancho,
                     height: ancho / 0.68,
                     child: TarjetaProducto(
+                      productoId: producto['id']!,
                       nombre: producto['nombre']!,
                       precio: producto['precio']!,
                       imagen: producto['imagen']!,
@@ -57,4 +58,3 @@ class ListaProductos extends StatelessWidget {
     );
   }
 }
-

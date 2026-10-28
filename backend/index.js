@@ -9,6 +9,7 @@ import recuperarRouter from './routes/recuperar.js';
 import cocinaRouter from './routes/cocina.js';
 import chatRouter from './routes/chats.js';
 import tasasCambioRouter from './routes/tasasCambio.js';
+import notificacionRouter from './routes/notificacion.js';
 
 import cors from 'cors';
 
@@ -35,7 +36,7 @@ app.use('/recuperar', recuperarRouter);
 app.use('/cocina', cocinaRouter);
 app.use('/chat', chatRouter);
 app.use('/tasas-cambio', tasasCambioRouter);
-
+app.use('/notificaciones', notificacionRouter);
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {

@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/colores.dart';
@@ -7,9 +8,30 @@ import 'package:asadero/componentes/carta_productos.dart';
 import 'package:asadero/componentes/barra_nav_inferior.dart';
 import 'package:asadero/pantallas/historial.dart';
 import 'package:asadero/pantallas/carrito.dart';
+import 'package:asadero/pantallas/perfil.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  int _versionEncabezado = 0;
+
+  Future<void> _abrirPerfil() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const Perfil()),
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      _versionEncabezado++;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,14 +39,16 @@ class Home extends StatelessWidget {
       backgroundColor: AppColors.goldSand,
       body: Column(
         children: [
-          const EncabezadoHome(),
+          EncabezadoHome(key: ValueKey(_versionEncabezado)),
           Expanded(child: _contenido(context)),
         ],
       ),
       floatingActionButton: const BurbujaAsistente(),
       bottomNavigationBar: BarraNavegacionInferior(
         onTap: (indice) {
-          if (indice == 3) {
+          if (indice == 1) {
+            _abrirPerfil();
+          } else if (indice == 3) {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const Historial()),
@@ -67,7 +91,10 @@ class Home extends StatelessWidget {
   Widget _titulo() {
     return Text(
       '¡Lo más pedido!',
-      style: GoogleFonts.kronaOne(color: AppColors.earthBrown, fontSize: 22),
+      style: GoogleFonts.kronaOne(
+        color: AppColors.earthBrown,
+        fontSize: 22,
+      ),
     );
   }
 }

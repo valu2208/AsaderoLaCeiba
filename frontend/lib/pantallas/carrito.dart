@@ -3,9 +3,17 @@ import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/carrito_estado.dart';
 import 'package:asadero/core/idioma.dart';
 import 'package:asadero/core/traducciones.dart';
+import 'package:asadero/services/pedido_service.dart';
 
-class Carrito extends StatelessWidget {
+class Carrito extends StatefulWidget {
   const Carrito({super.key});
+
+  @override
+  State<Carrito> createState() => _CarritoState();
+}
+
+class _CarritoState extends State<Carrito> {
+  bool _enviandoPedido = false;
 
   String nombreProducto(CarritoItem item) {
     if (item.imagen.contains('pollo_completo')) {
@@ -18,6 +26,44 @@ class Carrito extends StatelessWidget {
       return texto('cuarto_pollo');
     }
     return item.nombre;
+  }
+
+  Future<void> _realizarPedido() async {
+    if (_enviandoPedido) return;
+
+    final items = List<CarritoItem>.from(CarritoEstado.items.value);
+
+    if (items.isEmpty) return;
+
+    setState(() => _enviandoPedido = true);
+
+    try {
+      final pedidoId = await PedidoService().realizarPedido(items);
+
+      if (!mounted) return;
+
+      CarritoEstado.vaciar();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Pedido #$pedidoId registrado correctamente.'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceFirst('Exception: ', '')),
+          backgroundColor: AppColors.redPrayerFlag,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _enviandoPedido = false);
+      }
+    }
   }
 
   @override
@@ -142,9 +188,11 @@ class Carrito extends StatelessWidget {
                                 Icons.delete_outline,
                                 color: AppColors.goldSand,
                               ),
-                              onPressed: () {
-                                CarritoEstado.eliminar(item.nombre);
-                              },
+                              onPressed: _enviandoPedido
+                                  ? null
+                                  : () {
+                                      CarritoEstado.eliminar(item.nombre);
+                                    },
                             ),
                           ),
                         );
@@ -156,19 +204,28 @@ class Carrito extends StatelessWidget {
                       padding: const EdgeInsets.all(15),
                       color: AppColors.earthBrown,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: _enviandoPedido ? null : _realizarPedido,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.redPrayerFlag,
                           padding: const EdgeInsets.symmetric(vertical: 15),
                         ),
-                        child: Text(
-                          texto('realizar_pedido'),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        child: _enviandoPedido
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(
+                                texto('realizar_pedido'),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                       ),
                     ),
             );
@@ -178,4 +235,3 @@ class Carrito extends StatelessWidget {
     );
   }
 }
-

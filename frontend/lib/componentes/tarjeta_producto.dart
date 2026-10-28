@@ -6,6 +6,7 @@ import 'package:asadero/componentes/boton_agregar.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TarjetaProducto extends StatelessWidget {
+  final String productoId;
   final String nombre;
   final String precio;
   final String imagen;
@@ -13,6 +14,7 @@ class TarjetaProducto extends StatelessWidget {
 
   const TarjetaProducto({
     super.key,
+    required this.productoId,
     required this.nombre,
     required this.precio,
     required this.imagen,
@@ -57,9 +59,7 @@ class TarjetaProducto extends StatelessWidget {
                       fontSize: 15,
                     ),
                   ),
-
                   const SizedBox(height: 4),
-
                   Text(
                     precio,
                     style: GoogleFonts.josefinSans(
@@ -67,9 +67,7 @@ class TarjetaProducto extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
                   const SizedBox(height: 4),
-
                   Row(
                     children: [
                       Expanded(
@@ -92,14 +90,18 @@ class TarjetaProducto extends StatelessWidget {
                           ),
                         ),
                       ),
-
                       ValueListenableBuilder<List<CarritoItem>>(
                         valueListenable: CarritoEstado.items,
                         builder: (context, items, child) {
                           return BotonAgregar(
                             cantidad: CarritoEstado.cantidadDe(nombre),
                             onAgregar: () {
-                              CarritoEstado.agregar(nombre, precio, imagen);
+                              CarritoEstado.agregar(
+                                productoId,
+                                nombre,
+                                precio,
+                                imagen,
+                              );
                             },
                             onRestar: () {
                               CarritoEstado.restar(nombre);
@@ -112,7 +114,6 @@ class TarjetaProducto extends StatelessWidget {
                 ],
               ),
             ),
-
             Positioned(
               top: 0,
               left: ancho * 0.13,
@@ -125,4 +126,3 @@ class TarjetaProducto extends StatelessWidget {
     );
   }
 }
-
