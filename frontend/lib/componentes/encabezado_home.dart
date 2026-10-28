@@ -4,9 +4,39 @@ import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/idioma.dart';
 import 'package:asadero/core/traducciones.dart';
 import 'package:asadero/pantallas/chat.dart';
+import 'package:asadero/services/user_service.dart';
+import 'package:asadero/pantallas/notificaciones.dart';
 
-class EncabezadoHome extends StatelessWidget {
+class EncabezadoHome extends StatefulWidget {
   const EncabezadoHome({super.key});
+
+  @override
+  State<EncabezadoHome> createState() => _EncabezadoHomeState();
+}
+
+class _EncabezadoHomeState extends State<EncabezadoHome> {
+  String nombre = '';
+  String? avatar;
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarUsuario();
+  }
+
+  Future<void> _cargarUsuario() async {
+    final String nombreUsuario = await UserService.getNombre();
+    final String? fotoUsuario = await UserService.getAvatar();
+
+    if (!mounted) return;
+
+    setState(() {
+      nombre = nombreUsuario.trim();
+      avatar = (fotoUsuario != null && fotoUsuario.isNotEmpty)
+          ? fotoUsuario
+          : null;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +46,7 @@ class EncabezadoHome extends StatelessWidget {
         return Container(
           decoration: const BoxDecoration(
             color: AppColors.asphalt,
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(10),
-            ),
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(10)),
           ),
           child: SafeArea(
             bottom: false,
@@ -41,34 +69,43 @@ class EncabezadoHome extends StatelessWidget {
   Widget _fila(BuildContext context) {
     return Row(
       children: [
-        const CircleAvatar(
+        CircleAvatar(
           radius: 18,
           backgroundColor: AppColors.earthBrown,
-          child: Icon(
-            Icons.person,
-            color: AppColors.goldSand,
-            size: 20,
-          ),
+          backgroundImage: avatar != null && avatar!.isNotEmpty
+              ? NetworkImage(avatar!)
+              : null,
+          child: avatar == null || avatar!.isEmpty
+              ? const Icon(Icons.person, color: AppColors.goldSand, size: 20)
+              : null,
         ),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
-            texto('bienvenido_usuario'),
+            nombre.isEmpty
+                ? texto('bienvenido_usuario')
+                : '¡Bienvenid@, $nombre!',
             style: GoogleFonts.kronaOne(
               color: AppColors.goldSand,
               fontSize: 13,
             ),
-          ),
-        ),
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(
-            Icons.notifications_none,
-            color: AppColors.goldSand,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
         IconButton(
           onPressed: () {
+            Navigator.push(context, 
+              MaterialPageRoute(
+                builder: (_) => const Notificaciones(),
+                ),
+            );
+          },
+          icon: const Icon(
+            Icons.notifications_none,
+            color: AppColors.goldSand,
+            ),
+        ), 
+        IconButton(onPressed: () {
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,
@@ -90,13 +127,8 @@ class EncabezadoHome extends StatelessWidget {
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         hintText: texto('buscar'),
-        hintStyle: TextStyle(
-          color: AppColors.goldSand.withValues(alpha: 0.7),
-        ),
-        prefixIcon: const Icon(
-          Icons.search,
-          color: AppColors.redPrayerFlag,
-        ),
+        hintStyle: TextStyle(color: AppColors.goldSand.withValues(alpha: 0.7)),
+        prefixIcon: const Icon(Icons.search, color: AppColors.redPrayerFlag),
         filled: true,
         fillColor: AppColors.earthBrown,
         border: OutlineInputBorder(
@@ -107,4 +139,3 @@ class EncabezadoHome extends StatelessWidget {
     );
   }
 }
-

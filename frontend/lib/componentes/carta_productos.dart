@@ -38,11 +38,12 @@ class _CartaProductosState extends State<CartaProductos> {
   }
 
   Map<String, String> _aMapa(ProductoModel p) => {
-        'nombre': p.nombre,
-        'precio': formatoPesos(p.precio),
-        'imagen': p.imagenUrl ?? '',
-        'descripcion': p.descripcion,
-      };
+    'id': p.id,
+    'nombre': p.nombre,
+    'precio': formatoPesos(p.precio),
+    'imagen': p.imagenUrl ?? '',
+    'descripcion': p.descripcion,
+  };
 
   Widget _mensaje(String texto, {bool reintentar = false}) {
     return Expanded(
@@ -53,16 +54,10 @@ class _CartaProductosState extends State<CartaProductos> {
             Text(
               texto,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.earthBrown,
-                fontSize: 16,
-              ),
+              style: const TextStyle(color: AppColors.earthBrown, fontSize: 16),
             ),
             if (reintentar)
-              TextButton(
-                onPressed: _recargar,
-                child: const Text('Reintentar'),
-              ),
+              TextButton(onPressed: _recargar, child: const Text('Reintentar')),
           ],
         ),
       ),
@@ -77,16 +72,13 @@ class _CartaProductosState extends State<CartaProductos> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Expanded(
             child: Center(
-              child: CircularProgressIndicator(
-                color: AppColors.earthBrown,
-              ),
+              child: CircularProgressIndicator(color: AppColors.earthBrown),
             ),
           );
         }
 
         if (snapshot.hasError) {
-          final error =
-              snapshot.error.toString().replaceAll('Exception: ', '');
+          final error = snapshot.error.toString().replaceAll('Exception: ', '');
           return _mensaje(error, reintentar: true);
         }
 
@@ -103,10 +95,14 @@ class _CartaProductosState extends State<CartaProductos> {
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               children: [
+<<<<<<< HEAD
+                ListaProductos(productos: productos.map(_aMapa).toList()),
+=======
                 ListaProductos(
                   columnas: widget.columnas,
                   productos: productos.map(_aMapa).toList(),
                 ),
+>>>>>>> origin/main
               ],
             ),
           ),

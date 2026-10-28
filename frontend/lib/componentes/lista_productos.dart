@@ -18,10 +18,11 @@ class ListaProductos extends StatelessWidget {
           builder: (context, constraints) {
             const espacio = 12.0;
 
-            final ancho = (columnas == 1
-                    ? constraints.maxWidth * 0.78
-                    : (constraints.maxWidth - espacio) / 2)
-                .floorToDouble();
+            final ancho =
+                (columnas == 1
+                        ? constraints.maxWidth * 0.78
+                        : (constraints.maxWidth - espacio) / 2)
+                    .floorToDouble();
             final proporcion = columnas == 1 ? 0.9 : 0.68; // ancho / alto
 
             return SingleChildScrollView(
@@ -34,6 +35,7 @@ class ListaProductos extends StatelessWidget {
                     width: ancho,
                     height: ancho / proporcion,
                     child: TarjetaProducto(
+                      productoId: producto['id']!,
                       nombre: producto['nombre']!,
                       precio: producto['precio']!,
                       imagen: producto['imagen']!,
@@ -61,3 +63,4 @@ class ListaProductos extends StatelessWidget {
     );
   }
 }
+  
