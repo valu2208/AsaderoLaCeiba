@@ -10,6 +10,7 @@ import 'package:asadero/pantallas/home.dart';
 import 'package:asadero/pantallas/historial.dart';
 import 'package:asadero/pantallas/carrito.dart';
 import 'package:asadero/pantallas/informacion_personal.dart';
+import 'package:asadero/pantallas/productos.dart';
 
 class Perfil extends StatefulWidget {
   const Perfil({super.key});
@@ -55,25 +56,25 @@ class _PerfilState extends State<Perfil> {
     });
   }
 
+  // Barra inferior: 0 Home, 1 Perfil (esta pantalla), 2 Menú, 3 Historial, 4 Carrito
   void _navegar(int indice) {
     if (indice == 1) return;
 
+    final Widget pantalla;
     if (indice == 0) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const Home()),
-      );
+      pantalla = const Home();
+    } else if (indice == 2) {
+      pantalla = const Productos();
     } else if (indice == 3) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const Historial()),
-      );
-    } else if (indice == 4) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const Carrito()),
-      );
+      pantalla = const Historial();
+    } else {
+      pantalla = const Carrito();
     }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => pantalla),
+    );
   }
 
   Future<void> _abrirInformacionPersonal() async {

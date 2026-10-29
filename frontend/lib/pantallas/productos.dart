@@ -11,6 +11,7 @@ import 'package:asadero/pantallas/carrito.dart';
 import 'package:asadero/pantallas/historial.dart';
 import 'package:asadero/pantallas/home.dart';
 import 'package:asadero/pantallas/menu_categoria.dart';
+import 'package:asadero/pantallas/perfil.dart';
 
 // Pantalla Menú (botón del centro de la barra): las opciones de la carta
 class Productos extends StatelessWidget {
@@ -125,6 +126,7 @@ class Productos extends StatelessWidget {
             indiceActual: 2,
             onTap: (indice) {
               if (indice == 0) _ir(context, const Home());
+              if (indice == 1) _ir(context, Perfil());
               if (indice == 3) _ir(context, const Historial());
               if (indice == 4) _ir(context, const Carrito());
             },

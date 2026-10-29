@@ -6,6 +6,11 @@ import {
     obtenerMensajesPorSesion
 } from '../models/chats.js';
 import { obtenerTasaCOPaUSD } from '../models/tasasCambio.js';
+import {
+    diaDeHoy,
+    limpiarRespuesta,
+    productosParaCliente
+} from '../utils/textoChat.js';
  
 const groq = new Groq({
     apiKey: process.env.GROQ_API_KEY
@@ -60,7 +65,6 @@ export const enviarMensaje = async (req, res) => {
             descripcion: producto.descripcion || '',
             presentacion: producto.presentacion || '',
             precio: producto.precio,
-            stock: producto.stock,
             categoria: producto.categoria || ''
         }));
  
@@ -70,7 +74,10 @@ export const enviarMensaje = async (req, res) => {
             role: item.emisor === 'usuario'
                 ? 'user'
                 : 'assistant',
-            content: item.mensaje
+            // las respuestas viejas del bot se limpian para que la IA no copie ese estilo
+            content: item.emisor === 'usuario'
+                ? item.mensaje
+                : limpiarRespuesta(item.mensaje)
         }));
  
         mensajesHistorial.push({
@@ -316,9 +323,12 @@ No vuelvas a calcular.
     }
  }
  
-const contextoProductos = (productos || [])
-    .map((producto) => JSON.stringify(producto))
-        .join('\n');
+const hoy = diaDeHoy();
+
+        // La IA solo ve datos para el cliente (sin stock exacto ni enlaces de fotos)
+        const contextoProductos = productosParaCliente(productos, hoy)
+            .map((producto) => JSON.stringify(producto))
+            .join('\n');
  
         const completion = await groq.chat.completions.create({
             model: 'openai/gpt-oss-20b',
@@ -352,6 +362,11 @@ REGLAS:
 - No salgas del tema del Asadero La Ceiba.
 - Responde siempre en texto plano: sin markdown, sin asteriscos, sin negritas, sin tablas y sin listas con símbolos.
 - No menciones dólares, USD, tasas de cambio ni conversiones a menos que el cliente lo pida de forma explícita.
+- Nunca muestres enlaces, URLs ni direcciones de imágenes.
+- No menciones cantidades de stock ni unidades: di solamente si el producto está disponible.
+- Responde corto, en una a tres frases de texto corrido, sin listas ni guiones.
+- Si preguntan por un producto, di el nombre, el precio en pesos y una breve descripción.
+- Si preguntan qué hay hoy o por el menú, menciona solo los productos con se_sirve_hoy en true e indica su sección (desayuno, almuerzo, gaseosas, fin de semana o lo más pedido).
  
 CUANDO EL CLIENTE PREGUNTE POR UN PRODUCTO:
  
@@ -376,7 +391,9 @@ UN PRODUCTO:
  
 Pregúntale qué producto desea consultar.
  
-PRODUCTOS DEL ASADERO:
+HOY ES: ${hoy}
+ 
+PRODUCTOS DEL ASADERO (uno por línea):
  
 ${contextoProductos}
  
@@ -392,8 +409,9 @@ ${contextoConversion}
             reasoning_effort: 'low',
             include_reasoning: false
         });
-        const respuesta =
-            completion.choices?.[0]?.message?.content;
+        const respuesta = limpiarRespuesta(
+            completion.choices?.[0]?.message?.content
+        );
  
         if (!respuesta) {
             console.error(
