@@ -3,14 +3,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/navegacion_rol.dart';
 import 'package:asadero/core/roles.dart';
+import 'package:asadero/pantallas/cocina_inventario.dart';
+import 'package:asadero/pantallas/cocina_pedidos.dart';
 import 'package:asadero/pantallas/menu_mesero.dart';
 import 'package:asadero/pantallas/mesero_pedidos.dart';
 import 'package:asadero/pantallas/notificaciones.dart';
 
-// Menú lateral del personal (mesero y, más adelante, cocinero)
+// Menú lateral del personal (mesero y cocinero)
 class PersonalDrawer extends StatefulWidget {
   final String rol; // 'mesero' o 'cocinero'
-  final String actual; // pantalla abierta: 'pedidos' o 'menu'
+  final String actual; // pantalla abierta: 'pedidos', 'menu' o 'suministro'
 
   const PersonalDrawer({super.key, required this.rol, required this.actual});
 
@@ -21,6 +23,8 @@ class PersonalDrawer extends StatefulWidget {
 class _PersonalDrawerState extends State<PersonalDrawer> {
   String _nombre = '';
   String _email = '';
+
+  bool get _esCocinero => widget.rol == 'cocinero';
 
   @override
   void initState() {
@@ -57,6 +61,20 @@ class _PersonalDrawerState extends State<PersonalDrawer> {
     );
   }
 
+  // Las opciones cambian según el rol
+  List<Widget> _opcionesPorRol() {
+    if (_esCocinero) {
+      return [
+        _opcion(Icons.receipt_long, 'Pedidos', 'pedidos', const CocinaPedidos()),
+        _opcion(Icons.inventory_2_outlined, 'Suministro', 'suministro', const CocinaInventario()),
+      ];
+    }
+    return [
+      _opcion(Icons.receipt_long, 'Pedidos', 'pedidos', const MeseroPedidos()),
+      _opcion(Icons.restaurant_menu, 'Menú del día', 'menu', const MenuMesero()),
+    ];
+  }
+
   void _abrirNotificaciones() {
     Navigator.pop(context);
     Navigator.push(
@@ -83,14 +101,17 @@ class _PersonalDrawerState extends State<PersonalDrawer> {
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               accountEmail: Text(_email.isEmpty ? nombreRol(widget.rol) : _email),
-              currentAccountPicture: const CircleAvatar(
+              currentAccountPicture: CircleAvatar(
                 backgroundColor: AppColors.goldSand,
-                child: Icon(Icons.room_service, size: 36, color: AppColors.redPrayerFlag),
+                child: Icon(
+                  _esCocinero ? Icons.soup_kitchen : Icons.room_service,
+                  size: 36,
+                  color: AppColors.redPrayerFlag,
+                ),
               ),
               decoration: const BoxDecoration(color: AppColors.earthBrown),
             ),
-            _opcion(Icons.receipt_long, 'Pedidos', 'pedidos', const MeseroPedidos()),
-            _opcion(Icons.restaurant_menu, 'Menú del día', 'menu', const MenuMesero()),
+            ..._opcionesPorRol(),
             ListTile(
               leading: const Icon(Icons.notifications_none),
               title: const Text('Notificaciones'),

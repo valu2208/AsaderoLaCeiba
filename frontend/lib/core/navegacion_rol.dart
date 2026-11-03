@@ -4,7 +4,7 @@ import 'package:asadero/pantallas/home.dart';
 import 'package:asadero/pantallas/login.dart';
 import 'package:asadero/pantallas/admin_product_list_page.dart';
 import 'package:asadero/pantallas/mesero_pedidos.dart';
-import 'package:asadero/pantallas/panel_pendiente.dart';
+import 'package:asadero/pantallas/cocina_pedidos.dart';
 
 // Devuelve la pantalla de inicio que le corresponde a cada rol
 Widget pantallaPorRol(String rol) {
@@ -14,7 +14,7 @@ Widget pantallaPorRol(String rol) {
     case 'mesero':
       return const MeseroPedidos();
     case 'cocinero':
-      return const PanelPendiente(titulo: 'Panel de cocina');
+      return const CocinaPedidos();
     default:
       return const Home(); // 'usuario' (cliente)
   }
