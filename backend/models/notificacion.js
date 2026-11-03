@@ -1,4 +1,3 @@
-
 import { supabase } from '../config/supabase.js';
 
 // Crear una notificación para un usuario.
@@ -57,4 +56,30 @@ export const contarNotificacionesNoLeidas = async (usuario_id) => {
         .eq('leida', false);
 
     return { count, error };
+};
+
+// Crear el mismo aviso para todos los usuarios de un rol (ej. todos los meseros).
+export const avisarRol = async (rol, { pedido_id = null, tipo, titulo, mensaje }) => {
+    const { data: usuarios, error } = await supabase
+        .from('usuarios')
+        .select('id')
+        .ilike('rol', rol);
+
+    if (error) return { error };
+    if (!usuarios || usuarios.length === 0) return { data: [] };
+
+    const filas = usuarios.map((usuario) => ({
+        usuario_id: usuario.id,
+        pedido_id,
+        tipo,
+        titulo,
+        mensaje
+    }));
+
+    const { data, error: errorInsert } = await supabase
+        .from('notificaciones')
+        .insert(filas)
+        .select();
+
+    return { data, error: errorInsert };
 };

@@ -79,3 +79,57 @@ export const cambiarEstadoPedidoBD = async (pedido_id, nuevoEstado) => {
 
   return { data, error };
 };
+
+// Un pedido por su id (sin detalles)
+export const obtenerPedidoPorIdBD = async (pedido_id) => {
+  const { data, error } = await supabase
+    .from('pedidos')
+    .select('*')
+    .eq('id', pedido_id)
+    .maybeSingle();
+
+  return { data, error };
+};
+
+// Pedidos en ciertos estados, del más antiguo al más nuevo, con lo que necesitan
+// el mesero y la cocina: nombre del cliente y nombre de cada plato.
+export const obtenerPedidosPorEstadosBD = async (estados) => {
+  const { data: pedidos, error } = await supabase
+    .from('pedidos')
+    .select('*, detalle_pedido(*)')
+    .in('estado', estados)
+    .order('fecha_pedido', { ascending: true });
+
+  if (error) return { error };
+  if (!pedidos || pedidos.length === 0) return { data: [] };
+
+  const usuarioIds = [...new Set(pedidos.map((p) => p.usuario_id))];
+  const productoIds = [
+    ...new Set(
+      pedidos.flatMap((p) => (p.detalle_pedido || []).map((d) => d.producto_id))
+    )
+  ];
+
+  const [usuarios, productos] = await Promise.all([
+    supabase.from('usuarios').select('id, nombre').in('id', usuarioIds),
+    supabase.from('productos').select('id, nombre').in('id', productoIds)
+  ]);
+
+  const nombreUsuario = new Map((usuarios.data || []).map((u) => [u.id, u.nombre]));
+  const nombreProducto = new Map((productos.data || []).map((p) => [p.id, p.nombre]));
+
+  const completos = pedidos.map((pedido) => ({
+    id: pedido.id,
+    estado: pedido.estado,
+    fecha_pedido: pedido.fecha_pedido,
+    total: pedido.total,
+    notas: pedido.notas,
+    cliente: nombreUsuario.get(pedido.usuario_id) || 'Cliente',
+    items: (pedido.detalle_pedido || []).map((detalle) => ({
+      nombre: nombreProducto.get(detalle.producto_id) || 'Plato',
+      cantidad: detalle.cantidad
+    }))
+  }));
+
+  return { data: completos };
+};

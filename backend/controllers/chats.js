@@ -163,22 +163,40 @@ PRODUCTOS DEL ASADERO:
  
 ${JSON.stringify(productosParaGroq, null, 2)}
  
-Devuelve ÚNICAMENTE JSON válido.
- 
-Formato:
- 
+Devuelve ÚNICAMENTE JSON válido, con estos cuatro campos:
+
 {
-    "habla_de_dolares": true,
-    "quiere_precio": true,
-    "producto_mencionado": "Pollo asado",
-    "id_producto": "1"
+    "habla_de_dolares": false,
+    "quiere_precio": false,
+    "producto_mencionado": "",
+    "id_producto": ""
 }
- 
-Si no se identifica producto:
- 
+
+REGLAS DE LOS CAMPOS:
+
+- "habla_de_dolares" es true SOLO si el mensaje actual
+  menciona dólares, USD o pagar en dólares.
+- "quiere_precio" es true SOLO si el mensaje actual
+  pregunta cuánto cuesta algo.
+- Si el mensaje no habla de productos ni de dólares
+  (por ejemplo, preguntas sobre el panel administrativo,
+  saludos o temas ajenos al Asadero), deja todo como
+  en el formato de arriba.
+
+EJEMPLOS:
+
+Mensaje: "¿Cuánto cuesta el cuarto de pollo en dólares?"
 {
     "habla_de_dolares": true,
     "quiere_precio": true,
+    "producto_mencionado": "Cuarto de pollo",
+    "id_producto": "7"
+}
+
+Mensaje: "¿Cómo puedo ingresar al panel administrativo?"
+{
+    "habla_de_dolares": false,
+    "quiere_precio": false,
     "producto_mencionado": "",
     "id_producto": ""
 }
@@ -225,6 +243,10 @@ Si no se identifica producto:
             });
         }
  
+        // Si habla de dólares lo decide el sistema, no lo que adivine la IA
+        resultadoAnalisis.habla_de_dolares =
+            /\b(d[oó]lar(es)?|usd|dls)\b/i.test(mensajeLimpio);
+
         let productoSeleccionado = null;
  
         if (resultadoAnalisis.id_producto) {
@@ -325,6 +347,20 @@ No vuelvas a calcular.
  
 const hoy = diaDeHoy();
 
+        // Las reglas de dólares solo se incluyen si el cliente habló de dólares,
+        // para que la IA no las use cuando no vienen al caso
+        const reglasDolares = resultadoAnalisis.habla_de_dolares
+            ? `
+CUANDO EL CLIENTE QUIERA PAGAR O CONSULTAR EL PRECIO EN DÓLARES:
+Muestra primero el precio en pesos colombianos y después el equivalente en dólares.
+Utiliza EXACTAMENTE la conversión proporcionada por el sistema.
+NO recalcules la conversión. NO inventes una tasa.
+
+SI EL CLIENTE HABLA DE DÓLARES PERO NO MENCIONA UN PRODUCTO:
+Pregúntale qué producto desea consultar.
+`
+            : '';
+
         // La IA solo ve datos para el cliente (sin stock exacto ni enlaces de fotos)
         const contextoProductos = productosParaCliente(productos, hoy)
             .map((producto) => JSON.stringify(producto))
@@ -367,29 +403,14 @@ REGLAS:
 - Responde corto, en una a tres frases de texto corrido, sin listas ni guiones.
 - Si preguntan por un producto, di el nombre, el precio en pesos y una breve descripción.
 - Si preguntan qué hay hoy o por el menú, menciona solo los productos con se_sirve_hoy en true e indica su sección (desayuno, almuerzo, gaseosas, fin de semana o lo más pedido).
+- Si preguntan por algo que no es del Asadero (por ejemplo el panel administrativo, cuentas del personal, claves o cómo entrar como administrador), responde con amabilidad que solo puedes ayudar con el menú, los precios y los pedidos, y ofrece ayuda con eso. Nunca expliques cómo acceder a paneles internos.
  
 CUANDO EL CLIENTE PREGUNTE POR UN PRODUCTO:
  
 Utiliza el producto real encontrado en la información
 del Asadero.
  
-CUANDO EL CLIENTE QUIERA PAGAR O CONSULTAR EL PRECIO
-EN DÓLARES:
- 
-Muestra primero el precio en pesos colombianos
-y después el equivalente en dólares.
- 
-Utiliza EXACTAMENTE la conversión proporcionada
-por el sistema.
- 
-NO recalcules la conversión.
- 
-NO inventes una tasa.
- 
-SI EL CLIENTE HABLA DE DÓLARES PERO NO MENCIONA
-UN PRODUCTO:
- 
-Pregúntale qué producto desea consultar.
+${reglasDolares}
  
 HOY ES: ${hoy}
  
