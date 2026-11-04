@@ -69,11 +69,12 @@ export const obtenerPedidosPorUsuarioBD = async (usuario_id) => {
   return { data, error };
 };
 
-// Actualizar el estado del pedido
-export const cambiarEstadoPedidoBD = async (pedido_id, nuevoEstado) => {
+// Actualizar el estado del pedido. "extras" permite guardar otros datos a la
+// vez, por ejemplo { numero_mesa: 4 } cuando el mesero lo envía a cocina.
+export const cambiarEstadoPedidoBD = async (pedido_id, nuevoEstado, extras = {}) => {
   const { data, error } = await supabase
     .from('pedidos')
-    .update({ estado: nuevoEstado, actualizado_es: new Date() })
+    .update({ estado: nuevoEstado, actualizado_es: new Date(), ...extras })
     .eq('id', pedido_id)
     .select();
 
@@ -92,7 +93,7 @@ export const obtenerPedidoPorIdBD = async (pedido_id) => {
 };
 
 // Pedidos en ciertos estados, del más antiguo al más nuevo, con lo que necesitan
-// el mesero y la cocina: nombre del cliente y nombre de cada plato.
+// el mesero y la cocina: nombre del cliente, mesa y nombre de cada plato.
 export const obtenerPedidosPorEstadosBD = async (estados) => {
   const { data: pedidos, error } = await supabase
     .from('pedidos')
@@ -124,6 +125,7 @@ export const obtenerPedidosPorEstadosBD = async (estados) => {
     fecha_pedido: pedido.fecha_pedido,
     total: pedido.total,
     notas: pedido.notas,
+    mesa: pedido.numero_mesa,
     cliente: nombreUsuario.get(pedido.usuario_id) || 'Cliente',
     items: (pedido.detalle_pedido || []).map((detalle) => ({
       nombre: nombreProducto.get(detalle.producto_id) || 'Plato',

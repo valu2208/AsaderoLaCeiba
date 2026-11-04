@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:asadero/core/colores.dart';
 import '../models/pedido_personal.dart';
 import '../services/pedido_personal_service.dart';
+import 'dialogo_mesa.dart';
 import 'lista_pedidos_personal.dart';
 import 'pestana_pedidos.dart';
 
@@ -84,9 +85,16 @@ class _PedidosPersonalVistaState extends State<PedidosPersonalVista> {
   }
 
   Future<void> _cambiar(PedidoPersonal pedido, String estado) async {
+    // Al enviar a cocina el mesero debe indicar la mesa
+    int? mesa;
+    if (widget.rol == 'mesero' && estado == 'En cocina') {
+      mesa = await pedirMesa(context, pedido);
+      if (mesa == null) return;
+    }
+
     setState(() => _ocupado = true);
     try {
-      await _servicio.cambiarEstado(widget.rol, pedido.id, estado);
+      await _servicio.cambiarEstado(widget.rol, pedido.id, estado, mesa: mesa);
       await _cargar();
     } catch (e) {
       _aviso(e.toString().replaceAll('Exception: ', ''));

@@ -60,6 +60,16 @@ class TarjetaPedidoPersonal extends StatelessWidget {
               ],
             ),
             _linea('${pedido.cliente} · ${pedido.hace}', opacidad: 0.8),
+            if (pedido.mesa != null) ...[
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  const Icon(Icons.table_restaurant, color: AppColors.goldSand, size: 18),
+                  const SizedBox(width: 6),
+                  _linea('Mesa ${pedido.mesa}', size: 16, negrita: true),
+                ],
+              ),
+            ],
             Divider(color: AppColors.goldSand.withValues(alpha: 0.25), height: 20),
             for (final item in pedido.items)
               _linea('${item.cantidad} × ${item.nombre}', size: 16),

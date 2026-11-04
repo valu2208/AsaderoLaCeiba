@@ -29,8 +29,9 @@ const registrarError = (donde, resultado) => {
 };
 
 // Cambia el estado si el paso está permitido para ese rol y avisa a quien corresponde.
+// "extras" guarda otros datos a la vez, por ejemplo { numero_mesa: 4 }.
 // Devuelve { pedido } o { codigo, error }.
-export const avanzarPedido = async (id, nuevoEstado, pasosPermitidos) => {
+export const avanzarPedido = async (id, nuevoEstado, pasosPermitidos, extras = {}) => {
     const desde = pasosPermitidos[nuevoEstado];
 
     if (!desde) {
@@ -49,7 +50,7 @@ export const avanzarPedido = async (id, nuevoEstado, pasosPermitidos) => {
         };
     }
 
-    const { data, error: errorEstado } = await cambiarEstadoPedidoBD(id, nuevoEstado);
+    const { data, error: errorEstado } = await cambiarEstadoPedidoBD(id, nuevoEstado, extras);
     const actualizado = data?.[0];
 
     if (errorEstado || !actualizado) {
@@ -67,20 +68,22 @@ export const avanzarPedido = async (id, nuevoEstado, pasosPermitidos) => {
 
     // Avisos al personal
     if (nuevoEstado === 'En cocina') {
+        const mesa = actualizado.numero_mesa ? ` (mesa ${actualizado.numero_mesa})` : '';
         registrarError('cocineros', await avisarRol('cocinero', {
             pedido_id: actualizado.id,
             tipo: 'pedido',
             titulo: `Pedido #${actualizado.id} para preparar`,
-            mensaje: 'El mesero envió un pedido a la cocina.'
+            mensaje: `El mesero envió un pedido a la cocina${mesa}.`
         }));
     }
 
     if (nuevoEstado === 'Listo') {
+        const mesa = actualizado.numero_mesa ? ` de la mesa ${actualizado.numero_mesa}` : '';
         registrarError('meseros', await avisarRol('mesero', {
             pedido_id: actualizado.id,
             tipo: 'estado_pedido',
             titulo: `Pedido #${actualizado.id} listo`,
-            mensaje: 'Pasa por el plato y llévalo al cliente.'
+            mensaje: `Pasa por el plato${mesa} y llévalo al cliente.`
         }));
     }
 

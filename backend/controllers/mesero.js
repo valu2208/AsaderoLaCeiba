@@ -18,7 +18,8 @@ export const listarPedidosMesero = async (req, res) => {
     }
 };
 
-// El mesero envía a cocina (Pendiente -> En cocina) o entrega (Listo -> Entregado)
+// El mesero envía a cocina (Pendiente -> En cocina) o entrega (Listo -> Entregado).
+// Al enviar a cocina debe indicar la mesa: { estado: 'En cocina', mesa: 4 }
 export const actualizarEstadoMesero = async (req, res) => {
     try {
         const { estado } = req.body;
@@ -27,7 +28,21 @@ export const actualizarEstadoMesero = async (req, res) => {
             return res.status(400).json({ error: 'El estado es requerido' });
         }
 
-        const resultado = await avanzarPedido(req.params.id, estado, PASOS_MESERO);
+        const extras = {};
+
+        if (estado === 'En cocina') {
+            const mesa = Number(req.body.mesa);
+
+            if (!Number.isInteger(mesa) || mesa <= 0) {
+                return res.status(400).json({
+                    error: 'Indica el número de mesa para enviar el pedido a cocina'
+                });
+            }
+
+            extras.numero_mesa = mesa;
+        }
+
+        const resultado = await avanzarPedido(req.params.id, estado, PASOS_MESERO, extras);
 
         if (resultado.error) {
             return res.status(resultado.codigo).json({ error: resultado.error });

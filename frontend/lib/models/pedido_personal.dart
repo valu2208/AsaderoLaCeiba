@@ -21,6 +21,7 @@ class PedidoPersonal {
   final double total;
   final String notas;
   final String cliente;
+  final int? mesa; // la pone el mesero al enviar a cocina
   final List<ItemPedido> items;
 
   const PedidoPersonal({
@@ -30,6 +31,7 @@ class PedidoPersonal {
     required this.total,
     required this.notas,
     required this.cliente,
+    required this.mesa,
     required this.items,
   });
 
@@ -43,6 +45,7 @@ class PedidoPersonal {
       total: (json['total'] as num?)?.toDouble() ?? 0,
       notas: json['notas']?.toString() ?? '',
       cliente: json['cliente']?.toString() ?? 'Cliente',
+      mesa: (json['mesa'] as num?)?.toInt(),
       items: lista
           .map((i) => ItemPedido.fromJson(Map<String, dynamic>.from(i)))
           .toList(),

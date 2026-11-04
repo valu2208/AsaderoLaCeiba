@@ -44,13 +44,17 @@ class PedidoPersonalService {
         .toList();
   }
 
-  Future<void> cambiarEstado(String rol, int id, String estado) async {
+  // "mesa" solo se envía cuando el mesero manda el pedido a cocina
+  Future<void> cambiarEstado(String rol, int id, String estado, {int? mesa}) async {
     final http.Response respuesta;
     try {
       respuesta = await http.put(
         Uri.parse('${ApiConfig.baseUrl}/$rol/pedidos/$id/estado'),
         headers: await _cabeceras(),
-        body: jsonEncode({'estado': estado}),
+        body: jsonEncode({
+          'estado': estado,
+          if (mesa != null) 'mesa': mesa,
+        }),
       );
     } catch (_) {
       throw Exception('No se pudo conectar con el servidor');
