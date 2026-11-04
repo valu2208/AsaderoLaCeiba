@@ -4,7 +4,7 @@ import '../models/pedido_personal.dart';
 import 'api_config.dart';
 import 'user_service.dart';
 
-// Pedidos para el personal. rol: 'mesero' o 'cocina' (así empieza la ruta del servidor)
+// Pedidos para el personal. rol: 'mesero', 'cocina' o 'admin'
 class PedidoPersonalService {
   Future<Map<String, String>> _cabeceras() async {
     final token = await UserService.getToken();
@@ -24,10 +24,13 @@ class PedidoPersonalService {
   }
 
   Future<List<PedidoPersonal>> listar(String rol) async {
+    // La ruta del admin vive dentro del router de pedidos, montado en /api
+    final ruta = rol == 'admin' ? '/api/admin/pedidos' : '/$rol/pedidos';
+
     final http.Response respuesta;
     try {
       respuesta = await http.get(
-        Uri.parse('${ApiConfig.baseUrl}/$rol/pedidos'),
+        Uri.parse('${ApiConfig.baseUrl}$ruta'),
         headers: await _cabeceras(),
       );
     } catch (_) {
