@@ -7,12 +7,13 @@ import 'package:asadero/models/producto_model.dart';
 // Card de un producto en el panel admin (mismos colores de la card del cliente)
 class TarjetaAdminProducto extends StatelessWidget {
   final ProductoModel producto;
-  final ValueChanged<String> onAccion; // 'editar', 'estado' o 'eliminar'
+  // 'editar', 'estado' o 'eliminar'. Sin onAccion la card es de solo lectura (mesero)
+  final ValueChanged<String>? onAccion;
 
   const TarjetaAdminProducto({
     super.key,
     required this.producto,
-    required this.onAccion,
+    this.onAccion,
   });
 
   Widget _foto() {
@@ -73,27 +74,29 @@ class TarjetaAdminProducto extends StatelessWidget {
                     _texto(producto.nombre, size: 16, negrita: true),
                     _texto(formatoPesos(producto.precio), negrita: true),
                     _texto(producto.descripcion, lineas: 2),
-                    _texto(producto.activo ? 'Activo' : 'Inactivo', size: 12),
+                    if (onAccion != null)
+                      _texto(producto.activo ? 'Activo' : 'Inactivo', size: 12),
                   ],
                 ),
               ),
-              PopupMenuButton<String>(
-                iconColor: AppColors.goldSand,
-                color: AppColors.goldSand,
-                onSelected: onAccion,
-                itemBuilder: (_) => [
-                  if (producto.activo)
-                    const PopupMenuItem(value: 'editar', child: Text('Editar')),
-                  PopupMenuItem(
-                    value: 'estado',
-                    child: Text(producto.activo ? 'Desactivar' : 'Reactivar'),
-                  ),
-                  const PopupMenuItem(
-                    value: 'eliminar',
-                    child: Text('Eliminar definitivamente'),
-                  ),
-                ],
-              ),
+              if (onAccion != null)
+                PopupMenuButton<String>(
+                  iconColor: AppColors.goldSand,
+                  color: AppColors.goldSand,
+                  onSelected: onAccion!,
+                  itemBuilder: (_) => [
+                    if (producto.activo)
+                      const PopupMenuItem(value: 'editar', child: Text('Editar')),
+                    PopupMenuItem(
+                      value: 'estado',
+                      child: Text(producto.activo ? 'Desactivar' : 'Reactivar'),
+                    ),
+                    const PopupMenuItem(
+                      value: 'eliminar',
+                      child: Text('Eliminar definitivamente'),
+                    ),
+                  ],
+                ),
             ],
           ),
         ),

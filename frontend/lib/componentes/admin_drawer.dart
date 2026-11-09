@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/navegacion_rol.dart';
+import 'package:asadero/pantallas/admin_inventario_page.dart';
 import 'package:asadero/pantallas/admin_menu_page.dart';
+import 'package:asadero/pantallas/admin_pedidos_page.dart';
 import 'package:asadero/pantallas/admin_product_list_page.dart';
+import 'package:asadero/pantallas/admin_reportes_page.dart';
 import 'package:asadero/pantallas/admin_usuarios_page.dart';
 import 'package:asadero/pantallas/home.dart';
 
 class AdminDrawer extends StatefulWidget {
-  final String actual; // pantalla abierta: 'productos', 'menu' o 'usuarios'
+  // pantalla abierta: 'productos', 'menu', 'inventario', 'pedidos', 'reportes' o 'usuarios'
+  final String actual;
 
   const AdminDrawer({super.key, this.actual = 'productos'});
 
@@ -56,13 +60,6 @@ class _AdminDrawerState extends State<AdminDrawer> {
     );
   }
 
-  // Pedidos todavía no tiene pantalla de administrador: avisa "próximamente"
-  void _proximamente(String seccion) {
-    final mensajes = ScaffoldMessenger.of(context);
-    Navigator.pop(context);
-    mensajes.showSnackBar(SnackBar(content: Text('$seccion: próximamente')));
-  }
-
   // Muestra la carta tal como la ve el cliente (con "atrás" se vuelve al panel)
   void _verCartaCliente() {
     Navigator.pop(context);
@@ -100,13 +97,14 @@ class _AdminDrawerState extends State<AdminDrawer> {
           _opcion(Icons.fastfood, 'Gestionar Productos', 'productos',
               const AdminProductListPage()),
           _opcion(Icons.restaurant_menu, 'Menú', 'menu', const AdminMenuPage()),
+          _opcion(Icons.inventory_2, 'Inventario', 'inventario',
+              const AdminInventarioPage()),
+          _opcion(Icons.receipt_long, 'Pedidos', 'pedidos',
+              const AdminPedidosPage()),
+          _opcion(Icons.bar_chart, 'Reportes', 'reportes',
+              const AdminReportesPage()),
           _opcion(Icons.people, 'Usuarios y roles', 'usuarios',
               const AdminUsuariosPage()),
-          ListTile(
-            leading: const Icon(Icons.receipt_long),
-            title: const Text('Pedidos'),
-            onTap: () => _proximamente('Pedidos'),
-          ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.menu_book),

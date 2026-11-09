@@ -10,8 +10,10 @@ import cocinaRouter from './routes/cocina.js';
 import chatRouter from './routes/chats.js';
 import tasasCambioRouter from './routes/tasasCambio.js';
 import notificacionRouter from './routes/notificacion.js';
-
+import meseroRouter from './routes/mesero.js';
+import inventarioRouter from './routes/inventario.js';
 import cors from 'cors';
+
 
 conectaDB();
 
@@ -33,8 +35,10 @@ app.get('/health', (req, res) => {
     res.status(200).send('OK');
 });
 
-
+// Rutas de productos, pedidos, usuarios, autenticación, recuperación de contraseña, cocina, chat, tasas de cambio, notificaciones, mesero e inventario
 app.use('/productos', productoRouter);
+
+// Rutas de pedidos, usuarios, autenticación, recuperación de contraseña, cocina, chat, tasas de cambio, notificaciones, mesero e inventario
 app.use('/api', pedidoRouter);
 app.use('/usuarios', userRouter);
 app.use('/auth', authRouter);
@@ -43,6 +47,11 @@ app.use('/cocina', cocinaRouter);
 app.use('/chat', chatRouter);
 app.use('/tasas-cambio', tasasCambioRouter);
 app.use('/notificaciones', notificacionRouter);
+
+// Rutas de mesero e inventario
+app.use('/mesero', meseroRouter);
+// Rutas de inventario
+app.use('/inventario', inventarioRouter);
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {

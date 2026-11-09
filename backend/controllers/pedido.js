@@ -1,4 +1,3 @@
-
 import {
   crearPedidoBD,
   obtenerTodosPedidosBD,
@@ -6,7 +5,7 @@ import {
   cambiarEstadoPedidoBD
 } from '../models/pedido.js';
 
-import { crearNotificacion } from '../models/notificacion.js';
+import { crearNotificacion, avisarRol } from '../models/notificacion.js';
 
 // Crear un pedido
 export const crearPedido = async (req, res) => {
@@ -65,6 +64,18 @@ export const crearPedido = async (req, res) => {
         'Error al crear la notificación del pedido:',
         errorNotificacion.message
       );
+    }
+
+    // Aviso a todos los meseros: hay un pedido nuevo
+    const { error: errorMeseros } = await avisarRol('mesero', {
+      pedido_id: data.id,
+      tipo: 'pedido',
+      titulo: `Nuevo pedido #${data.id}`,
+      mensaje: 'Un cliente hizo un pedido. Revísalo y envíalo a cocina.'
+    });
+
+    if (errorMeseros) {
+      console.error('Error al avisar a los meseros:', errorMeseros.message);
     }
 
     return res.status(201).json({
@@ -171,6 +182,7 @@ export const actualizarEstado = async (req, res) => {
     if (pedidoAnterior.estado !== estado) {
       const mensajesEstado = {
         'Pendiente': 'Tu pedido está pendiente.',
+        'En cocina': 'Tu pedido fue enviado a la cocina.',
         'En preparación': 'La cocina está preparando tu pedido.',
         'Listo': 'Tu pedido está listo.',
         'Entregado': 'Tu pedido ha sido entregado.'

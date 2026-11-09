@@ -5,6 +5,8 @@ import {
   misPedidos, 
   actualizarEstado 
 } from '../controllers/pedido.js';
+import { listarPedidosAdmin } from '../controllers/pedidosAdmin.js';
+import { reporteVentas } from '../controllers/reportes.js';
 import { verificarToken, verificarAdmin } from '../middlewares/authMiddleware.js';
 
 const router = Router();
@@ -17,6 +19,12 @@ router.get('/pedidos/mis-pedidos', verificarToken, misPedidos);
 
 // Endpoint para que el Admin/Personal vea TODOS los pedidos del asadero
 router.get('/pedidos', verificarToken, verificarAdmin, listarPedidos);
+
+// Admin: pedidos con cliente, mesa y platos (para la pantalla de control de pedidos)
+router.get('/admin/pedidos', verificarToken, verificarAdmin, listarPedidosAdmin);
+
+// Admin: reporte de ventas y platos más vendidos (montado bajo /api)
+router.get('/admin/reportes', verificarToken, verificarAdmin, reporteVentas);
 
 // Endpoint para cambiar el estado del pedido
 router.put('/pedidos/:id/estado', verificarToken, verificarAdmin, actualizarEstado);
