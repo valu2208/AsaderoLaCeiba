@@ -1,4 +1,6 @@
+
 import bcrypt from 'bcrypt';
+
 import {
     obtenerUsuarioPorEmail,
     invalidarCodigosAnteriores,
@@ -8,7 +10,9 @@ import {
     marcarCodigoUsado
 } from '../models/recuperar.js';
 
-import { enviarCodigoRecuperacion } from '../utils/sendEmail.js';
+import {
+    enviarCodigoRecuperacion
+} from '../utils/emailservice.js';
 
 // Solicitar código de recuperación
 export const solicitarRecuperacion = async (req, res) => {
@@ -56,23 +60,32 @@ export const solicitarRecuperacion = async (req, res) => {
             });
         }
 
-        await enviarCodigoRecuperacion(
+        // Enviar código mediante Brevo
+        const resultadoCorreo = await enviarCodigoRecuperacion(
             usuario.email,
             usuario.nombre,
             codigo
         );
+
+        if (!resultadoCorreo.exito) {
+            return res.status(502).json({
+                error: 'No se pudo enviar el correo de recuperación',
+                detalle: resultadoCorreo.error
+            });
+        }
 
         return res.status(200).json({
             message: 'Código de recuperación enviado al correo'
         });
 
     } catch (error) {
+        console.error('Error solicitando recuperación:', error);
+
         return res.status(500).json({
             error: error.message
         });
     }
 };
-
 
 // Restablecer contraseña
 export const restablecerPassword = async (req, res) => {
@@ -153,6 +166,8 @@ export const restablecerPassword = async (req, res) => {
         });
 
     } catch (error) {
+        console.error('Error restableciendo contraseña:', error);
+
         return res.status(500).json({
             error: error.message
         });
