@@ -5,12 +5,13 @@ import { verificarToken } from '../middlewares/authMiddleware.js';
 import {
     listarNotificaciones,
     leerNotificacion,
-    contarNoLeidas
+    contarNoLeidas,
+    borrarNotificaciones
 } from '../controllers/notificacion.js';
 
 const router = Router();
 
-// Consultar las notificaciones del usuario autenticado.
+// Consultar las notificaciones.
 router.get('/', verificarToken, listarNotificaciones);
 
 // Consultar la cantidad de notificaciones no leídas.
@@ -19,4 +20,7 @@ router.get('/no-leidas', verificarToken, contarNoLeidas);
 // Marcar una notificación como leída.
 router.patch('/:id/leida', verificarToken, leerNotificacion);
 
-export default router;
+// Eliminar todas las notificaciones del usuario.
+router.delete('/', verificarToken, borrarNotificaciones);
+
+export default router; 

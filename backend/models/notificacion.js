@@ -1,3 +1,4 @@
+
 import { supabase } from '../config/supabase.js';
 
 // Crear una notificación para un usuario.
@@ -23,7 +24,7 @@ export const crearNotificacion = async ({
     return { data, error };
 };
 
-// Obtener las notificaciones de un usuario, de más recientes a más antiguas.
+// Obtener las notificaciones de un usuario.
 export const obtenerNotificaciones = async (usuario_id) => {
     const { data, error } = await supabase
         .from('notificaciones')
@@ -34,7 +35,7 @@ export const obtenerNotificaciones = async (usuario_id) => {
     return { data, error };
 };
 
-// Marcar como leída una notificación perteneciente al usuario autenticado.
+// Marcar como leída una notificación.
 export const marcarNotificacionLeida = async (id, usuario_id) => {
     const { data, error } = await supabase
         .from('notificaciones')
@@ -58,8 +59,22 @@ export const contarNotificacionesNoLeidas = async (usuario_id) => {
     return { count, error };
 };
 
-// Crear el mismo aviso para todos los usuarios de un rol (ej. todos los meseros).
-export const avisarRol = async (rol, { pedido_id = null, tipo, titulo, mensaje }) => {
+// Eliminar todas las notificaciones de un usuario.
+export const eliminarNotificaciones = async (usuario_id) => {
+    const { data, error } = await supabase
+        .from('notificaciones')
+        .delete()
+        .eq('usuario_id', usuario_id)
+        .select('id');
+
+    return { data, error };
+};
+
+// Crear el mismo aviso para todos los usuarios de un rol.
+export const avisarRol = async (
+    rol,
+    { pedido_id = null, tipo, titulo, mensaje }
+) => {
     const { data: usuarios, error } = await supabase
         .from('usuarios')
         .select('id')

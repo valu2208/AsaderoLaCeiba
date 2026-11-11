@@ -17,6 +17,7 @@ class Notificaciones extends StatefulWidget {
 class _NotificacionesState extends State<Notificaciones> {
   List<Map<String, dynamic>> notificaciones = [];
   bool cargando = true;
+  bool eliminando = false;
   String? error;
 
   @override
@@ -40,10 +41,7 @@ class _NotificacionesState extends State<Notificaciones> {
 
       final respuesta = await http.get(
         Uri.parse('${ApiConfig.baseUrl}/notificaciones'),
-        headers: {
-          ...ApiConfig.headers,
-          'Authorization': 'Bearer $token',
-        },
+        headers: {...ApiConfig.headers, 'Authorization': 'Bearer $token'},
       );
 
       if (respuesta.statusCode != 200) {
@@ -84,10 +82,7 @@ class _NotificacionesState extends State<Notificaciones> {
         Uri.parse(
           '${ApiConfig.baseUrl}/notificaciones/${notificacion['id']}/leida',
         ),
-        headers: {
-          ...ApiConfig.headers,
-          'Authorization': 'Bearer $token',
-        },
+        headers: {...ApiConfig.headers, 'Authorization': 'Bearer $token'},
       );
 
       if (respuesta.statusCode != 200) {
@@ -103,11 +98,83 @@ class _NotificacionesState extends State<Notificaciones> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            e.toString().replaceFirst('Exception: ', ''),
-          ),
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
+    }
+  }
+
+  Future<void> _confirmarEliminar() async {
+    final confirmar = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Borrar notificaciones'),
+        content: const Text(
+          '¿Estás seguro de que deseas eliminar todas tus notificaciones? '
+          'Esta acción no se puede deshacer.',
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text(
+              'Borrar todas',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmar == true) {
+      await _eliminarNotificaciones();
+    }
+  }
+
+  Future<void> _eliminarNotificaciones() async {
+    setState(() {
+      eliminando = true;
+    });
+
+    try {
+      final token = await UserService.getToken();
+
+      if (token == null || token.isEmpty) {
+        throw Exception('Debes iniciar sesión nuevamente.');
+      }
+
+      final respuesta = await http.delete(
+        Uri.parse('${ApiConfig.baseUrl}/notificaciones'),
+        headers: {...ApiConfig.headers, 'Authorization': 'Bearer $token'},
+      );
+
+      if (respuesta.statusCode != 200) {
+        throw Exception('No se pudieron eliminar las notificaciones.');
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        notificaciones.clear();
+        eliminando = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Notificaciones eliminadas correctamente.'),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        eliminando = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
       );
     }
   }
@@ -160,10 +227,25 @@ class _NotificacionesState extends State<Notificaciones> {
         ),
         actions: [
           IconButton(
-            onPressed: _cargarNotificaciones,
+            onPressed: cargando ? null : _cargarNotificaciones,
             icon: const Icon(Icons.refresh),
             tooltip: 'Actualizar',
           ),
+          if (notificaciones.isNotEmpty)
+            IconButton(
+              onPressed: eliminando || cargando ? null : _confirmarEliminar,
+              icon: eliminando
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.goldSand,
+                      ),
+                    )
+                  : const Icon(Icons.delete_outline),
+              tooltip: 'Borrar todas',
+            ),
         ],
       ),
       body: Container(
@@ -172,15 +254,13 @@ class _NotificacionesState extends State<Notificaciones> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              AppColors.goldSand,
-              AppColors.redPrayerFlag,
-            ],
+            colors: [AppColors.goldSand, AppColors.redPrayerFlag],
           ),
         ),
         child: RefreshIndicator(
           onRefresh: _cargarNotificaciones,
           child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(16),
             children: [
               Text(
@@ -214,9 +294,7 @@ class _NotificacionesState extends State<Notificaciones> {
                       Text(
                         error!,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: AppColors.earthBrown,
-                        ),
+                        style: const TextStyle(color: AppColors.earthBrown),
                       ),
                       const SizedBox(height: 12),
                       ElevatedButton(
@@ -262,9 +340,7 @@ class _NotificacionesState extends State<Notificaciones> {
                       onTap: () => _marcarComoLeida(notificacion),
                       contentPadding: const EdgeInsets.all(14),
                       leading: Icon(
-                        _obtenerIcono(
-                          notificacion['tipo']?.toString() ?? '',
-                        ),
+                        _obtenerIcono(notificacion['tipo']?.toString() ?? ''),
                         color: AppColors.goldSand,
                         size: 30,
                       ),
@@ -272,8 +348,9 @@ class _NotificacionesState extends State<Notificaciones> {
                         notificacion['titulo']?.toString() ?? '',
                         style: TextStyle(
                           color: AppColors.goldSand,
-                          fontWeight:
-                              leida ? FontWeight.normal : FontWeight.bold,
+                          fontWeight: leida
+                              ? FontWeight.normal
+                              : FontWeight.bold,
                         ),
                       ),
                       subtitle: Padding(

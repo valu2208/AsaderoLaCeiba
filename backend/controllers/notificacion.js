@@ -2,7 +2,8 @@
 import {
     obtenerNotificaciones,
     marcarNotificacionLeida,
-    contarNotificacionesNoLeidas
+    contarNotificacionesNoLeidas,
+    eliminarNotificaciones
 } from '../models/notificacion.js';
 
 // Obtener las notificaciones del usuario autenticado.
@@ -26,7 +27,7 @@ export const listarNotificaciones = async (req, res) => {
     }
 };
 
-// Marcar como leída una notificación del usuario autenticado.
+// Marcar como leída una notificación.
 export const leerNotificacion = async (req, res) => {
     try {
         const usuario_id = req.usuario.id;
@@ -81,6 +82,30 @@ export const contarNoLeidas = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             error: 'Error al consultar el contador'
+        });
+    }
+};
+
+export const borrarNotificaciones = async (req, res) => {
+    try {
+        const usuario_id = req.usuario.id;
+
+        const { data, error } = await eliminarNotificaciones(usuario_id);
+
+        if (error) {
+            console.error('ERROR AL ELIMINIAR NOTIFICACIONES:', error);
+            return res.status(500).json({
+                error: 'No se pudieron eliminar las notificaciones'
+            });
+        }
+
+        return res.status(200).json({
+            message: 'Notificaciones eliminadas correctamente',
+            eliminadas: data?.length ?? 0
+        });
+    } catch (error) {
+        return res.status(500).json({
+            error: 'Error al eliminar las notificaciones'
         });
     }
 };
