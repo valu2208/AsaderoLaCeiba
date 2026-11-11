@@ -1,3 +1,4 @@
+
 import {
   crearPedidoBD,
   obtenerTodosPedidosBD,
@@ -55,8 +56,8 @@ export const crearPedido = async (req, res) => {
       usuario_id,
       pedido_id: data.id,
       tipo: 'pedido',
-      titulo: 'Pedido recibido',
-      mensaje: `Tu pedido #${data.id} se registró correctamente.`
+      titulo: '¡Pedido recibido!',
+      mensaje: 'Hemos recibido tu pedido y pronto comenzaremos a prepararlo. ¡Gracias por elegir Asadero La Ceiba!'
     });
 
     if (errorNotificacion) {
@@ -180,19 +181,29 @@ export const actualizarEstado = async (req, res) => {
 
     // Notificar únicamente si el estado cambió
     if (pedidoAnterior.estado !== estado) {
+      const nombresEstado = {
+        'Pendiente': 'Recibido',
+        'Recibido': 'Recibido',
+        'En cocina': 'En cocina',
+        'En preparación': 'En cocina',
+        'Listo': 'Listo',
+        'Entregado': 'Entregado'
+      };
+
       const mensajesEstado = {
-        'Pendiente': 'Tu pedido está pendiente.',
-        'En cocina': 'Tu pedido fue enviado a la cocina.',
+        'Pendiente': 'Hemos recibido tu pedido y pronto comenzaremos a prepararlo.',
+        'Recibido': 'Hemos recibido tu pedido y pronto comenzaremos a prepararlo.',
+        'En cocina': 'Tu pedido está en cocina y pronto estará listo.',
         'En preparación': 'La cocina está preparando tu pedido.',
-        'Listo': 'Tu pedido está listo.',
-        'Entregado': 'Tu pedido ha sido entregado.'
+        'Listo': '¡Tu pedido está listo! Puedes pasar a recogerlo.',
+        'Entregado': 'Tu pedido ha sido entregado. ¡Gracias por elegirnos!'
       };
 
       const { error: errorNotificacion } = await crearNotificacion({
         usuario_id: pedidoActualizado.usuario_id,
         pedido_id: pedidoActualizado.id,
         tipo: 'estado_pedido',
-        titulo: `Pedido #${pedidoActualizado.id}: ${estado}`,
+        titulo: `Pedido #${pedidoActualizado.id}: ${nombresEstado[estado] || estado}`,
         mensaje: mensajesEstado[estado] ||
           `El estado de tu pedido cambió a ${estado}.`
       });
