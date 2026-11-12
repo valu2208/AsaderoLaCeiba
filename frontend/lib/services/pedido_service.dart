@@ -68,6 +68,7 @@ class PedidoService {
         datos['error'] ?? datos['message'] ?? 'No se pudo registrar el pedido.',
       );
     }
+
     final pedido = datos['pedido'];
 
     if (pedido is! Map || pedido['id'] == null) {
@@ -75,5 +76,79 @@ class PedidoService {
     }
 
     return (pedido['id'] as num).toInt();
+  }
+
+  Future<List<Map<String, dynamic>>> obtenerMisPedidos() async {
+    final token = await UserService.getToken();
+
+    if (token == null || token.isEmpty) {
+      throw Exception('Tu sesión ha expirado. Inicia sesión nuevamente.');
+    }
+
+    final respuesta = await http.get(
+      Uri.parse('${ApiConfig.baseUrl}/api/pedidos/mis-pedidos'),
+      headers: {...ApiConfig.headers, 'Authorization': 'Bearer $token'},
+    );
+
+    if (respuesta.statusCode != 200) {
+      throw Exception('No se pudo cargar el historial de pedidos.');
+    }
+
+    final datos = jsonDecode(respuesta.body);
+
+    if (datos is! List) {
+      throw Exception('La respuesta del historial no es válida.');
+    }
+
+    return datos.map((pedido) => Map<String, dynamic>.from(pedido)).toList();
+  }
+
+  // Ocultar todos los pedidos del historial del cliente
+  Future<void> limpiarHistorial() async {
+    final token = await UserService.getToken();
+
+    if (token == null || token.isEmpty) {
+      throw Exception('Tu sesión ha expirado. Inicia sesión nuevamente.');
+    }
+
+    final respuesta = await http.delete(
+      Uri.parse('${ApiConfig.baseUrl}/api/pedidos/mis-pedidos/historial'),
+      headers: {...ApiConfig.headers, 'Authorization': 'Bearer $token'},
+    );
+
+    if (respuesta.statusCode != 200) {
+      String mensaje = 'No se pudo limpiar el historial.';
+
+      try {
+        final datos = jsonDecode(respuesta.body);
+        mensaje = datos['error'] ?? mensaje;
+      } catch (_) {}
+
+      throw Exception(mensaje);
+    }
+  }
+
+  Future<void> cancelarPedido(int id) async {
+    final token = await UserService.getToken();
+
+    if (token == null || token.isEmpty) {
+      throw Exception('Tu sesión ha expirado. Inicia sesión nuevamente.');
+    }
+
+    final respuesta = await http.patch(
+      Uri.parse('${ApiConfig.baseUrl}/api/pedidos/$id/cancelar'),
+      headers: {...ApiConfig.headers, 'Authorization': 'Bearer $token'},
+    );
+
+    if (respuesta.statusCode != 200) {
+      String mensaje = 'No se pudo cancelar el pedido.';
+
+      try {
+        final datos = jsonDecode(respuesta.body);
+        mensaje = datos['error'] ?? mensaje;
+      } catch (_) {}
+
+      throw Exception(mensaje);
+    }
   }
 }

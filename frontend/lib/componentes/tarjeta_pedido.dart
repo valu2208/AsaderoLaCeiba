@@ -7,6 +7,7 @@ class TarjetaPedido extends StatelessWidget {
   final String estado;
   final String producto;
   final VoidCallback onVerDetalle;
+  final VoidCallback? onCancelar;
 
   const TarjetaPedido({
     super.key,
@@ -14,10 +15,19 @@ class TarjetaPedido extends StatelessWidget {
     required this.estado,
     required this.producto,
     required this.onVerDetalle,
+    this.onCancelar,
   });
 
   @override
   Widget build(BuildContext context) {
+    final estadoOriginal = pedido['estado'] ?? '';
+
+    final Color colorEstado = estadoOriginal == 'Entregado'
+        ? Colors.greenAccent
+        : estadoOriginal == 'Pendiente'
+        ? Colors.orangeAccent
+        : Colors.redAccent;
+
     return Card(
       color: AppColors.earthBrown,
       surfaceTintColor: Colors.transparent,
@@ -44,9 +54,7 @@ class TarjetaPedido extends StatelessWidget {
                 Text(
                   estado,
                   style: TextStyle(
-                    color: pedido['estado'] == 'Entregado'
-                        ? Colors.greenAccent
-                        : Colors.redAccent,
+                    color: colorEstado,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -70,12 +78,25 @@ class TarjetaPedido extends StatelessWidget {
             ),
             Align(
               alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: onVerDetalle,
-                child: Text(
-                  texto('ver_detalle'),
-                  style: const TextStyle(color: AppColors.goldSand),
-                ),
+              child: Wrap(
+                spacing: 8,
+                children: [
+                  if (onCancelar != null)
+                    TextButton(
+                      onPressed: onCancelar,
+                      child: const Text(
+                        'Cancelar pedido',
+                        style: TextStyle(color: Colors.redAccent),
+                      ),
+                    ),
+                  TextButton(
+                    onPressed: onVerDetalle,
+                    child: Text(
+                      texto('ver_detalle'),
+                      style: const TextStyle(color: AppColors.goldSand),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -84,4 +105,3 @@ class TarjetaPedido extends StatelessWidget {
     );
   }
 }
-

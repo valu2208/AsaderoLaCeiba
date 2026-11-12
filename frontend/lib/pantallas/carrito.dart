@@ -38,15 +38,15 @@ class _CarritoState extends State<Carrito> {
     setState(() => _enviandoPedido = true);
 
     try {
-      final pedidoId = await PedidoService().realizarPedido(items);
+      await PedidoService().realizarPedido(items);
 
       if (!mounted) return;
 
       CarritoEstado.vaciar();
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Pedido #$pedidoId registrado correctamente.'),
+        const SnackBar(
+          content: Text('Pedido registrado correctamente.'),
           backgroundColor: Colors.green,
         ),
       );

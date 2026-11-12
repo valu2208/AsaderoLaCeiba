@@ -3,7 +3,9 @@ import {
   crearPedidoBD,
   obtenerTodosPedidosBD,
   obtenerPedidosPorUsuarioBD,
-  cambiarEstadoPedidoBD
+  cambiarEstadoPedidoBD,
+  cancelarPedidoBD,
+  ocultarHistorialPedidosBD
 } from '../models/pedido.js';
 
 import { crearNotificacion, avisarRol } from '../models/notificacion.js';
@@ -41,10 +43,7 @@ export const crearPedido = async (req, res) => {
       notas
     };
 
-    const { data, error } = await crearPedidoBD(
-      datosPedido,
-      productos
-    );
+    const { data, error } = await crearPedidoBD(datosPedido, productos);
 
     if (error) {
       return res.status(500).json({
@@ -67,7 +66,6 @@ export const crearPedido = async (req, res) => {
       );
     }
 
-    // Aviso a todos los meseros: hay un pedido nuevo
     const { error: errorMeseros } = await avisarRol('mesero', {
       pedido_id: data.id,
       tipo: 'pedido',
@@ -84,9 +82,7 @@ export const crearPedido = async (req, res) => {
       pedido: data
     });
   } catch (error) {
-    return res.status(500).json({
-      error: error.message
-    });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -101,9 +97,7 @@ export const listarPedidos = async (req, res) => {
 
     return res.status(200).json(data);
   } catch (error) {
-    return res.status(500).json({
-      error: error.message
-    });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -112,9 +106,7 @@ export const misPedidos = async (req, res) => {
   try {
     const usuario_id = req.usuario.id;
 
-    const { data, error } = await obtenerPedidosPorUsuarioBD(
-      usuario_id
-    );
+    const { data, error } = await obtenerPedidosPorUsuarioBD(usuario_id);
 
     if (error) {
       return res.status(500).json({ error: error.message });
@@ -122,13 +114,58 @@ export const misPedidos = async (req, res) => {
 
     return res.status(200).json(data);
   } catch (error) {
-    return res.status(500).json({
-      error: error.message
-    });
+    return res.status(500).json({ error: error.message });
   }
 };
 
-// Cambiar estado
+// Ocultar todo el historial del usuario autenticado
+export const limpiarHistorial = async (req, res) => {
+  try {
+    const usuario_id = req.usuario.id;
+
+    const { data, error } = await ocultarHistorialPedidosBD(usuario_id);
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    return res.status(200).json({
+      message: 'Historial eliminado correctamente',
+      pedidosOcultos: data?.length || 0
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+// Cancelar un pedido del usuario autenticado
+export const cancelarPedido = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const usuario_id = req.usuario.id;
+
+    const { data, error } = await cancelarPedidoBD(id, usuario_id);
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    if (!data) {
+      return res.status(409).json({
+        error: 'Este pedido no existe, no te pertenece o ya no se puede cancelar.'
+      });
+    }
+
+    return res.status(200).json({
+      message: 'Pedido cancelado correctamente',
+      pedido: data
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+// Cambiar estado desde administración
 export const actualizarEstado = async (req, res) => {
   try {
     const { id } = req.params;
@@ -140,7 +177,6 @@ export const actualizarEstado = async (req, res) => {
       });
     }
 
-    // Consultar el pedido antes de actualizarlo
     const { data: pedidos, error: errorConsulta } =
       await obtenerTodosPedidosBD();
 
@@ -160,15 +196,10 @@ export const actualizarEstado = async (req, res) => {
       });
     }
 
-    const { data, error } = await cambiarEstadoPedidoBD(
-      id,
-      estado
-    );
+    const { data, error } = await cambiarEstadoPedidoBD(id, estado);
 
     if (error) {
-      return res.status(500).json({
-        error: error.message
-      });
+      return res.status(500).json({ error: error.message });
     }
 
     const pedidoActualizado = data?.[0];
@@ -179,7 +210,6 @@ export const actualizarEstado = async (req, res) => {
       });
     }
 
-    // Notificar únicamente si el estado cambió
     if (pedidoAnterior.estado !== estado) {
       const nombresEstado = {
         'Pendiente': 'Recibido',
@@ -221,8 +251,6 @@ export const actualizarEstado = async (req, res) => {
       pedido: pedidoActualizado
     });
   } catch (error) {
-    return res.status(500).json({
-      error: error.message
-    });
+    return res.status(500).json({ error: error.message });
   }
 };
