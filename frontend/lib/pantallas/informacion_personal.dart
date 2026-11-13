@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,9 +13,11 @@ class InformacionPersonal extends StatefulWidget {
 
 class _InformacionPersonalState extends State<InformacionPersonal> {
   final _formKey = GlobalKey<FormState>();
+
   final _nombreController = TextEditingController();
-  final _correoController = TextEditingController();
   final _telefonoController = TextEditingController();
+  final _direccionController = TextEditingController();
+  final _barrioController = TextEditingController();
 
   bool _cargando = true;
   bool _guardando = false;
@@ -31,8 +32,9 @@ class _InformacionPersonalState extends State<InformacionPersonal> {
     final prefs = await SharedPreferences.getInstance();
 
     _nombreController.text = prefs.getString('user_nombre') ?? '';
-    _correoController.text = prefs.getString('user_email') ?? '';
     _telefonoController.text = prefs.getString('user_telefono') ?? '';
+    _direccionController.text = prefs.getString('user_direccion') ?? '';
+    _barrioController.text = prefs.getString('user_barrio') ?? '';
 
     if (!mounted) return;
 
@@ -51,9 +53,14 @@ class _InformacionPersonalState extends State<InformacionPersonal> {
     try {
       await UserService.actualizarPerfil(
         nombre: _nombreController.text.trim(),
-        email: _correoController.text.trim(),
         telefono: _telefonoController.text.trim(),
       );
+
+      final prefs = await SharedPreferences.getInstance();
+
+      await prefs.setString('user_direccion', _direccionController.text.trim());
+
+      await prefs.setString('user_barrio', _barrioController.text.trim());
 
       if (!mounted) return;
 
@@ -71,10 +78,7 @@ class _InformacionPersonalState extends State<InformacionPersonal> {
       final mensaje = e.toString().replaceFirst('Exception: ', '');
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(mensaje),
-          backgroundColor: AppColors.earthBrown,
-        ),
+        SnackBar(content: Text(mensaje), backgroundColor: AppColors.earthBrown),
       );
     } finally {
       if (mounted) {
@@ -88,8 +92,9 @@ class _InformacionPersonalState extends State<InformacionPersonal> {
   @override
   void dispose() {
     _nombreController.dispose();
-    _correoController.dispose();
     _telefonoController.dispose();
+    _direccionController.dispose();
+    _barrioController.dispose();
     super.dispose();
   }
 
@@ -185,28 +190,6 @@ class _InformacionPersonalState extends State<InformacionPersonal> {
                                     ),
                                     const SizedBox(height: 18),
                                     _campo(
-                                      etiqueta: 'Correo electrónico',
-                                      controller: _correoController,
-                                      icono: Icons.email_outlined,
-                                      tipo: TextInputType.emailAddress,
-                                      validar: (valor) {
-                                        final correo = valor?.trim() ?? '';
-
-                                        if (correo.isEmpty) {
-                                          return 'Ingresa tu correo electrónico';
-                                        }
-
-                                        if (!RegExp(
-                                          r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
-                                        ).hasMatch(correo)) {
-                                          return 'Ingresa un correo válido';
-                                        }
-
-                                        return null;
-                                      },
-                                    ),
-                                    const SizedBox(height: 18),
-                                    _campo(
                                       etiqueta: 'Teléfono',
                                       controller: _telefonoController,
                                       icono: Icons.phone_outlined,
@@ -224,12 +207,27 @@ class _InformacionPersonalState extends State<InformacionPersonal> {
                                         return null;
                                       },
                                     ),
+                                    const SizedBox(height: 18),
+                                    _campo(
+                                      etiqueta: 'Dirección (opcional)',
+                                      controller: _direccionController,
+                                      icono: Icons.location_on_outlined,
+                                      validar: (valor) => null,
+                                    ),
+                                    const SizedBox(height: 18),
+                                    _campo(
+                                      etiqueta: 'Barrio (opcional)',
+                                      controller: _barrioController,
+                                      icono: Icons.home_outlined,
+                                      validar: (valor) => null,
+                                    ),
                                     const SizedBox(height: 30),
                                     SizedBox(
                                       width: double.infinity,
                                       child: ElevatedButton(
-                                        onPressed:
-                                            _guardando ? null : _guardarCambios,
+                                        onPressed: _guardando
+                                            ? null
+                                            : _guardarCambios,
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: AppColors.earthBrown,
                                           foregroundColor: AppColors.goldSand,
@@ -237,8 +235,9 @@ class _InformacionPersonalState extends State<InformacionPersonal> {
                                             vertical: 16,
                                           ),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(14),
+                                            borderRadius: BorderRadius.circular(
+                                              14,
+                                            ),
                                           ),
                                         ),
                                         child: _guardando
@@ -247,9 +246,9 @@ class _InformacionPersonalState extends State<InformacionPersonal> {
                                                 height: 22,
                                                 child:
                                                     CircularProgressIndicator(
-                                                  strokeWidth: 2,
-                                                  color: AppColors.goldSand,
-                                                ),
+                                                      strokeWidth: 2,
+                                                      color: AppColors.goldSand,
+                                                    ),
                                               )
                                             : const Text(
                                                 'Guardar cambios',
@@ -313,10 +312,7 @@ class _InformacionPersonalState extends State<InformacionPersonal> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(
-                color: AppColors.asphalt,
-                width: 2,
-              ),
+              borderSide: const BorderSide(color: AppColors.asphalt, width: 2),
             ),
           ),
         ),

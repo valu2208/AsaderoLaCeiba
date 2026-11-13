@@ -26,7 +26,7 @@ export const crearPedido = async (req, res) => {
 
     const usuario_id = req.usuario.id;
 
-    if (!productos || productos.length === 0) {
+    if (!Array.isArray(productos) || productos.length === 0) {
       return res.status(400).json({
         error: 'El pedido debe incluir al menos un producto'
       });
@@ -60,10 +60,7 @@ export const crearPedido = async (req, res) => {
     });
 
     if (errorNotificacion) {
-      console.error(
-        'Error al crear la notificación del pedido:',
-        errorNotificacion.message
-      );
+      console.error('Error al crear la notificación:', errorNotificacion.message);
     }
 
     const { error: errorMeseros } = await avisarRol('mesero', {
@@ -104,9 +101,7 @@ export const listarPedidos = async (req, res) => {
 // Historial de pedidos del usuario autenticado
 export const misPedidos = async (req, res) => {
   try {
-    const usuario_id = req.usuario.id;
-
-    const { data, error } = await obtenerPedidosPorUsuarioBD(usuario_id);
+    const { data, error } = await obtenerPedidosPorUsuarioBD(req.usuario.id);
 
     if (error) {
       return res.status(500).json({ error: error.message });
@@ -118,41 +113,38 @@ export const misPedidos = async (req, res) => {
   }
 };
 
-// Ocultar todo el historial del usuario autenticado
+// Ocultar el historial del usuario sin eliminar sus pedidos
 export const limpiarHistorial = async (req, res) => {
   try {
-    const usuario_id = req.usuario.id;
-
-    const { data, error } = await ocultarHistorialPedidosBD(usuario_id);
+    const { data, error } = await ocultarHistorialPedidosBD(req.usuario.id);
 
     if (error) {
       return res.status(500).json({ error: error.message });
     }
 
     return res.status(200).json({
-      message: 'Historial eliminado correctamente',
-      pedidosOcultos: data?.length || 0
+      message: 'Historial limpiado correctamente',
+      pedidos_ocultos: data?.length || 0
     });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 };
 
-// Cancelar un pedido del usuario autenticado
+// Cancelar un pedido propio que siga pendiente
 export const cancelarPedido = async (req, res) => {
   try {
     const { id } = req.params;
-    const usuario_id = req.usuario.id;
 
-    const { data, error } = await cancelarPedidoBD(id, usuario_id);
+    const { data, error } = await cancelarPedidoBD(id, req.usuario.id);
 
     if (error) {
       return res.status(500).json({ error: error.message });
     }
 
     if (!data) {
-      return res.status(409).json({
-        error: 'Este pedido no existe, no te pertenece o ya no se puede cancelar.'
+      return res.status(400).json({
+        error: 'No se pudo cancelar. El pedido no existe, no te pertenece o ya no está pendiente.'
       });
     }
 
@@ -165,7 +157,7 @@ export const cancelarPedido = async (req, res) => {
   }
 };
 
-// Cambiar estado desde administración
+// Cambiar estado del pedido
 export const actualizarEstado = async (req, res) => {
   try {
     const { id } = req.params;
@@ -181,19 +173,15 @@ export const actualizarEstado = async (req, res) => {
       await obtenerTodosPedidosBD();
 
     if (errorConsulta) {
-      return res.status(500).json({
-        error: errorConsulta.message
-      });
+      return res.status(500).json({ error: errorConsulta.message });
     }
 
-    const pedidoAnterior = pedidos.find(
+    const pedidoAnterior = (pedidos || []).find(
       pedido => String(pedido.id) === String(id)
     );
 
     if (!pedidoAnterior) {
-      return res.status(404).json({
-        error: 'Pedido no encontrado'
-      });
+      return res.status(404).json({ error: 'Pedido no encontrado' });
     }
 
     const { data, error } = await cambiarEstadoPedidoBD(id, estado);

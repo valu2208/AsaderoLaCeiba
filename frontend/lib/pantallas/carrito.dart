@@ -4,6 +4,7 @@ import 'package:asadero/core/carrito_estado.dart';
 import 'package:asadero/core/idioma.dart';
 import 'package:asadero/core/traducciones.dart';
 import 'package:asadero/services/pedido_service.dart';
+import 'package:asadero/services/user_service.dart';
 
 class Carrito extends StatefulWidget {
   const Carrito({super.key});
@@ -14,6 +15,25 @@ class Carrito extends StatefulWidget {
 
 class _CarritoState extends State<Carrito> {
   bool _enviandoPedido = false;
+  bool _esAdmin = false;
+  bool _verificandoRol = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _verificarRol();
+  }
+
+  Future<void> _verificarRol() async {
+    final rol = await UserService.getRol();
+
+    if (!mounted) return;
+
+    setState(() {
+      _esAdmin = rol.toLowerCase() == 'admin';
+      _verificandoRol = false;
+    });
+  }
 
   String nombreProducto(CarritoItem item) {
     if (item.imagen.contains('pollo_completo')) {
@@ -29,7 +49,7 @@ class _CarritoState extends State<Carrito> {
   }
 
   Future<void> _realizarPedido() async {
-    if (_enviandoPedido) return;
+    if (_enviandoPedido || _esAdmin || _verificandoRol) return;
 
     final items = List<CarritoItem>.from(CarritoEstado.items.value);
 
@@ -198,7 +218,7 @@ class _CarritoState extends State<Carrito> {
                         );
                       },
                     ),
-              bottomNavigationBar: items.isEmpty
+              bottomNavigationBar: items.isEmpty || _esAdmin || _verificandoRol
                   ? null
                   : Container(
                       padding: const EdgeInsets.all(15),

@@ -1,3 +1,4 @@
+
 import bcrypt from 'bcrypt';
 import { enviarCodigoVerificacion } from '../utils/emailservice.js';
 import { crearNotificacion } from '../models/notificacion.js';
@@ -6,6 +7,7 @@ import {
     crearUsuario,
     obtenerTodosUsuarios,
     obtenerUsuarioPorId,
+    obtenerUsuarioPorIdConPassword,
     obtenerUsuarioPorEmail,
     actualizarUsuario,
     eliminarUsuario as eliminarUsuarioBD,
@@ -63,13 +65,14 @@ export const registrarUsuario = async (req, res) => {
             nombre,
             codigoVerificacion
         );
+
         const correoEnviado = Boolean(resultadoCorreo.exito);
 
         return res.status(201).json({
             message: correoEnviado
                 ? 'Usuario creado exitosamente. Se envió un código de verificación al correo.'
                 : 'Usuario creado, pero no se pudo enviar el código. Usa la opción de reenviar código.',
-                correoEnviado,
+            correoEnviado,
             usuario: {
                 id: data.id,
                 nombre: data.nombre,
@@ -91,7 +94,6 @@ export const registrarUsuario = async (req, res) => {
 };
 
 // Verificar correo electrónico
-
 export const verificarCorreo = async (req, res) => {
     try {
         const { email, codigo } = req.body;
@@ -205,30 +207,25 @@ export const obtenerUsuario = async (req, res) => {
 export const editarUsuario = async (req, res) => {
     try {
         const { id } = req.params;
-
-        const {
-            nombre,
-            email,
-            telefono,
-            password
-        } = req.body;
+        const { nombre, telefono } = req.body;
 
         const datosActualizados = {};
 
-        if (nombre) datosActualizados.nombre = nombre;
-        if (email) datosActualizados.email = email;
-        if (telefono) datosActualizados.telefono = telefono;
-        // El rol NO se cambia aquí: solo el admin lo asigna (ruta aparte, paso 3)
-
-        if (password) {
-            datosActualizados.password =
-                await bcrypt.hash(password, 10);
+        if (typeof nombre === 'string' && nombre.trim()) {
+            datosActualizados.nombre = nombre.trim();
         }
 
-        const {
-            data,
-            error
-        } = await actualizarUsuario(
+        if (typeof telefono === 'string' && telefono.trim()) {
+            datosActualizados.telefono = telefono.trim();
+        }
+
+        if (Object.keys(datosActualizados).length === 0) {
+            return res.status(400).json({
+                error: 'No hay datos válidos para actualizar'
+            });
+        }
+
+        const { data, error } = await actualizarUsuario(
             id,
             datosActualizados
         );
@@ -253,15 +250,57 @@ export const editarUsuario = async (req, res) => {
     }
 };
 
+// Actualizar foto de perfil
+export const actualizarFotoPerfil = async (req, res) => {
+    try {
+        const id = req.usuario?.id;
+
+        if (!id) {
+            return res.status(401).json({
+                error: 'No se pudo identificar al usuario'
+            });
+        }
+
+        if (!req.file) {
+            return res.status(400).json({
+                error: 'Debes seleccionar una imagen'
+            });
+        }
+
+        const avatar = req.file.path;
+
+        const { error } = await actualizarUsuario(id, {
+            avatar
+        });
+
+        if (error) {
+            console.error('Error al guardar avatar:', error.message);
+
+            return res.status(500).json({
+                error: 'No se pudo guardar la foto de perfil'
+            });
+        }
+
+        return res.status(200).json({
+            mensaje: 'Foto de perfil actualizada correctamente',
+            avatar
+        });
+
+    } catch (error) {
+        console.error('ERROR EN actualizarFotoPerfil:', error);
+
+        return res.status(500).json({
+            error: 'No se pudo actualizar la foto de perfil'
+        });
+    }
+};
+
 // Eliminar usuario
 export const eliminarUsuario = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const {
-            data,
-            error
-        } = await eliminarUsuarioBD(id);
+        const { data, error } = await eliminarUsuarioBD(id);
 
         if (error) {
             return res.status(500).json({
@@ -358,7 +397,7 @@ export const reenviarCodigo = async (req, res) => {
 // Roles que se pueden asignar
 const ROLES_PERMITIDOS = ['usuario', 'mesero', 'cocinero', 'admin'];
 
-// Cambiar el rol de un usuario (solo admin; la ruta ya lo exige)
+// Cambiar el rol de un usuario
 export const cambiarRolUsuario = async (req, res) => {
     try {
         const { id } = req.params;

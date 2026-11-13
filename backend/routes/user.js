@@ -1,3 +1,4 @@
+
 import { Router } from 'express';
 
 import {
@@ -14,30 +15,35 @@ import {
     obtenerUsuario,
     editarUsuario,
     cambiarRolUsuario,
-    eliminarUsuario
+    eliminarUsuario,
+    actualizarFotoPerfil
 } from '../controllers/user.js';
+
+import { uploadAvatar } from '../config/cloudinary.js';
 
 const router = Router();
 
-// Registrar usuario
+// Registro y verificación
 router.post('/', registrarUsuario);
-
-// Verificar correo electrónico
 router.post('/verificar', verificarCorreo);
-
-// Reenviar código de verificación
 router.post('/reenviar-codigo', reenviarCodigo);
 
-// Obtener todos los usuarios
+// Listar usuarios: solo administrador
 router.get('/', verificarToken, verificarAdmin, listarUsuarios);
 
-// Obtener usuario por ID (el propio usuario o un admin)
-router.get('/:id', verificarToken, verificarPropietarioOAdmin, obtenerUsuario);
+// Actualizar foto del usuario autenticado
+router.post(
+    '/avatar',
+    verificarToken,
+    uploadAvatar.single('avatar'),
+    actualizarFotoPerfil
+);
 
-// Editar usuario (el propio usuario o un admin; el rol NO se cambia por aquí)
+// Consultar y editar usuarios
+router.get('/:id', verificarToken, verificarPropietarioOAdmin, obtenerUsuario);
 router.put('/:id', verificarToken, verificarPropietarioOAdmin, editarUsuario);
 
-// Cambiar el rol de un usuario (solo admin)
+// Cambiar rol: solo administrador
 router.put('/:id/rol', verificarToken, verificarAdmin, cambiarRolUsuario);
 
 // Eliminar usuario

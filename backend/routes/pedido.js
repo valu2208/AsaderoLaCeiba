@@ -15,13 +15,14 @@ import { reporteVentas } from '../controllers/reportes.js';
 
 import {
   verificarToken,
-  verificarAdmin
+  verificarAdmin,
+  verificarNoAdmin
 } from '../middlewares/authMiddleware.js';
 
 const router = Router();
 
 // Cliente: crear pedido
-router.post('/pedidos', verificarToken, crearPedido);
+router.post('/pedidos', verificarToken, verificarNoAdmin, crearPedido);
 
 // Cliente: consultar sus pedidos visibles
 router.get('/pedidos/mis-pedidos', verificarToken, misPedidos);

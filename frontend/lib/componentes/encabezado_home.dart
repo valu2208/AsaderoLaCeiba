@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/idioma.dart';
 import 'package:asadero/core/traducciones.dart';
-import 'package:asadero/pantallas/chat.dart';
+import 'package:asadero/pantallas/historial_chat.dart';
 import 'package:asadero/services/user_service.dart';
 import 'package:asadero/services/api_config.dart';
 import 'package:asadero/pantallas/notificaciones.dart';
@@ -96,6 +96,13 @@ class _EncabezadoHomeState extends State<EncabezadoHome> {
     );
 
     _cargarNoLeidas();
+  }
+
+  Future<void> _abrirHistorial() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const HistorialChat()),
+    );
   }
 
   @override
@@ -192,14 +199,7 @@ class _EncabezadoHomeState extends State<EncabezadoHome> {
           ),
         ),
         IconButton(
-          onPressed: () {
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              backgroundColor: AppColors.asphalt,
-              builder: (_) => const Chat(),
-            );
-          },
+          onPressed: _abrirHistorial,
           icon: const Icon(
             Icons.chat_bubble_outline,
             color: AppColors.goldSand,

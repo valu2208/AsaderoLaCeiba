@@ -2,6 +2,7 @@ import 'package:asadero/pantallas/notificaciones.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/navegacion_rol.dart';
 import 'package:asadero/services/user_service.dart';
@@ -25,6 +26,7 @@ class _PerfilState extends State<Perfil> {
   String? avatar;
   bool cargando = true;
   bool eliminandoCuenta = false;
+  bool subiendoAvatar = false;
 
   @override
   void initState() {
@@ -56,11 +58,52 @@ class _PerfilState extends State<Perfil> {
     });
   }
 
-  // Barra inferior: 0 Home, 1 Perfil (esta pantalla), 2 Menú, 3 Historial, 4 Carrito
+  // Seleccionar y subir fotografía de perfil.
+  Future<void> _seleccionarFoto() async {
+    if (subiendoAvatar) return;
+
+    try {
+      final picker = ImagePicker();
+
+      final XFile? imagen = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+      );
+
+      if (imagen == null || !mounted) return;
+
+      setState(() {
+        subiendoAvatar = true;
+      });
+
+      final nuevaFoto = await UserService.actualizarAvatar(imagen);
+
+      if (!mounted) return;
+
+      setState(() {
+        avatar = nuevaFoto;
+      });
+
+      _mensaje('Foto de perfil actualizada correctamente.');
+    } catch (e) {
+      if (!mounted) return;
+
+      _mensaje(e.toString().replaceFirst('Exception: ', ''));
+    } finally {
+      if (mounted) {
+        setState(() {
+          subiendoAvatar = false;
+        });
+      }
+    }
+  }
+
+  // Barra inferior: 0 Home, 1 Perfil, 2 Menú, 3 Historial, 4 Carrito.
   void _navegar(int indice) {
     if (indice == 1) return;
 
     final Widget pantalla;
+
     if (indice == 0) {
       pantalla = const Home();
     } else if (indice == 2) {
@@ -217,22 +260,63 @@ class _PerfilState extends State<Perfil> {
                             ],
                           ),
                           const SizedBox(height: 20),
-                          CircleAvatar(
-                            radius: 48,
-                            backgroundColor: AppColors.earthBrown,
-                            child: ClipOval(
-                              child: avatar != null
-                                  ? Image.network(
-                                      avatar!,
-                                      width: 96,
-                                      height: 96,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) =>
-                                          _iconoPerfil(),
-                                    )
-                                  : _iconoPerfil(),
-                            ),
+
+                          // Fotografía con botón para editar.
+                          Stack(
+                            children: [
+                              CircleAvatar(
+                                radius: 48,
+                                backgroundColor: AppColors.earthBrown,
+                                child: ClipOval(
+                                  child: avatar != null
+                                      ? Image.network(
+                                          avatar!,
+                                          width: 96,
+                                          height: 96,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (_, __, ___) =>
+                                              _iconoPerfil(),
+                                        )
+                                      : _iconoPerfil(),
+                                ),
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: GestureDetector(
+                                  onTap: subiendoAvatar
+                                      ? null
+                                      : _seleccionarFoto,
+                                  child: Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.goldSand,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: AppColors.asphalt,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: subiendoAvatar
+                                        ? const Padding(
+                                            padding: EdgeInsets.all(7),
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: AppColors.asphalt,
+                                            ),
+                                          )
+                                        : const Icon(
+                                            Icons.edit,
+                                            color: AppColors.asphalt,
+                                            size: 17,
+                                          ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
+
                           const SizedBox(height: 15),
                           Text(
                             cargando

@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import { generarTokens } from './auth.js';
 import { OAuth2Client } from 'google-auth-library';
 import { crearNotificacion } from '../models/notificacion.js';
 
@@ -125,24 +125,15 @@ if (errorNotificacion) {
 }
         }
 
-        // Crear JWT de nuestra aplicación
-        const token = jwt.sign(
-            {
-                id: usuarioFinal.id,
-                email: usuarioFinal.email,
-                rol: usuarioFinal.rol.toLowerCase()
-            },
-            process.env.JWT_SECRET,
-            {
-                expiresIn: '2h'
-            }
-        );
+        // Crear Access Token y Refresh Token.
+        const { token, refreshToken } = await generarTokens(usuarioFinal);
 
         return res.status(200).json({
             message: usuarioExistente
                 ? 'Inicio de sesión exitoso con Google'
                 : 'Registro exitoso con Google',
             token,
+            refreshToken,
             usuario: {
                 id: usuarioFinal.id,
                 nombre: usuarioFinal.nombre,

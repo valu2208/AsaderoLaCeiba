@@ -131,7 +131,7 @@ class _RegistroState extends State<Registro> {
               ),
               const SizedBox(height: 26),
               Text(
-                texto('registrese'),
+                texto('registro'),
                 style: GoogleFonts.kronaOne(
                   color: AppColors.goldSand,
                   fontSize: 30,
@@ -199,12 +199,20 @@ class _RegistroState extends State<Registro> {
                   const Expanded(child: Divider(color: AppColors.goldSand)),
                 ],
               ),
-              IconButton(
+              TextButton.icon(
                 onPressed: registrarConGoogle,
                 icon: const Icon(
                   Icons.g_mobiledata,
                   color: AppColors.goldSand,
-                  size: 41,
+                  size: 35,
+                ),
+                label: const Text(
+                  'Google',
+                  style: TextStyle(
+                    color: AppColors.goldSand,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],

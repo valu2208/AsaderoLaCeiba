@@ -22,7 +22,6 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final TextEditingController nombreController = TextEditingController();
   final TextEditingController correoController = TextEditingController();
   final TextEditingController contrasenaController = TextEditingController();
 
@@ -32,7 +31,6 @@ class _LoginState extends State<Login> {
 
   @override
   void dispose() {
-    nombreController.dispose();
     correoController.dispose();
     contrasenaController.dispose();
     super.dispose();
@@ -43,15 +41,19 @@ class _LoginState extends State<Login> {
       SnackBar(content: Text(texto), backgroundColor: AppColors.redPrayerFlag),
     );
   }
+
   Future<void> _entrar(Future<UserModel> Function() autenticar) async {
     if (cargando) return;
     setState(() => cargando = true);
+
     try {
       final usuario = await autenticar();
       if (!mounted) return;
       irSegunRol(context, usuario.rol);
     } catch (e) {
-      if (mounted) _mensaje(e.toString().replaceAll('Exception: ', ''));
+      if (mounted) {
+        _mensaje(e.toString().replaceAll('Exception: ', ''));
+      }
     } finally {
       if (mounted) setState(() => cargando = false);
     }
@@ -60,9 +62,11 @@ class _LoginState extends State<Login> {
   void iniciarSesion() {
     final correo = correoController.text.trim();
     final clave = contrasenaController.text;
+
     if (correo.isEmpty || clave.isEmpty) {
       return _mensaje('Ingresa tu correo y contraseña');
     }
+
     _entrar(() => UserService.loginUsuario(correo, clave));
   }
 
@@ -104,12 +108,6 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                         const SizedBox(height: 30),
-                        CampoTexto(
-                          texto: texto('nombre'),
-                          icono: Icons.person,
-                          controller: nombreController,
-                        ),
-                        const SizedBox(height: 20),
                         CampoTexto(
                           texto: texto('correo_electronico'),
                           icono: Icons.email,
@@ -157,12 +155,20 @@ class _LoginState extends State<Login> {
                         const Spacer(),
                         const SizedBox(height: 20),
                         const SeparadorContinuar(),
-                        IconButton(
-                          onPressed: iniciarSesionGoogle,
+                        TextButton.icon(
+                          onPressed: cargando? null :iniciarSesionGoogle,
                           icon: const Icon(
                             Icons.g_mobiledata,
                             color: AppColors.goldSand,
-                            size: 50,
+                            size: 35,
+                          ),
+                          label: const Text(
+                            'Google',
+                            style: TextStyle(
+                              color: AppColors.goldSand,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ],

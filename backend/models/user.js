@@ -186,3 +186,13 @@ export const crearUsuarioGoogle = async ({
 
     return { data, error };
 };
+// Obtener usuario por ID incluyendo la contraseña para validarla.
+export const obtenerUsuarioPorIdConPassword = async (id) => {
+    const { data, error } = await supabase
+        .from('usuarios')
+        .select('id, password')
+        .eq('id', id)
+        .single();
+
+    return { data, error };
+};

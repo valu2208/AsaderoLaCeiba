@@ -1,9 +1,12 @@
+
 import { Router } from 'express';
 
 import {
     iniciarSesion,
     solicitarRecuperacion,
-    restablecerContrasena
+    restablecerContrasena,
+    renovarSesion,
+    cerrarSesion
 } from '../controllers/auth.js';
 
 import {
@@ -12,11 +15,17 @@ import {
 
 const router = Router();
 
-// Iniciar sesión   
+// Iniciar sesión
 router.post('/login', iniciarSesion);
 
 // Autenticación con Google
 router.post('/google', autenticarConGoogle);
+
+// Renovar sesión
+router.post('/refresh', renovarSesion);
+
+// Cerrar sesión
+router.post('/logout', cerrarSesion);
 
 // Solicitar código de recuperación
 router.post('/recuperar', solicitarRecuperacion);
