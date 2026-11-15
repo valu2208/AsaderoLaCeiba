@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "978670292562",
+    "project_id": "asadero-la-ceiba-63673",
+    "storage_bucket": "asadero-la-ceiba-63673.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:978670292562:android:b2ae11de753ef395ead98b",
+        "android_client_info": {
+          "package_name": "com.example.asadero"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYpeVPLa-NYFRzWZv84-5vnGS_M5yKlxo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
