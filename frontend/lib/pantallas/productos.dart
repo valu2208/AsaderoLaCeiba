@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/idioma.dart';
 import 'package:asadero/core/traducciones.dart';
+import 'package:asadero/core/transicion.dart';
+import 'package:asadero/models/opcion_menu.dart';
 import 'package:asadero/componentes/barra_nav_inferior.dart';
 import 'package:asadero/componentes/burbuja_asistente.dart';
 import 'package:asadero/componentes/fondo_degradado.dart';
@@ -19,43 +21,45 @@ class Productos extends StatelessWidget {
 
   // 'categoria' es el mismo texto que se guarda en la base de datos.
   // 'porDia': true = el cliente solo ve los platos de hoy (lo que subió el admin para hoy)
-  static const List<Map<String, dynamic>> _opciones = [
-    {
-      'titulo': 'Desayuno',
-      'categoria': 'desayuno',
-      'imagen': 'assets/imagenes/menu_desayuno.jpg',
-      'color': AppColors.redPrayerFlag,
-      'porDia': true,
-      'descripcion': 'Huevos, caldos y bebidas para empezar el día',
-      'icono': Icons.free_breakfast,
-    },
-    {
-      'titulo': 'Almuerzo',
-      'categoria': 'almuerzo',
-      'imagen': 'assets/imagenes/menu_almuerzo.jpg',
-      'color': AppColors.demonicPresence,
-      'porDia': true,
-      'descripcion': 'Platos fuertes y sopas del día',
-      'icono': Icons.lunch_dining,
-    },
-    {
-      'titulo': 'Gaseosas',
-      'categoria': 'gaseosas',
-      'imagen': 'assets/imagenes/menu_gaseosas.jpg',
-      'color': AppColors.earthBrown,
-      'porDia': false,
-      'descripcion': 'Gaseosas y bebidas frías',
-      'icono': Icons.local_drink,
-    },
-    {
-      'titulo': 'Fin de semana',
-      'categoria': 'fin_de_semana',
-      'imagen': 'assets/imagenes/menu_fin_de_semana.jpg',
-      'color': AppColors.asphalt,
-      'porDia': false,
-      'descripcion': 'Especiales de sábado y domingo',
-      'icono': Icons.celebration,
-    },
+  static const List<OpcionMenu> _opciones = [
+    OpcionMenu(
+      titulo: 'Desayuno',
+      categoria: 'desayuno',
+      descripcion: 'Huevos, caldos y bebidas para empezar el día',
+      imagen: 'assets/imagenes/menu_desayuno.jpg',
+      icono: Icons.free_breakfast,
+      color: Color(0xFFD9611A),
+      colorFin: Color(0xFFA92A0A),
+      porDia: true,
+    ),
+    OpcionMenu(
+      titulo: 'Almuerzo',
+      categoria: 'almuerzo',
+      descripcion: 'Platos fuertes y sopas del día',
+      imagen: 'assets/imagenes/menu_almuerzo.jpg',
+      icono: Icons.lunch_dining,
+      color: Color(0xFFC41E14),
+      colorFin: Color(0xFF7B1103),
+      porDia: true,
+    ),
+    OpcionMenu(
+      titulo: 'Gaseosas',
+      categoria: 'gaseosas',
+      descripcion: 'Gaseosas y bebidas frías',
+      imagen: 'assets/imagenes/menu_gaseosas.jpg',
+      icono: Icons.local_drink,
+      color: Color(0xFFA12A55),
+      colorFin: Color(0xFF5E1230),
+    ),
+    OpcionMenu(
+      titulo: 'Fin de semana',
+      categoria: 'fin_de_semana',
+      descripcion: 'Especiales de sábado y domingo',
+      imagen: 'assets/imagenes/menu_fin_de_semana.jpg',
+      icono: Icons.celebration,
+      color: Color(0xFF4A2312),
+      colorFin: Color(0xFF1C0A0A),
+    ),
   ];
 
   void _ir(BuildContext context, Widget pantalla) {
@@ -93,27 +97,17 @@ class Productos extends StatelessWidget {
           ),
           body: FondoDegradado(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 10, 16, 90),
+              padding: const EdgeInsets.fromLTRB(16, 6, 16, 90),
               child: Column(
                 children: [
                   // Cada opción ocupa la misma parte de la pantalla
                   for (final opcion in _opciones)
                     Expanded(
                       child: TarjetaOpcionMenu(
-                        titulo: opcion['titulo'] as String,
-                        descripcion: opcion['descripcion'] as String,
-                        imagen: opcion['imagen'] as String,
-                        icono: opcion['icono'] as IconData,
-                        color: opcion['color'] as Color,
+                        opcion: opcion,
                         onTap: () => Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => MenuCategoria(
-                              titulo: opcion['titulo'] as String,
-                              categoria: opcion['categoria'] as String,
-                              porDia: opcion['porDia'] as bool,
-                            ),
-                          ),
+                          rutaSuave(MenuCategoria(opcion: opcion)),
                         ),
                       ),
                     ),
