@@ -84,8 +84,8 @@ class TarjetaPedido extends StatelessWidget {
                   if (onCancelar != null)
                     TextButton(
                       onPressed: onCancelar,
-                      child: const Text(
-                        'Cancelar pedido',
+                      child: Text(
+                        texto('cancelar_pedido'),
                         style: TextStyle(color: Colors.redAccent),
                       ),
                     ),

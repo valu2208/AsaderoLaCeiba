@@ -31,6 +31,13 @@ export const crearPedido = async (req, res) => {
         error: 'El pedido debe incluir al menos un producto'
       });
     }
+    const metodoPago = String(metodo_pago || 'presencial').toLowerCase();
+
+if (!['presencial', 'qr', 'nequi'].includes(metodoPago)) {
+  return res.status(400).json({
+    error: 'El método de pago no es válido.'
+  });
+}
 
     const datosPedido = {
       usuario_id,
@@ -38,7 +45,7 @@ export const crearPedido = async (req, res) => {
       total,
       moneda_pago,
       total_moneda_extranjera,
-      metodo_pago,
+      metodo_pago: metodoPago,
       telefono,
       notas
     };

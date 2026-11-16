@@ -1,8 +1,10 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
+
 import '../models/user_model.dart';
 import 'api_config.dart';
 
@@ -42,7 +44,9 @@ class UserService {
         utf8.decode(base64Url.decode(base64Url.normalize(partes[1]))),
       );
 
-      final expiracion = payload['exp'] as int;
+      final expiracion = payload['exp'];
+
+      if (expiracion is! num) return true;
 
       return expiracion * 1000 <= DateTime.now().millisecondsSinceEpoch + 60000;
     } catch (_) {
@@ -61,32 +65,54 @@ class UserService {
     final http.Response respuesta;
 
     try {
-      respuesta = await http.post(
-        Uri.parse('${ApiConfig.baseUrl}/auth/refresh'),
-        headers: ApiConfig.headers,
-        body: jsonEncode({'refreshToken': refreshToken}),
-      );
-    } catch (_) {
-      throw Exception('No se pudo conectar para renovar la sesión.');
+      respuesta = await http
+          .post(
+            Uri.parse('${ApiConfig.baseUrl}/auth/refresh'),
+            headers: ApiConfig.headers,
+            body: jsonEncode({'refreshToken': refreshToken}),
+          )
+          .timeout(const Duration(seconds: 20));
+    } catch (error) {
+      throw Exception('No se pudo conectar para renovar la sesión: $error');
     }
 
-    Map<String, dynamic> datos;
+    Map<String, dynamic> datos = {};
 
     try {
-      datos = jsonDecode(respuesta.body);
+      final respuestaJson = jsonDecode(respuesta.body);
+
+      if (respuestaJson is Map) {
+        datos = Map<String, dynamic>.from(respuestaJson);
+      }
     } catch (_) {
-      throw Exception('Respuesta inesperada al renovar la sesión.');
+      throw Exception(
+        'Respuesta inesperada de Render al renovar la sesión. '
+        'Código HTTP: ${respuesta.statusCode}. '
+        'Respuesta: ${respuesta.body}',
+      );
     }
 
     if (respuesta.statusCode != 200) {
-      return null;
+      final detalle = datos['error'] ?? datos['message'] ?? respuesta.body;
+
+      throw Exception(
+        'Render rechazó la renovación de sesión. '
+        'Código HTTP: ${respuesta.statusCode}. '
+        'Motivo: $detalle',
+      );
     }
 
     final nuevoToken = datos['token'];
     final nuevoRefreshToken = datos['refreshToken'];
 
-    if (nuevoToken == null || nuevoRefreshToken == null) {
-      throw Exception('El servidor no devolvió los nuevos tokens.');
+    if (nuevoToken is! String ||
+        nuevoToken.isEmpty ||
+        nuevoRefreshToken is! String ||
+        nuevoRefreshToken.isEmpty) {
+      throw Exception(
+        'Render respondió correctamente, pero no devolvió '
+        'los nuevos tokens de sesión.',
+      );
     }
 
     final prefs = await SharedPreferences.getInstance();
@@ -181,7 +207,7 @@ class UserService {
     Map<String, dynamic> datos;
 
     try {
-      datos = jsonDecode(respuesta.body);
+      datos = Map<String, dynamic>.from(jsonDecode(respuesta.body));
     } catch (_) {
       throw Exception('Respuesta inesperada (código ${respuesta.statusCode})');
     }
@@ -199,7 +225,10 @@ class UserService {
     final token = datos['token'];
     final refreshToken = datos['refreshToken'];
 
-    if (token == null || refreshToken == null) {
+    if (token is! String ||
+        token.isEmpty ||
+        refreshToken is! String ||
+        refreshToken.isEmpty) {
       throw Exception('El servidor no devolvió los tokens de sesión.');
     }
 
@@ -264,7 +293,7 @@ class UserService {
     Map<String, dynamic> datos;
 
     try {
-      datos = jsonDecode(respuesta.body);
+      datos = Map<String, dynamic>.from(jsonDecode(respuesta.body));
     } catch (_) {
       throw Exception('Respuesta inesperada (código ${respuesta.statusCode})');
     }
@@ -328,7 +357,7 @@ class UserService {
     Map<String, dynamic> datos;
 
     try {
-      datos = jsonDecode(respuesta.body);
+      datos = Map<String, dynamic>.from(jsonDecode(respuesta.body));
     } catch (_) {
       throw Exception('Respuesta inesperada al subir la fotografía.');
     }
@@ -401,7 +430,7 @@ class UserService {
     Map<String, dynamic> datos;
 
     try {
-      datos = jsonDecode(respuesta.body);
+      datos = Map<String, dynamic>.from(jsonDecode(respuesta.body));
     } catch (_) {
       throw Exception('Respuesta inesperada (código ${respuesta.statusCode})');
     }
@@ -459,7 +488,7 @@ class UserService {
     Map<String, dynamic> datos = {};
 
     try {
-      datos = jsonDecode(respuesta.body);
+      datos = Map<String, dynamic>.from(jsonDecode(respuesta.body));
     } catch (_) {
       if (respuesta.statusCode != 200) {
         throw Exception(

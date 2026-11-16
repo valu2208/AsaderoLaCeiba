@@ -7,16 +7,17 @@ import 'api_config.dart';
 import 'user_service.dart';
 
 class AdminProductService {
-  // Cabeceras con el token del administrador
+  // Cabeceras con el token del administrador.
   Future<Map<String, String>> _cabeceras() async {
     final token = await UserService.getToken();
+
     return {
       ...ApiConfig.headers,
       if (token != null) 'Authorization': 'Bearer $token',
     };
   }
 
-  // Saca el mensaje de error que manda el backend
+  // Obtiene el mensaje de error del backend.
   String _mensajeError(http.Response respuesta, String porDefecto) {
     try {
       return jsonDecode(respuesta.body)['error'] ?? porDefecto;
@@ -25,10 +26,7 @@ class AdminProductService {
     }
   }
 
-  // Productos activos e inactivos. Filtros opcionales:
-  //   masPedido: true -> solo "Lo más pedido" | false -> solo el menú
-  //   categoria: 'desayuno', 'almuerzo', 'fin_de_semana' o 'gaseosas'
-  //   dia: 'lunes' ... 'domingo'
+  // Productos activos e inactivos.
   Future<List<ProductoModel>> obtenerProductos({
     bool? masPedido,
     String? categoria,
@@ -39,10 +37,13 @@ class AdminProductService {
       if (categoria != null) 'categoria': categoria,
       if (dia != null) 'dia': dia,
     };
-    final url = Uri.parse('${ApiConfig.baseUrl}/productos/admin/todos')
-        .replace(queryParameters: filtros.isEmpty ? null : filtros);
+
+    final url = Uri.parse(
+      '${ApiConfig.baseUrl}/productos/admin/todos',
+    ).replace(queryParameters: filtros.isEmpty ? null : filtros);
 
     final http.Response response;
+
     try {
       response = await http.get(url, headers: await _cabeceras());
     } catch (_) {
@@ -54,10 +55,11 @@ class AdminProductService {
     }
 
     final List<dynamic> data = jsonDecode(response.body);
+
     return data.map((json) => ProductoModel.fromJson(json)).toList();
   }
 
-  // Preparar la imagen para Cloudinary
+  // Prepara la imagen para Cloudinary.
   Future<http.MultipartFile> _archivoImagen(File imagen) async {
     final extension = imagen.path.split('.').last.toLowerCase();
 
@@ -79,31 +81,62 @@ class AdminProductService {
   }
 
   // Crear o editar un producto.
-  // categoria / masPedido / dias: si van null no se envían (se conserva lo guardado)
   Future<void> guardarProducto({
     String? id,
     required String nombre,
     required String precio,
     required String descripcion,
+    String? nombreEn,
+    String? descripcionEn,
+    String? nombrePt,
+    String? descripcionPt,
     File? imagen,
     String? categoria,
     bool? masPedido,
     List<String>? dias,
   }) async {
     final base = '${ApiConfig.baseUrl}/productos';
+
     final request = http.MultipartRequest(
       id == null ? 'POST' : 'PUT',
       Uri.parse(id == null ? base : '$base/$id'),
     );
 
     request.headers.addAll(await _cabeceras());
-    request.headers.remove('Content-Type'); // lo pone el multipart
+    request.headers.remove('Content-Type');
+
     request.fields['nombre'] = nombre;
     request.fields['precio'] = precio;
     request.fields['descripcion'] = descripcion;
-    if (categoria != null) request.fields['categoria'] = categoria;
-    if (masPedido != null) request.fields['mas_pedido'] = masPedido.toString();
-    if (dias != null) request.fields['dias'] = dias.join(','); // 'lunes,martes'
+
+    // Traducciones opcionales.
+    if (nombreEn != null) {
+      request.fields['nombre_en'] = nombreEn;
+    }
+
+    if (descripcionEn != null) {
+      request.fields['description_en'] = descripcionEn;
+    }
+
+    if (nombrePt != null) {
+      request.fields['nombre_pt'] = nombrePt;
+    }
+
+    if (descripcionPt != null) {
+      request.fields['descripcion_pt'] = descripcionPt;
+    }
+
+    if (categoria != null) {
+      request.fields['categoria'] = categoria;
+    }
+
+    if (masPedido != null) {
+      request.fields['mas_pedido'] = masPedido.toString();
+    }
+
+    if (dias != null) {
+      request.fields['dias'] = dias.join(',');
+    }
 
     if (imagen != null) {
       request.files.add(await _archivoImagen(imagen));
@@ -116,9 +149,13 @@ class AdminProductService {
     }
   }
 
-  // Envía DELETE / PATCH a /productos y revisa la respuesta
+  // Envía DELETE o PATCH a productos.
   Future<void> _enviar(String metodo, String ruta, String porDefecto) async {
-    final request = http.Request(metodo, Uri.parse('${ApiConfig.baseUrl}/productos$ruta'));
+    final request = http.Request(
+      metodo,
+      Uri.parse('${ApiConfig.baseUrl}/productos$ruta'),
+    );
+
     request.headers.addAll(await _cabeceras());
 
     final response = await http.Response.fromStream(await request.send());
@@ -135,8 +172,8 @@ class AdminProductService {
       _enviar('PATCH', '/$id/activar', 'No se pudo activar el producto');
 
   Future<void> eliminarProductoDefinitivamente(String id) => _enviar(
-        'DELETE',
-        '/$id/definitivo',
-        'No se pudo eliminar el producto definitivamente',
-      );
+    'DELETE',
+    '/$id/definitivo',
+    'No se pudo eliminar el producto definitivamente',
+  );
 }

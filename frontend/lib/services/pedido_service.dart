@@ -1,14 +1,22 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:asadero/core/carrito_estado.dart';
 import 'package:asadero/services/api_config.dart';
 import 'package:asadero/services/user_service.dart';
 
 class PedidoService {
-  Future<int> realizarPedido(List<CarritoItem> items) async {
+  Future<int> realizarPedido(
+    List<CarritoItem> items, {
+    String metodoPago = 'presencial',
+  }) async {
     if (items.isEmpty) {
       throw Exception('El carrito está vacío.');
+    }
+
+    if (!['nequi', 'presencial'].contains(metodoPago.toLowerCase())) {
+      throw Exception('El método de pago no es válido.');
     }
 
     final token = await UserService.getToken();
@@ -47,6 +55,7 @@ class PedidoService {
       body: jsonEncode({
         'total': total,
         'moneda_pago': 'COP',
+        'metodo_pago': metodoPago.toLowerCase(),
         'telefono': telefono.isEmpty ? null : telefono,
         'productos': productos,
       }),
@@ -78,6 +87,51 @@ class PedidoService {
     return (pedido['id'] as num).toInt();
   }
 
+  Future<void> subirComprobante({
+    required int pedidoId,
+    required XFile imagen,
+  }) async {
+    final token = await UserService.getToken();
+
+    if (token == null || token.isEmpty) {
+      throw Exception('Tu sesión ha expirado. Inicia sesión nuevamente.');
+    }
+
+    final uri = Uri.parse(
+      '${ApiConfig.baseUrl}/api/pedidos/$pedidoId/comprobante',
+    );
+
+    final solicitud = http.MultipartRequest('POST', uri);
+
+    final headers = Map<String, String>.from(ApiConfig.headers);
+
+    // MultipartRequest establece automáticamente su propio Content-Type.
+    headers.removeWhere((key, value) => key.toLowerCase() == 'content-type');
+
+    headers['Authorization'] = 'Bearer $token';
+    solicitud.headers.addAll(headers);
+
+    solicitud.files.add(
+      await http.MultipartFile.fromPath('comprobante', imagen.path),
+    );
+
+    final respuesta = await solicitud.send();
+    final cuerpo = await respuesta.stream.bytesToString();
+
+    if (respuesta.statusCode != 200 && respuesta.statusCode != 201) {
+      String mensaje = 'No se pudo subir el comprobante.';
+
+      try {
+        final datos = jsonDecode(cuerpo);
+        if (datos is Map) {
+          mensaje = datos['error'] ?? datos['message'] ?? mensaje;
+        }
+      } catch (_) {}
+
+      throw Exception(mensaje);
+    }
+  }
+
   Future<List<Map<String, dynamic>>> obtenerMisPedidos() async {
     final token = await UserService.getToken();
 
@@ -103,7 +157,7 @@ class PedidoService {
     return datos.map((pedido) => Map<String, dynamic>.from(pedido)).toList();
   }
 
-  // Ocultar todos los pedidos del historial del cliente
+  // Ocultar todos los pedidos del historial del cliente.
   Future<void> limpiarHistorial() async {
     final token = await UserService.getToken();
 

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/core/idioma.dart';
+import 'package:asadero/core/traducciones.dart';
 import 'package:asadero/services/api_config.dart';
 import 'package:asadero/services/user_service.dart';
 
@@ -36,7 +38,7 @@ class _NotificacionesState extends State<Notificaciones> {
       final token = await UserService.getToken();
 
       if (token == null || token.isEmpty) {
-        throw Exception('Debes iniciar sesión para ver tus notificaciones.');
+        throw Exception(texto('debes_iniciar_sesion_notificaciones'));
       }
 
       final respuesta = await http.get(
@@ -45,7 +47,7 @@ class _NotificacionesState extends State<Notificaciones> {
       );
 
       if (respuesta.statusCode != 200) {
-        throw Exception('No se pudieron cargar las notificaciones.');
+        throw Exception(texto('error_cargar_notificaciones'));
       }
 
       final List<dynamic> datos = jsonDecode(respuesta.body);
@@ -75,7 +77,7 @@ class _NotificacionesState extends State<Notificaciones> {
       final token = await UserService.getToken();
 
       if (token == null || token.isEmpty) {
-        throw Exception('Debes iniciar sesión nuevamente.');
+        throw Exception(texto('debes_iniciar_sesion_nuevamente'));
       }
 
       final respuesta = await http.patch(
@@ -86,7 +88,7 @@ class _NotificacionesState extends State<Notificaciones> {
       );
 
       if (respuesta.statusCode != 200) {
-        throw Exception('No se pudo marcar la notificación como leída.');
+        throw Exception(texto('error_marcar_notificacion'));
       }
 
       if (!mounted) return;
@@ -107,21 +109,28 @@ class _NotificacionesState extends State<Notificaciones> {
     final confirmar = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Borrar notificaciones'),
-        content: const Text(
-          '¿Estás seguro de que deseas eliminar todas tus notificaciones? '
-          'Esta acción no se puede deshacer.',
+        backgroundColor: AppColors.asphalt,
+        title: Text(
+          texto('borrar_notificaciones'),
+          style: const TextStyle(color: AppColors.goldSand),
+        ),
+        content: Text(
+          texto('pregunta_borrar_notificaciones'),
+          style: const TextStyle(color: AppColors.goldSand),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text(
+              texto('cancelar'),
+              style: const TextStyle(color: AppColors.goldSand),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'Borrar todas',
-              style: TextStyle(color: Colors.red),
+            child: Text(
+              texto('borrar_todas'),
+              style: const TextStyle(color: Colors.red),
             ),
           ),
         ],
@@ -142,7 +151,7 @@ class _NotificacionesState extends State<Notificaciones> {
       final token = await UserService.getToken();
 
       if (token == null || token.isEmpty) {
-        throw Exception('Debes iniciar sesión nuevamente.');
+        throw Exception(texto('debes_iniciar_sesion_nuevamente'));
       }
 
       final respuesta = await http.delete(
@@ -151,7 +160,7 @@ class _NotificacionesState extends State<Notificaciones> {
       );
 
       if (respuesta.statusCode != 200) {
-        throw Exception('No se pudieron eliminar las notificaciones.');
+        throw Exception(texto('error_eliminar_notificaciones'));
       }
 
       if (!mounted) return;
@@ -162,9 +171,7 @@ class _NotificacionesState extends State<Notificaciones> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Notificaciones eliminadas correctamente.'),
-        ),
+        SnackBar(content: Text(texto('notificaciones_eliminadas'))),
       );
     } catch (e) {
       if (!mounted) return;
@@ -204,7 +211,7 @@ class _NotificacionesState extends State<Notificaciones> {
     if (local.year == ahora.year &&
         local.month == ahora.month &&
         local.day == ahora.day) {
-      return 'Hoy ${local.hour.toString().padLeft(2, '0')}:'
+      return '${texto('hoy')} ${local.hour.toString().padLeft(2, '0')}:'
           '${local.minute.toString().padLeft(2, '0')}';
     }
 
@@ -215,184 +222,193 @@ class _NotificacionesState extends State<Notificaciones> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.goldSand,
-      appBar: AppBar(
-        backgroundColor: AppColors.asphalt,
-        foregroundColor: AppColors.goldSand,
-        centerTitle: true,
-        title: Text(
-          'Notificaciones',
-          style: GoogleFonts.kronaOne(fontSize: 16),
-        ),
-        actions: [
-          IconButton(
-            onPressed: cargando ? null : _cargarNotificaciones,
-            icon: const Icon(Icons.refresh),
-            tooltip: 'Actualizar',
-          ),
-          if (notificaciones.isNotEmpty)
-            IconButton(
-              onPressed: eliminando || cargando ? null : _confirmarEliminar,
-              icon: eliminando
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: AppColors.goldSand,
-                      ),
-                    )
-                  : const Icon(Icons.delete_outline),
-              tooltip: 'Borrar todas',
+    return ValueListenableBuilder<String>(
+      valueListenable: Idioma.seleccionado,
+      builder: (context, idioma, child) {
+        return Scaffold(
+          backgroundColor: AppColors.goldSand,
+          appBar: AppBar(
+            backgroundColor: AppColors.asphalt,
+            foregroundColor: AppColors.goldSand,
+            centerTitle: true,
+            title: Text(
+              texto('notificaciones'),
+              style: GoogleFonts.kronaOne(fontSize: 16),
             ),
-        ],
-      ),
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.goldSand, AppColors.redPrayerFlag],
-          ),
-        ),
-        child: RefreshIndicator(
-          onRefresh: _cargarNotificaciones,
-          child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(16),
-            children: [
-              Text(
-                'Tus avisos',
-                style: GoogleFonts.kronaOne(
-                  fontSize: 17,
-                  color: AppColors.earthBrown,
-                ),
+            actions: [
+              IconButton(
+                onPressed: cargando ? null : _cargarNotificaciones,
+                icon: const Icon(Icons.refresh),
+                tooltip: texto('actualizar'),
               ),
-              const SizedBox(height: 16),
-              if (cargando)
-                const Padding(
-                  padding: EdgeInsets.all(30),
-                  child: Center(
-                    child: CircularProgressIndicator(
+              if (notificaciones.isNotEmpty)
+                IconButton(
+                  onPressed: eliminando || cargando ? null : _confirmarEliminar,
+                  icon: eliminando
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.goldSand,
+                          ),
+                        )
+                      : const Icon(Icons.delete_outline),
+                  tooltip: texto('borrar_todas'),
+                ),
+            ],
+          ),
+          body: Container(
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [AppColors.goldSand, AppColors.redPrayerFlag],
+              ),
+            ),
+            child: RefreshIndicator(
+              onRefresh: _cargarNotificaciones,
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(16),
+                children: [
+                  Text(
+                    texto('tus_avisos'),
+                    style: GoogleFonts.kronaOne(
+                      fontSize: 17,
                       color: AppColors.earthBrown,
                     ),
                   ),
-                )
-              else if (error != null)
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      const Icon(
-                        Icons.error_outline,
-                        size: 45,
-                        color: AppColors.earthBrown,
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        error!,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(color: AppColors.earthBrown),
-                      ),
-                      const SizedBox(height: 12),
-                      ElevatedButton(
-                        onPressed: _cargarNotificaciones,
-                        child: const Text('Reintentar'),
-                      ),
-                    ],
-                  ),
-                )
-              else if (notificaciones.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.all(30),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.notifications_none,
-                        size: 55,
-                        color: AppColors.earthBrown,
-                      ),
-                      SizedBox(height: 12),
-                      Text(
-                        'No tienes notificaciones todavía.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
+                  const SizedBox(height: 16),
+                  if (cargando)
+                    const Padding(
+                      padding: EdgeInsets.all(30),
+                      child: Center(
+                        child: CircularProgressIndicator(
                           color: AppColors.earthBrown,
-                          fontSize: 15,
                         ),
                       ),
-                    ],
-                  ),
-                )
-              else
-                ...notificaciones.map((notificacion) {
-                  final leida = notificacion['leida'] == true;
+                    )
+                  else if (error != null)
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          const Icon(
+                            Icons.error_outline,
+                            size: 45,
+                            color: AppColors.earthBrown,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            error!,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: AppColors.earthBrown),
+                          ),
+                          const SizedBox(height: 12),
+                          ElevatedButton(
+                            onPressed: _cargarNotificaciones,
+                            child: Text(texto('reintentar')),
+                          ),
+                        ],
+                      ),
+                    )
+                  else if (notificaciones.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(30),
+                      child: Column(
+                        children: [
+                          const Icon(
+                            Icons.notifications_none,
+                            size: 55,
+                            color: AppColors.earthBrown,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            texto('sin_notificaciones'),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: AppColors.earthBrown,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    ...notificaciones.map((notificacion) {
+                      final leida = notificacion['leida'] == true;
 
-                  return Card(
-                    color: AppColors.earthBrown,
-                    margin: const EdgeInsets.only(bottom: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: ListTile(
-                      onTap: () => _marcarComoLeida(notificacion),
-                      contentPadding: const EdgeInsets.all(14),
-                      leading: Icon(
-                        _obtenerIcono(notificacion['tipo']?.toString() ?? ''),
-                        color: AppColors.goldSand,
-                        size: 30,
-                      ),
-                      title: Text(
-                        notificacion['titulo']?.toString() ?? '',
-                        style: TextStyle(
-                          color: AppColors.goldSand,
-                          fontWeight: leida
-                              ? FontWeight.normal
-                              : FontWeight.bold,
+                      return Card(
+                        color: AppColors.earthBrown,
+                        margin: const EdgeInsets.only(bottom: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
                         ),
-                      ),
-                      subtitle: Padding(
-                        padding: const EdgeInsets.only(top: 6),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              notificacion['mensaje']?.toString() ?? '',
-                              style: TextStyle(
-                                color: AppColors.goldSand.withValues(
-                                  alpha: 0.85,
-                                ),
-                              ),
+                        child: ListTile(
+                          onTap: () => _marcarComoLeida(notificacion),
+                          contentPadding: const EdgeInsets.all(14),
+                          leading: Icon(
+                            _obtenerIcono(
+                              notificacion['tipo']?.toString() ?? '',
                             ),
-                            const SizedBox(height: 6),
-                            Text(
-                              leida ? 'Leída' : 'Sin leer · Toca para marcar',
-                              style: TextStyle(
-                                color: AppColors.goldSand.withValues(
-                                  alpha: 0.7,
-                                ),
-                                fontSize: 11,
-                              ),
+                            color: AppColors.goldSand,
+                            size: 30,
+                          ),
+                          title: Text(
+                            notificacion['titulo']?.toString() ?? '',
+                            style: TextStyle(
+                              color: AppColors.goldSand,
+                              fontWeight: leida
+                                  ? FontWeight.normal
+                                  : FontWeight.bold,
                             ),
-                          ],
+                          ),
+                          subtitle: Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  notificacion['mensaje']?.toString() ?? '',
+                                  style: TextStyle(
+                                    color: AppColors.goldSand.withValues(
+                                      alpha: 0.85,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  leida
+                                      ? texto('leida')
+                                      : texto('sin_leer_tocar'),
+                                  style: TextStyle(
+                                    color: AppColors.goldSand.withValues(
+                                      alpha: 0.7,
+                                    ),
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          trailing: Text(
+                            _formatearFecha(notificacion['creado_en']),
+                            style: const TextStyle(
+                              color: AppColors.goldSand,
+                              fontSize: 11,
+                            ),
+                          ),
                         ),
-                      ),
-                      trailing: Text(
-                        _formatearFecha(notificacion['creado_en']),
-                        style: const TextStyle(
-                          color: AppColors.goldSand,
-                          fontSize: 11,
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-            ],
+                      );
+                    }),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

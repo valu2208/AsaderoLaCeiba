@@ -1,9 +1,10 @@
-import 'package:asadero/pantallas/notificaciones.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/core/idioma.dart';
+import 'package:asadero/core/traducciones.dart';
 import 'package:asadero/core/navegacion_rol.dart';
 import 'package:asadero/services/user_service.dart';
 import 'package:asadero/componentes/barra_nav_inferior.dart';
@@ -11,6 +12,7 @@ import 'package:asadero/pantallas/home.dart';
 import 'package:asadero/pantallas/historial.dart';
 import 'package:asadero/pantallas/carrito.dart';
 import 'package:asadero/pantallas/informacion_personal.dart';
+import 'package:asadero/pantallas/notificaciones.dart';
 import 'package:asadero/pantallas/productos.dart';
 
 class Perfil extends StatefulWidget {
@@ -84,7 +86,7 @@ class _PerfilState extends State<Perfil> {
         avatar = nuevaFoto;
       });
 
-      _mensaje('Foto de perfil actualizada correctamente.');
+      _mensaje(texto('foto_actualizada'));
     } catch (e) {
       if (!mounted) return;
 
@@ -137,32 +139,30 @@ class _PerfilState extends State<Perfil> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.asphalt,
-        title: const Text(
-          'Eliminar cuenta',
-          style: TextStyle(
+        title: Text(
+          texto('eliminar_cuenta'),
+          style: const TextStyle(
             color: AppColors.goldSand,
             fontWeight: FontWeight.bold,
           ),
         ),
-        content: const Text(
-          '¿Estás seguro de que deseas eliminar tu cuenta permanentemente? '
-          'Esta acción no se puede deshacer y podrías perder tus pedidos '
-          'y otros datos asociados.',
-          style: TextStyle(color: AppColors.goldSand),
+        content: Text(
+          texto('pregunta_eliminar_cuenta'),
+          style: const TextStyle(color: AppColors.goldSand),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text(
-              'Cancelar',
-              style: TextStyle(color: AppColors.goldSand),
+            child: Text(
+              texto('cancelar'),
+              style: const TextStyle(color: AppColors.goldSand),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'Eliminar definitivamente',
-              style: TextStyle(color: AppColors.redPrayerFlag),
+            child: Text(
+              texto('eliminar_definitivamente'),
+              style: const TextStyle(color: AppColors.redPrayerFlag),
             ),
           ),
         ],
@@ -181,8 +181,8 @@ class _PerfilState extends State<Perfil> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Tu cuenta se eliminó correctamente.'),
+        SnackBar(
+          content: Text(texto('cuenta_eliminada')),
           backgroundColor: AppColors.earthBrown,
         ),
       );
@@ -203,190 +203,198 @@ class _PerfilState extends State<Perfil> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.asphalt,
-      extendBodyBehindAppBar: true,
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.goldSand, AppColors.redPrayerFlag],
-          ),
-        ),
-        child: Column(
-          children: [
-            Container(
-              color: AppColors.asphalt,
-              height: MediaQuery.of(context).padding.top,
-            ),
-            Expanded(
-              child: SafeArea(
-                top: false,
-                child: Column(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
-                      decoration: const BoxDecoration(
-                        color: AppColors.asphalt,
-                        borderRadius: BorderRadius.vertical(
-                          bottom: Radius.circular(20),
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              IconButton(
-                                onPressed: () => Navigator.pop(context),
-                                icon: const Icon(
-                                  Icons.arrow_back,
-                                  color: AppColors.goldSand,
-                                ),
-                              ),
-                              Expanded(
-                                child: Text(
-                                  'Mi perfil',
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.kronaOne(
-                                    color: AppColors.goldSand,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 48),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-
-                          // Fotografía con botón para editar.
-                          Stack(
-                            children: [
-                              CircleAvatar(
-                                radius: 48,
-                                backgroundColor: AppColors.earthBrown,
-                                child: ClipOval(
-                                  child: avatar != null
-                                      ? Image.network(
-                                          avatar!,
-                                          width: 96,
-                                          height: 96,
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (_, __, ___) =>
-                                              _iconoPerfil(),
-                                        )
-                                      : _iconoPerfil(),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: GestureDetector(
-                                  onTap: subiendoAvatar
-                                      ? null
-                                      : _seleccionarFoto,
-                                  child: Container(
-                                    width: 32,
-                                    height: 32,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.goldSand,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: AppColors.asphalt,
-                                        width: 2,
-                                      ),
-                                    ),
-                                    child: subiendoAvatar
-                                        ? const Padding(
-                                            padding: EdgeInsets.all(7),
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                              color: AppColors.asphalt,
-                                            ),
-                                          )
-                                        : const Icon(
-                                            Icons.edit,
-                                            color: AppColors.asphalt,
-                                            size: 17,
-                                          ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 15),
-                          Text(
-                            cargando
-                                ? 'Cargando...'
-                                : nombre.isEmpty
-                                ? 'Usuario'
-                                : nombre,
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.kronaOne(
-                              color: AppColors.goldSand,
-                              fontSize: 18,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            correo,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: AppColors.goldSand,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: ListView(
-                        padding: const EdgeInsets.all(20),
-                        children: [
-                          _opcion(
-                            icono: Icons.person_outline,
-                            titulo: 'Información personal',
-                            subtitulo: 'Consulta los datos de tu cuenta',
-                            onTap: _abrirInformacionPersonal,
-                          ),
-                          _opcion(
-                            icono: Icons.notifications_none,
-                            titulo: 'Notificaciones',
-                            subtitulo: 'Consulta tus avisos',
-                            onTap: _abrirNotificaciones,
-                          ),
-                          _opcion(
-                            icono: Icons.logout,
-                            titulo: 'Cerrar sesión',
-                            subtitulo: 'Salir de tu cuenta',
-                            onTap: _confirmarSalida,
-                          ),
-                          const SizedBox(height: 20),
-                          _opcion(
-                            icono: Icons.delete_outline,
-                            titulo: 'Eliminar cuenta',
-                            subtitulo: 'Borra permanentemente tu cuenta',
-                            onTap: eliminandoCuenta
-                                ? () {}
-                                : _confirmarEliminarCuenta,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+    return ValueListenableBuilder<String>(
+      valueListenable: Idioma.seleccionado,
+      builder: (context, idioma, child) {
+        return Scaffold(
+          backgroundColor: AppColors.asphalt,
+          extendBodyBehindAppBar: true,
+          body: Container(
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [AppColors.goldSand, AppColors.redPrayerFlag],
               ),
             ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BarraNavegacionInferior(
-        indiceActual: 1,
-        onTap: _navegar,
-      ),
+            child: Column(
+              children: [
+                Container(
+                  color: AppColors.asphalt,
+                  height: MediaQuery.of(context).padding.top,
+                ),
+                Expanded(
+                  child: SafeArea(
+                    top: false,
+                    child: Column(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
+                          decoration: const BoxDecoration(
+                            color: AppColors.asphalt,
+                            borderRadius: BorderRadius.vertical(
+                              bottom: Radius.circular(20),
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  IconButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    icon: const Icon(
+                                      Icons.arrow_back,
+                                      color: AppColors.goldSand,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      texto('mi_perfil'),
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.kronaOne(
+                                        color: AppColors.goldSand,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 48),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+
+                              // Fotografía con botón para editar.
+                              Stack(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 48,
+                                    backgroundColor: AppColors.earthBrown,
+                                    child: ClipOval(
+                                      child: avatar != null
+                                          ? Image.network(
+                                              avatar!,
+                                              width: 96,
+                                              height: 96,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (_, __, ___) =>
+                                                  _iconoPerfil(),
+                                            )
+                                          : _iconoPerfil(),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: GestureDetector(
+                                      onTap: subiendoAvatar
+                                          ? null
+                                          : _seleccionarFoto,
+                                      child: Container(
+                                        width: 32,
+                                        height: 32,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.goldSand,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: AppColors.asphalt,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: subiendoAvatar
+                                            ? const Padding(
+                                                padding: EdgeInsets.all(7),
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  strokeWidth: 2,
+                                                  color: AppColors.asphalt,
+                                                ),
+                                              )
+                                            : const Icon(
+                                                Icons.edit,
+                                                color: AppColors.asphalt,
+                                                size: 17,
+                                              ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 15),
+                              Text(
+                                cargando
+                                    ? texto('cargando')
+                                    : nombre.isEmpty
+                                        ? texto('usuario')
+                                        : nombre,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.kronaOne(
+                                  color: AppColors.goldSand,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                correo,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: AppColors.goldSand,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView(
+                            padding: const EdgeInsets.all(20),
+                            children: [
+                              _opcion(
+                                icono: Icons.person_outline,
+                                titulo: texto('informacion_personal'),
+                                subtitulo: texto('consulta_datos_cuenta'),
+                                onTap: _abrirInformacionPersonal,
+                              ),
+                              _opcion(
+                                icono: Icons.notifications_none,
+                                titulo: texto('notificaciones'),
+                                subtitulo: texto('consulta_avisos'),
+                                onTap: _abrirNotificaciones,
+                              ),
+                              _opcion(
+                                icono: Icons.logout,
+                                titulo: texto('cerrar_sesion'),
+                                subtitulo: texto('salir_cuenta'),
+                                onTap: _confirmarSalida,
+                              ),
+                              const SizedBox(height: 20),
+                              _opcion(
+                                icono: Icons.delete_outline,
+                                titulo: texto('eliminar_cuenta'),
+                                subtitulo: texto(
+                                  'borrar_permanentemente_cuenta',
+                                ),
+                                onTap: eliminandoCuenta
+                                    ? () {}
+                                    : _confirmarEliminarCuenta,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          bottomNavigationBar: BarraNavegacionInferior(
+            indiceActual: 1,
+            onTap: _navegar,
+          ),
+        );
+      },
     );
   }
 
@@ -409,7 +417,10 @@ class _PerfilState extends State<Perfil> {
       margin: const EdgeInsets.only(bottom: 14),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 8,
+        ),
         leading: Icon(icono, color: AppColors.goldSand, size: 28),
         title: Text(
           titulo,
@@ -425,7 +436,8 @@ class _PerfilState extends State<Perfil> {
             fontSize: 12,
           ),
         ),
-        trailing: eliminandoCuenta && titulo == 'Eliminar cuenta'
+        trailing: eliminandoCuenta &&
+                titulo == texto('eliminar_cuenta')
             ? const SizedBox(
                 width: 20,
                 height: 20,
@@ -434,15 +446,21 @@ class _PerfilState extends State<Perfil> {
                   color: AppColors.goldSand,
                 ),
               )
-            : const Icon(Icons.chevron_right, color: AppColors.goldSand),
+            : const Icon(
+                Icons.chevron_right,
+                color: AppColors.goldSand,
+              ),
         onTap: onTap,
       ),
     );
   }
 
-  void _mensaje(String texto) {
+  void _mensaje(String mensaje) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(texto), backgroundColor: AppColors.earthBrown),
+      SnackBar(
+        content: Text(mensaje),
+        backgroundColor: AppColors.earthBrown,
+      ),
     );
   }
 
@@ -451,27 +469,27 @@ class _PerfilState extends State<Perfil> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.asphalt,
-        title: const Text(
-          'Cerrar sesión',
-          style: TextStyle(color: AppColors.goldSand),
+        title: Text(
+          texto('cerrar_sesion'),
+          style: const TextStyle(color: AppColors.goldSand),
         ),
-        content: const Text(
-          '¿Seguro que deseas salir de tu cuenta?',
-          style: TextStyle(color: AppColors.goldSand),
+        content: Text(
+          texto('pregunta_cerrar_sesion'),
+          style: const TextStyle(color: AppColors.goldSand),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text(
-              'Cancelar',
-              style: TextStyle(color: AppColors.goldSand),
+            child: Text(
+              texto('cancelar'),
+              style: const TextStyle(color: AppColors.goldSand),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'Salir',
-              style: TextStyle(color: AppColors.redPrayerFlag),
+            child: Text(
+              texto('salir'),
+              style: const TextStyle(color: AppColors.redPrayerFlag),
             ),
           ),
         ],

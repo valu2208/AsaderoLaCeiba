@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/core/idioma.dart';
+import 'package:asadero/core/traducciones.dart';
 import 'package:asadero/componentes/burbuja_asistente.dart';
 import 'package:asadero/componentes/encabezado_home.dart';
 import 'package:asadero/componentes/carta_productos.dart';
@@ -94,9 +96,17 @@ class _HomeState extends State<Home> {
   }
 
   Widget _titulo() {
-    return Text(
-      '¡Lo más pedido!',
-      style: GoogleFonts.kronaOne(color: AppColors.earthBrown, fontSize: 22),
+    return ValueListenableBuilder<String>(
+      valueListenable: Idioma.seleccionado,
+      builder: (context, idioma, child) {
+        return Text(
+          texto('lo_mas_pedido'),
+          style: GoogleFonts.kronaOne(
+            color: AppColors.earthBrown,
+            fontSize: 22,
+          ),
+        );
+      },
     );
   }
 }

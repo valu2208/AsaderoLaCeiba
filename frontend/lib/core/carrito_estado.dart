@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+
 class CarritoItem {
   final String productoId;
   final String nombre;
   final String precio;
   final String imagen;
+  final String? nombreEn;
+  final String? nombrePt;
   final int cantidad;
 
   const CarritoItem({
@@ -11,6 +14,8 @@ class CarritoItem {
     required this.nombre,
     required this.precio,
     required this.imagen,
+    this.nombreEn,
+    this.nombrePt,
     this.cantidad = 1,
   });
 
@@ -20,6 +25,8 @@ class CarritoItem {
       nombre: nombre,
       precio: precio,
       imagen: imagen,
+      nombreEn: nombreEn,
+      nombrePt: nombrePt,
       cantidad: nuevaCantidad,
     );
   }
@@ -45,13 +52,13 @@ class CarritoEstado {
     String productoId,
     String nombre,
     String precio,
-    String imagen,
-  ) {
+    String imagen, {
+    String? nombreEn,
+    String? nombrePt,
+  }) {
     final lista = List<CarritoItem>.from(items.value);
 
-    final indice = lista.indexWhere(
-      (item) => item.productoId == productoId,
-    );
+    final indice = lista.indexWhere((item) => item.productoId == productoId);
 
     if (indice != -1) {
       lista[indice] = lista[indice].copiarConCantidad(
@@ -64,6 +71,8 @@ class CarritoEstado {
           nombre: nombre,
           precio: precio,
           imagen: imagen,
+          nombreEn: nombreEn,
+          nombrePt: nombrePt,
         ),
       );
     }
@@ -74,9 +83,7 @@ class CarritoEstado {
   static void restar(String nombre) {
     final lista = List<CarritoItem>.from(items.value);
 
-    final indice = lista.indexWhere(
-      (item) => item.nombre == nombre,
-    );
+    final indice = lista.indexWhere((item) => item.nombre == nombre);
 
     if (indice == -1) return;
 
@@ -92,13 +99,10 @@ class CarritoEstado {
   }
 
   static void eliminar(String nombre) {
-    items.value = items.value
-        .where((item) => item.nombre != nombre)
-        .toList();
+    items.value = items.value.where((item) => item.nombre != nombre).toList();
   }
 
   static void vaciar() {
     items.value = [];
   }
 }
-

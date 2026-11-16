@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/core/idioma.dart';
+import 'package:asadero/core/traducciones.dart';
 import 'package:asadero/services/user_service.dart';
 
 class InformacionPersonal extends StatefulWidget {
@@ -65,8 +67,8 @@ class _InformacionPersonalState extends State<InformacionPersonal> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Información personal actualizada correctamente'),
+        SnackBar(
+          content: Text(texto('informacion_actualizada')),
           backgroundColor: AppColors.earthBrown,
         ),
       );
@@ -100,177 +102,187 @@ class _InformacionPersonalState extends State<InformacionPersonal> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.asphalt,
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.goldSand, AppColors.redPrayerFlag],
-          ),
-        ),
-        child: Column(
-          children: [
-            Container(
-              color: AppColors.asphalt,
-              height: MediaQuery.of(context).padding.top,
-            ),
-            Expanded(
-              child: SafeArea(
-                top: false,
-                child: Column(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.fromLTRB(12, 12, 20, 24),
-                      decoration: const BoxDecoration(
-                        color: AppColors.asphalt,
-                        borderRadius: BorderRadius.vertical(
-                          bottom: Radius.circular(20),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            onPressed: () => Navigator.pop(context),
-                            icon: const Icon(
-                              Icons.arrow_back,
-                              color: AppColors.goldSand,
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              'Información personal',
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.kronaOne(
-                                color: AppColors.goldSand,
-                                fontSize: 15,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 48),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: _cargando
-                          ? const Center(
-                              child: CircularProgressIndicator(
-                                color: AppColors.goldSand,
-                              ),
-                            )
-                          : SingleChildScrollView(
-                              padding: const EdgeInsets.all(20),
-                              child: Form(
-                                key: _formKey,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Edita los datos de tu cuenta',
-                                      style: GoogleFonts.kronaOne(
-                                        color: AppColors.earthBrown,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 24),
-                                    _campo(
-                                      etiqueta: 'Nombre completo',
-                                      controller: _nombreController,
-                                      icono: Icons.person_outline,
-                                      validar: (valor) {
-                                        if (valor == null ||
-                                            valor.trim().isEmpty) {
-                                          return 'Ingresa tu nombre';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                    const SizedBox(height: 18),
-                                    _campo(
-                                      etiqueta: 'Teléfono',
-                                      controller: _telefonoController,
-                                      icono: Icons.phone_outlined,
-                                      tipo: TextInputType.phone,
-                                      validar: (valor) {
-                                        if (valor == null ||
-                                            valor.trim().isEmpty) {
-                                          return 'Ingresa tu teléfono';
-                                        }
-
-                                        if (valor.trim().length < 7) {
-                                          return 'Ingresa un teléfono válido';
-                                        }
-
-                                        return null;
-                                      },
-                                    ),
-                                    const SizedBox(height: 18),
-                                    _campo(
-                                      etiqueta: 'Dirección (opcional)',
-                                      controller: _direccionController,
-                                      icono: Icons.location_on_outlined,
-                                      validar: (valor) => null,
-                                    ),
-                                    const SizedBox(height: 18),
-                                    _campo(
-                                      etiqueta: 'Barrio (opcional)',
-                                      controller: _barrioController,
-                                      icono: Icons.home_outlined,
-                                      validar: (valor) => null,
-                                    ),
-                                    const SizedBox(height: 30),
-                                    SizedBox(
-                                      width: double.infinity,
-                                      child: ElevatedButton(
-                                        onPressed: _guardando
-                                            ? null
-                                            : _guardarCambios,
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.earthBrown,
-                                          foregroundColor: AppColors.goldSand,
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 16,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              14,
-                                            ),
-                                          ),
-                                        ),
-                                        child: _guardando
-                                            ? const SizedBox(
-                                                width: 22,
-                                                height: 22,
-                                                child:
-                                                    CircularProgressIndicator(
-                                                      strokeWidth: 2,
-                                                      color: AppColors.goldSand,
-                                                    ),
-                                              )
-                                            : const Text(
-                                                'Guardar cambios',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                    ),
-                  ],
-                ),
+    return ValueListenableBuilder<String>(
+      valueListenable: Idioma.seleccionado,
+      builder: (context, idioma, child) {
+        return Scaffold(
+          backgroundColor: AppColors.asphalt,
+          body: Container(
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [AppColors.goldSand, AppColors.redPrayerFlag],
               ),
             ),
-          ],
-        ),
-      ),
+            child: Column(
+              children: [
+                Container(
+                  color: AppColors.asphalt,
+                  height: MediaQuery.of(context).padding.top,
+                ),
+                Expanded(
+                  child: SafeArea(
+                    top: false,
+                    child: Column(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.fromLTRB(12, 12, 20, 24),
+                          decoration: const BoxDecoration(
+                            color: AppColors.asphalt,
+                            borderRadius: BorderRadius.vertical(
+                              bottom: Radius.circular(20),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                onPressed: () => Navigator.pop(context),
+                                icon: const Icon(
+                                  Icons.arrow_back,
+                                  color: AppColors.goldSand,
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  texto('informacion_personal'),
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.kronaOne(
+                                    color: AppColors.goldSand,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 48),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: _cargando
+                              ? const Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.goldSand,
+                                  ),
+                                )
+                              : SingleChildScrollView(
+                                  padding: const EdgeInsets.all(20),
+                                  child: Form(
+                                    key: _formKey,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          texto('editar_datos_cuenta'),
+                                          style: GoogleFonts.kronaOne(
+                                            color: AppColors.earthBrown,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 24),
+                                        _campo(
+                                          etiqueta: texto('nombre_completo'),
+                                          controller: _nombreController,
+                                          icono: Icons.person_outline,
+                                          validar: (valor) {
+                                            if (valor == null ||
+                                                valor.trim().isEmpty) {
+                                              return texto('ingresa_nombre');
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                        const SizedBox(height: 18),
+                                        _campo(
+                                          etiqueta: texto('telefono'),
+                                          controller: _telefonoController,
+                                          icono: Icons.phone_outlined,
+                                          tipo: TextInputType.phone,
+                                          validar: (valor) {
+                                            if (valor == null ||
+                                                valor.trim().isEmpty) {
+                                              return texto('ingresa_telefono');
+                                            }
+
+                                            if (valor.trim().length < 7) {
+                                              return texto('telefono_valido');
+                                            }
+
+                                            return null;
+                                          },
+                                        ),
+                                        const SizedBox(height: 18),
+                                        _campo(
+                                          etiqueta: texto('direccion_opcional'),
+                                          controller: _direccionController,
+                                          icono: Icons.location_on_outlined,
+                                          validar: (valor) => null,
+                                        ),
+                                        const SizedBox(height: 18),
+                                        _campo(
+                                          etiqueta: texto('barrio_opcional'),
+                                          controller: _barrioController,
+                                          icono: Icons.home_outlined,
+                                          validar: (valor) => null,
+                                        ),
+                                        const SizedBox(height: 30),
+                                        SizedBox(
+                                          width: double.infinity,
+                                          child: ElevatedButton(
+                                            onPressed: _guardando
+                                                ? null
+                                                : _guardarCambios,
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  AppColors.earthBrown,
+                                              foregroundColor:
+                                                  AppColors.goldSand,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 16,
+                                                  ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(14),
+                                              ),
+                                            ),
+                                            child: _guardando
+                                                ? const SizedBox(
+                                                    width: 22,
+                                                    height: 22,
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                          strokeWidth: 2,
+                                                          color: AppColors
+                                                              .goldSand,
+                                                        ),
+                                                  )
+                                                : Text(
+                                                    texto('guardar_cambios'),
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
