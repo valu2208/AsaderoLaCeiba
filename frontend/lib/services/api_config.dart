@@ -5,7 +5,7 @@ class ApiConfig {
   static const bool useRemote = true;
 
   static const String _remoteUrl =
-      'https://asadero-la-ceiba-gigante.onrender.com';
+      'https://asadero-la-ceiba.onrender.com';
 
   static const String _urlManual = String.fromEnvironment('API_URL');
 

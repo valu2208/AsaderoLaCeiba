@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/idioma.dart';
 import 'package:asadero/core/traducciones.dart';
+import 'package:asadero/core/transicion.dart';
+import 'package:asadero/models/opcion_menu.dart';
 import 'package:asadero/componentes/barra_nav_inferior.dart';
 import 'package:asadero/componentes/burbuja_asistente.dart';
 import 'package:asadero/componentes/fondo_degradado.dart';
@@ -13,48 +15,51 @@ import 'package:asadero/pantallas/home.dart';
 import 'package:asadero/pantallas/menu_categoria.dart';
 import 'package:asadero/pantallas/perfil.dart';
 
-// Pantalla Menú: opciones de la carta.
+// Pantalla Menú (botón del centro de la barra): las opciones de la carta
 class Productos extends StatelessWidget {
   const Productos({super.key});
 
-  // Los valores de categoria se mantienen iguales a los de la base de datos.
-  static const List<Map<String, dynamic>> _opciones = [
-    {
-      'claveTitulo': 'categoria_desayuno',
-      'claveDescripcion': 'descripcion_desayuno',
-      'categoria': 'desayuno',
-      'imagen': 'assets/imagenes/menu_desayuno.jpg',
-      'color': AppColors.redPrayerFlag,
-      'porDia': true,
-      'icono': Icons.free_breakfast,
-    },
-    {
-      'claveTitulo': 'categoria_almuerzo',
-      'claveDescripcion': 'descripcion_almuerzo',
-      'categoria': 'almuerzo',
-      'imagen': 'assets/imagenes/menu_almuerzo.jpg',
-      'color': AppColors.demonicPresence,
-      'porDia': true,
-      'icono': Icons.lunch_dining,
-    },
-    {
-      'claveTitulo': 'categoria_gaseosas',
-      'claveDescripcion': 'descripcion_gaseosas',
-      'categoria': 'gaseosas',
-      'imagen': 'assets/imagenes/menu_gaseosas.jpg',
-      'color': AppColors.earthBrown,
-      'porDia': false,
-      'icono': Icons.local_drink,
-    },
-    {
-      'claveTitulo': 'categoria_fin_semana',
-      'claveDescripcion': 'descripcion_fin_semana',
-      'categoria': 'fin_de_semana',
-      'imagen': 'assets/imagenes/menu_fin_de_semana.jpg',
-      'color': AppColors.asphalt,
-      'porDia': false,
-      'icono': Icons.celebration,
-    },
+  // 'categoria' es el mismo texto que se guarda en la base de datos.
+  // 'porDia': true = el cliente solo ve los platos de hoy (lo que subió el admin para hoy)
+  static const List<OpcionMenu> _opciones = [
+    OpcionMenu(
+      titulo: 'Desayuno',
+      categoria: 'desayuno',
+      descripcion: 'Huevos, caldos y bebidas para empezar el día',
+      imagen: 'assets/imagenes/menu_desayuno.jpg',
+      icono: Icons.free_breakfast,
+      color: Color(0xFFD9611A),
+      colorFin: Color(0xFFA92A0A),
+      porDia: true,
+    ),
+    OpcionMenu(
+      titulo: 'Almuerzo',
+      categoria: 'almuerzo',
+      descripcion: 'Platos fuertes y sopas del día',
+      imagen: 'assets/imagenes/menu_almuerzo.jpg',
+      icono: Icons.lunch_dining,
+      color: Color(0xFFC41E14),
+      colorFin: Color(0xFF7B1103),
+      porDia: true,
+    ),
+    OpcionMenu(
+      titulo: 'Gaseosas',
+      categoria: 'gaseosas',
+      descripcion: 'Gaseosas y bebidas frías',
+      imagen: 'assets/imagenes/menu_gaseosas.jpg',
+      icono: Icons.local_drink,
+      color: Color(0xFFA12A55),
+      colorFin: Color(0xFF5E1230),
+    ),
+    OpcionMenu(
+      titulo: 'Fin de semana',
+      categoria: 'fin_de_semana',
+      descripcion: 'Especiales de sábado y domingo',
+      imagen: 'assets/imagenes/menu_fin_de_semana.jpg',
+      icono: Icons.celebration,
+      color: Color(0xFF4A2312),
+      colorFin: Color(0xFF1C0A0A),
+    ),
   ];
 
   void _ir(BuildContext context, Widget pantalla) {
@@ -64,7 +69,7 @@ class Productos extends StatelessWidget {
     );
   }
 
-  // Regresa al Home.
+  // Flecha de volver: regresa al Home
   void _volver(BuildContext context) {
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
@@ -83,10 +88,7 @@ class Productos extends StatelessWidget {
           appBar: AppBar(
             backgroundColor: AppColors.asphalt,
             foregroundColor: AppColors.goldSand,
-            title: Text(
-              texto('menu'),
-              style: GoogleFonts.kronaOne(fontSize: 18),
-            ),
+            title: Text(texto('menu'), style: GoogleFonts.kronaOne(fontSize: 18)),
             centerTitle: true,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
@@ -95,28 +97,17 @@ class Productos extends StatelessWidget {
           ),
           body: FondoDegradado(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 10, 16, 90),
+              padding: const EdgeInsets.fromLTRB(16, 6, 16, 90),
               child: Column(
                 children: [
+                  // Cada opción ocupa la misma parte de la pantalla
                   for (final opcion in _opciones)
                     Expanded(
                       child: TarjetaOpcionMenu(
-                        titulo: texto(opcion['claveTitulo'] as String),
-                        descripcion: texto(
-                          opcion['claveDescripcion'] as String,
-                        ),
-                        imagen: opcion['imagen'] as String,
-                        icono: opcion['icono'] as IconData,
-                        color: opcion['color'] as Color,
+                        opcion: opcion,
                         onTap: () => Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => MenuCategoria(
-                              titulo: texto(opcion['claveTitulo'] as String),
-                              categoria: opcion['categoria'] as String,
-                              porDia: opcion['porDia'] as bool,
-                            ),
-                          ),
+                          rutaSuave(MenuCategoria(opcion: opcion)),
                         ),
                       ),
                     ),
@@ -129,7 +120,7 @@ class Productos extends StatelessWidget {
             indiceActual: 2,
             onTap: (indice) {
               if (indice == 0) _ir(context, const Home());
-              if (indice == 1) _ir(context, const Perfil());
+              if (indice == 1) _ir(context, Perfil());
               if (indice == 3) _ir(context, const Historial());
               if (indice == 4) _ir(context, const Carrito());
             },
