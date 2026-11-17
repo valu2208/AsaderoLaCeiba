@@ -9,6 +9,7 @@ import 'package:asadero/core/idioma.dart';
 import 'package:asadero/core/traducciones.dart';
 import 'package:asadero/services/pedido_service.dart';
 import 'package:asadero/services/user_service.dart';
+import 'package:asadero/pantallas/login.dart';
 
 class Carrito extends StatefulWidget {
   const Carrito({super.key});
@@ -100,6 +101,24 @@ class _CarritoState extends State<Carrito> {
     final items = List<CarritoItem>.from(CarritoEstado.items.value);
 
     if (items.isEmpty && _pedidoPendienteComprobanteId == null) return;
+    // Exigir sesión para confirmar un pedido.
+    final token = await UserService.getToken();
+
+    if (!mounted) return;
+
+    if (token == null || token.isEmpty) {
+      _mostrarMensaje(
+        'Para realizar un pedido debes iniciar sesión o registrarte.',
+        error: true,
+      );
+
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const Login()),
+      );
+
+      return;
+    }
 
     if (_metodoPago == 'nequi' && _comprobante == null) {
       _mostrarMensaje(texto('selecciona_comprobante'), error: true);

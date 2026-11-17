@@ -14,13 +14,12 @@ import 'package:asadero/pantallas/historial.dart';
 import 'package:asadero/pantallas/home.dart';
 import 'package:asadero/pantallas/menu_categoria.dart';
 import 'package:asadero/pantallas/perfil.dart';
+import 'package:asadero/pantallas/login.dart';
+import 'package:asadero/services/user_service.dart';
 
 // Pantalla Menú (botón del centro de la barra): las opciones de la carta
 class Productos extends StatelessWidget {
   const Productos({super.key});
-
-  // 'categoria' es el mismo texto que se guarda en la base de datos.
-  // 'porDia': true = el cliente solo ve los platos de hoy (lo que subió el admin para hoy)
   static const List<OpcionMenu> _opciones = [
     OpcionMenu(
       titulo: 'Desayuno',
@@ -69,6 +68,23 @@ class Productos extends StatelessWidget {
     );
   }
 
+  // Exigir sesión para entrar a Perfil o Historial.
+  Future<void> _abrirZonaPrivada(BuildContext context, Widget pantalla) async {
+    final token = await UserService.getToken();
+
+    if (!context.mounted) return;
+
+    if (token == null || token.isEmpty) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const Login()),
+      );
+      return;
+    }
+
+    _ir(context, pantalla);
+  }
+
   // Flecha de volver: regresa al Home
   void _volver(BuildContext context) {
     if (Navigator.canPop(context)) {
@@ -88,7 +104,10 @@ class Productos extends StatelessWidget {
           appBar: AppBar(
             backgroundColor: AppColors.asphalt,
             foregroundColor: AppColors.goldSand,
-            title: Text(texto('menu'), style: GoogleFonts.kronaOne(fontSize: 18)),
+            title: Text(
+              texto('menu'),
+              style: GoogleFonts.kronaOne(fontSize: 18),
+            ),
             centerTitle: true,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
@@ -120,8 +139,15 @@ class Productos extends StatelessWidget {
             indiceActual: 2,
             onTap: (indice) {
               if (indice == 0) _ir(context, const Home());
-              if (indice == 1) _ir(context, Perfil());
-              if (indice == 3) _ir(context, const Historial());
+
+              if (indice == 1) {
+                _abrirZonaPrivada(context, Perfil());
+              }
+
+              if (indice == 3) {
+                _abrirZonaPrivada(context, const Historial());
+              }
+
               if (indice == 4) _ir(context, const Carrito());
             },
           ),

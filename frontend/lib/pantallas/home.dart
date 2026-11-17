@@ -11,6 +11,8 @@ import 'package:asadero/pantallas/historial.dart';
 import 'package:asadero/pantallas/carrito.dart';
 import 'package:asadero/pantallas/perfil.dart';
 import 'package:asadero/pantallas/productos.dart';
+import 'package:asadero/pantallas/login.dart';
+import 'package:asadero/services/user_service.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -22,7 +24,42 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int _versionEncabezado = 0;
 
+  Future<bool> _tieneSesion() async {
+    final token = await UserService.getToken();
+    return token != null && token.isNotEmpty;
+  }
+
+  Future<bool> _exigirSesion() async {
+    try {
+      final tieneSesion = await _tieneSesion();
+
+      if (!mounted) return false;
+
+      if (tieneSesion) return true;
+
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const Login()),
+      );
+
+      return false;
+    } catch (_) {
+      if (!mounted) return false;
+
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const Login()),
+      );
+
+      return false;
+    }
+  }
+
   Future<void> _abrirPerfil() async {
+    if (!await _exigirSesion()) return;
+
+    if (!mounted) return;
+
     await Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const Perfil()),
@@ -33,6 +70,17 @@ class _HomeState extends State<Home> {
     setState(() {
       _versionEncabezado++;
     });
+  }
+
+  Future<void> _abrirHistorial() async {
+    if (!await _exigirSesion()) return;
+
+    if (!mounted) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const Historial()),
+    );
   }
 
   @override
@@ -56,10 +104,7 @@ class _HomeState extends State<Home> {
               MaterialPageRoute(builder: (_) => const Productos()),
             );
           } else if (indice == 3) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const Historial()),
-            );
+            _abrirHistorial();
           } else if (indice == 4) {
             Navigator.push(
               context,
