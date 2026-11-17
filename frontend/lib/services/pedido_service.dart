@@ -1,12 +1,18 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:asadero/core/carrito_estado.dart';
 import 'package:asadero/services/api_config.dart';
 import 'package:asadero/services/user_service.dart';
 
 class PedidoService {
-  Future<int> realizarPedido(List<CarritoItem> items) async {
+  Future<int> realizarPedido(
+    List<CarritoItem> items, {
+    String metodoPago = 'presencial',
+  }) async {
     if (items.isEmpty) {
       throw Exception('El carrito está vacío.');
     }
@@ -47,6 +53,7 @@ class PedidoService {
       body: jsonEncode({
         'total': total,
         'moneda_pago': 'COP',
+        'metodo_pago': metodoPago,
         'telefono': telefono.isEmpty ? null : telefono,
         'productos': productos,
       }),
@@ -68,6 +75,7 @@ class PedidoService {
         datos['error'] ?? datos['message'] ?? 'No se pudo registrar el pedido.',
       );
     }
+
     final pedido = datos['pedido'];
 
     if (pedido is! Map || pedido['id'] == null) {
@@ -75,5 +83,48 @@ class PedidoService {
     }
 
     return (pedido['id'] as num).toInt();
+  }
+
+  Future<void> subirComprobante({
+    required int pedidoId,
+    required XFile imagen,
+  }) async {
+    final token = await UserService.getToken();
+
+    if (token == null || token.isEmpty) {
+      throw Exception('Tu sesión ha expirado. Inicia sesión nuevamente.');
+    }
+
+    final extension = imagen.name.split('.').last.toLowerCase();
+    final subtipo = extension == 'png' ? 'png' : 'jpeg';
+
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse('${ApiConfig.baseUrl}/api/pedidos/$pedidoId/comprobante'),
+    );
+
+    // No poner Content-Type a mano: MultipartRequest lo genera con el boundary.
+    request.headers['Authorization'] = 'Bearer $token';
+
+    request.files.add(
+      http.MultipartFile.fromBytes(
+        'comprobante', // debe coincidir con upload.single('comprobante')
+        await imagen.readAsBytes(),
+        filename: imagen.name,
+        contentType: MediaType('image', subtipo),
+      ),
+    );
+
+    final streamed = await request.send();
+    final respuesta = await http.Response.fromStream(streamed);
+
+    if (respuesta.statusCode != 200 && respuesta.statusCode != 201) {
+      String mensaje = 'No se pudo subir el comprobante.';
+      try {
+        final datos = jsonDecode(respuesta.body);
+        mensaje = datos['error'] ?? datos['message'] ?? mensaje;
+      } catch (_) {}
+      throw Exception(mensaje);
+    }
   }
 }

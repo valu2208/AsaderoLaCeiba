@@ -77,6 +77,30 @@ final Map<String, String> espanol = {
   'eliminar_producto': 'Eliminar producto',
   'realizar_pedido': 'Realizar pedido',
   'descripcion_generica': 'Delicioso producto preparado especialmente para ti.',
+
+  // --- Carrito: pago y comprobante ---
+  'login_requerido':
+      'Para realizar un pedido debes iniciar sesión o registrarte.',
+  'metodo_pago': 'Método de pago',
+  'pago_presencial': 'Pago presencial',
+  'paga_asadero': 'Paga directamente en el asadero.',
+  'pago_qr': 'Pago por QR (Nequi)',
+  'paga_qr': 'Escanea el QR, paga y sube el comprobante.',
+  'instruccion_qr': 'Escanea este código QR desde tu app para pagar.',
+  'qr_no_encontrado': 'No se encontró la imagen del QR.',
+  'instruccion_comprobante':
+      'Después de pagar, sube la captura del comprobante.',
+  'seleccionar_comprobante': 'Seleccionar comprobante',
+  'cambiar_comprobante': 'Cambiar comprobante',
+  'comprobante_seleccionado': 'Comprobante seleccionado',
+  'selecciona_comprobante': 'Selecciona el comprobante de pago.',
+  'error_seleccionar_imagen': 'No se pudo seleccionar la imagen.',
+  'pedido_registrado': 'Pedido registrado correctamente.',
+  'pedido_comprobante_enviado': 'Pedido y comprobante enviados correctamente.',
+  'pedido_registrado_reintentar':
+      'Tu pedido ya fue registrado, pero el comprobante no se pudo enviar. '
+      'Toca "Reintentar envío".',
+  'reintentar_envio': 'Reintentar envío',
 };
 
 final Map<String, String> ingles = {
@@ -144,6 +168,29 @@ final Map<String, String> ingles = {
   'eliminar_producto': 'Remove product',
   'realizar_pedido': 'Place order',
   'descripcion_generica': 'A delicious product prepared especially for you.',
+
+  // --- Cart: payment and receipt ---
+  'login_requerido': 'To place an order you must log in or sign up.',
+  'metodo_pago': 'Payment method',
+  'pago_presencial': 'Pay in person',
+  'paga_asadero': 'Pay directly at the restaurant.',
+  'pago_qr': 'QR payment (Nequi)',
+  'paga_qr': 'Scan the QR, pay and upload the receipt.',
+  'instruccion_qr': 'Scan this QR code from your app to pay.',
+  'qr_no_encontrado': 'QR image not found.',
+  'instruccion_comprobante':
+      'After paying, upload a screenshot of the receipt.',
+  'seleccionar_comprobante': 'Select receipt',
+  'cambiar_comprobante': 'Change receipt',
+  'comprobante_seleccionado': 'Receipt selected',
+  'selecciona_comprobante': 'Select the payment receipt.',
+  'error_seleccionar_imagen': 'Could not select the image.',
+  'pedido_registrado': 'Order placed successfully.',
+  'pedido_comprobante_enviado': 'Order and receipt sent successfully.',
+  'pedido_registrado_reintentar':
+      'Your order was placed, but the receipt could not be sent. '
+      'Tap "Retry sending".',
+  'reintentar_envio': 'Retry sending',
 };
 
 final Map<String, String> portugues = {
@@ -212,4 +259,26 @@ final Map<String, String> portugues = {
   'realizar_pedido': 'Fazer pedido',
   'descripcion_generica':
       'Um produto delicioso preparado especialmente para você.',
+
+  // --- Carrinho: pagamento e comprovante ---
+  'login_requerido': 'Para fazer um pedido você deve entrar ou se cadastrar.',
+  'metodo_pago': 'Forma de pagamento',
+  'pago_presencial': 'Pagamento presencial',
+  'paga_asadero': 'Pague diretamente no restaurante.',
+  'pago_qr': 'Pagamento por QR (Nequi)',
+  'paga_qr': 'Escaneie o QR, pague e envie o comprovante.',
+  'instruccion_qr': 'Escaneie este código QR no seu app para pagar.',
+  'qr_no_encontrado': 'Imagem do QR não encontrada.',
+  'instruccion_comprobante': 'Depois de pagar, envie a captura do comprovante.',
+  'seleccionar_comprobante': 'Selecionar comprovante',
+  'cambiar_comprobante': 'Trocar comprovante',
+  'comprobante_seleccionado': 'Comprovante selecionado',
+  'selecciona_comprobante': 'Selecione o comprovante de pagamento.',
+  'error_seleccionar_imagen': 'Não foi possível selecionar a imagem.',
+  'pedido_registrado': 'Pedido registrado com sucesso.',
+  'pedido_comprobante_enviado': 'Pedido e comprovante enviados com sucesso.',
+  'pedido_registrado_reintentar':
+      'Seu pedido foi registrado, mas o comprovante não pôde ser enviado. '
+      'Toque em "Tentar novamente".',
+  'reintentar_envio': 'Tentar novamente',
 };
