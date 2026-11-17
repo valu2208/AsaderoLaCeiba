@@ -4,10 +4,41 @@ import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/traducciones.dart';
 import 'package:asadero/componentes/barra_navegacion.dart';
 import 'package:asadero/componentes/boton_principal.dart';
-import 'package:asadero/pantallas/login.dart';
+import 'package:asadero/pantallas/home.dart';
+import 'package:asadero/services/user_service.dart';
+import 'package:asadero/core/navegacion_rol.dart';
 
 class Inicio extends StatelessWidget {
   const Inicio({super.key});
+
+  Future<void> _comenzar(BuildContext context) async {
+    try {
+      final token = await UserService.getToken();
+
+      if (!context.mounted) return;
+
+      if (token != null && token.isNotEmpty) {
+        final rol = await UserService.getRol();
+
+        if (!context.mounted) return;
+
+        irSegunRol(context, rol);
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const Home()),
+        );
+      }
+    } catch (e) {
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No se pudo comprobar la sesión. Intenta nuevamente.'),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +50,6 @@ class Inicio extends StatelessWidget {
           child: Column(
             children: [
               const BarraNavegacion(),
-              // Más espacio entre los dos textos: el título sube y el mensaje queda más al centro.
-              // Para moverlos, cambia los números de flex de los Spacer y el alto del SizedBox.
               const Spacer(flex: 1),
               Text(
                 texto('tu_proxima_gran_idea'),
@@ -42,12 +71,7 @@ class Inicio extends StatelessWidget {
               const Spacer(flex: 3),
               BotonPrincipal(
                 texto: texto('comenzar'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const Login()),
-                  );
-                },
+                onPressed: () => _comenzar(context),
               ),
             ],
           ),

@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/colores.dart';
@@ -12,6 +13,8 @@ import 'package:asadero/pantallas/historial.dart';
 import 'package:asadero/pantallas/home.dart';
 import 'package:asadero/pantallas/menu_categoria.dart';
 import 'package:asadero/pantallas/perfil.dart';
+import 'package:asadero/pantallas/login.dart';
+import 'package:asadero/services/user_service.dart';
 
 // Pantalla Menú (botón del centro de la barra): las opciones de la carta
 class Productos extends StatelessWidget {
@@ -63,6 +66,26 @@ class Productos extends StatelessWidget {
       context,
       MaterialPageRoute(builder: (_) => pantalla),
     );
+  }
+
+  // Exigir sesión para entrar a las zonas privadas.
+  Future<void> _abrirZonaPrivada(
+    BuildContext context,
+    Widget pantalla,
+  ) async {
+    final token = await UserService.getToken();
+
+    if (!context.mounted) return;
+
+    if (token == null || token.isEmpty) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const Login()),
+      );
+      return;
+    }
+
+    _ir(context, pantalla);
   }
 
   // Flecha de volver: regresa al Home
@@ -126,8 +149,12 @@ class Productos extends StatelessWidget {
             indiceActual: 2,
             onTap: (indice) {
               if (indice == 0) _ir(context, const Home());
-              if (indice == 1) _ir(context, Perfil());
-              if (indice == 3) _ir(context, const Historial());
+              if (indice == 1) {
+                _abrirZonaPrivada(context, Perfil());
+              }
+              if (indice == 3) {
+                _abrirZonaPrivada(context, const Historial());
+              }
               if (indice == 4) _ir(context, const Carrito());
             },
           ),
