@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/formato.dart';
 import '../models/reporte.dart';
+import 'tarjeta_vidrio.dart';
 
 // Tarjetas de resumen: total vendido, pedidos y ticket promedio
 class ResumenReporte extends StatelessWidget {
@@ -10,20 +10,13 @@ class ResumenReporte extends StatelessWidget {
 
   const ResumenReporte({super.key, required this.reporte});
 
-  Widget _tarjeta({required Widget hijo}) {
-    return Card(
-      color: Colors.white,
-      elevation: 3,
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(padding: const EdgeInsets.all(16), child: hijo),
-    );
-  }
-
   Widget _etiqueta(String texto) {
     return Text(
       texto,
-      style: GoogleFonts.josefinSans(fontSize: 14, color: AppColors.earthBrown),
+      style: GoogleFonts.josefinSans(
+        fontSize: 14,
+        color: TarjetaVidrio.colorTexto,
+      ),
     );
   }
 
@@ -36,25 +29,21 @@ class ResumenReporte extends StatelessWidget {
         style: GoogleFonts.josefinSans(
           fontSize: size,
           fontWeight: FontWeight.bold,
-          color: AppColors.asphalt,
+          color: TarjetaVidrio.colorTexto,
         ),
       ),
     );
   }
 
-  Widget _pequena(String titulo, String valor) {
+  Widget _pequena(String titulo, String valor, Color tinte) {
     return Expanded(
-      child: Card(
-        color: Colors.white,
-        elevation: 3,
+      child: TarjetaVidrio(
+        tinte: tinte,
         margin: const EdgeInsets.symmetric(horizontal: 4),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [_etiqueta(titulo), _cifra(valor, 22)],
-          ),
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [_etiqueta(titulo), _cifra(valor, 22)],
         ),
       ),
     );
@@ -64,8 +53,9 @@ class ResumenReporte extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _tarjeta(
-          hijo: Column(
+        TarjetaVidrio(
+          tinte: TarjetaVidrio.tinteNaranja,
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _etiqueta('Total vendido'),
@@ -77,8 +67,12 @@ class ResumenReporte extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
             children: [
-              _pequena('Pedidos', '${reporte.pedidos}'),
-              _pequena('Ticket promedio', formatoPesos(reporte.ticketPromedio)),
+              _pequena('Pedidos', '${reporte.pedidos}', TarjetaVidrio.tinteRojo),
+              _pequena(
+                'Ticket promedio',
+                formatoPesos(reporte.ticketPromedio),
+                TarjetaVidrio.tinteCiruela,
+              ),
             ],
           ),
         ),

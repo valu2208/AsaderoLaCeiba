@@ -1,10 +1,11 @@
-
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:asadero/pantallas/inicio.dart';
 import 'package:asadero/pantallas/idiomas.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/traducciones.dart';
+import 'package:asadero/componentes/pollo_animado.dart';
+import 'package:asadero/componentes/pulsante.dart';
+import 'package:asadero/componentes/texto_ovalado.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Bienvenida extends StatefulWidget {
@@ -14,7 +15,45 @@ class Bienvenida extends StatefulWidget {
   State<Bienvenida> createState() => _BienvenidaState();
 }
 
-class _BienvenidaState extends State<Bienvenida> {
+class _BienvenidaState extends State<Bienvenida> with SingleTickerProviderStateMixin {
+  late final AnimationController _entrada = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 5200),
+  );
+
+  late final Animation<double> _logo = CurvedAnimation(
+    parent: _entrada,
+    curve: const Interval(0.0, 0.2, curve: Curves.elasticOut),
+  );
+
+  late final Animation<double> _letras = CurvedAnimation(
+    parent: _entrada,
+    curve: const Interval(0.22, 0.8),
+  );
+
+  late final Animation<double> _boton = CurvedAnimation(
+    parent: _entrada,
+    curve: const Interval(0.84, 1.0, curve: Curves.easeIn),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _entrada.forward();
+  }
+
+  @override
+  void reassemble() {
+    super.reassemble();
+    _entrada.forward(from: 0);
+  }
+
+  @override
+  void dispose() {
+    _entrada.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,71 +76,32 @@ class _BienvenidaState extends State<Bienvenida> {
         child: SafeArea(
           child: Stack(
             children: [
-              Positioned(
-                top: 5,
-                right: 10,
-                child: TextButton(
-                  onPressed: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const Idiomas(),
-                      ),
-                    );
-                    setState(() {});
-                  },
-                  child: Text(
-                    'Cambio de idioma',
-                    style: GoogleFonts.inter(
-                      color: AppColors.goldSand,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ),
+              Positioned(top: 5, right: 10, child: _botonIdioma()),
               Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    SizedBox(
-                      width: 360,
-                      height: 360,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          CustomPaint(
-                            size: const Size(360, 360),
-                            painter: TextoOvaladoPainter(),
-                          ),
-                          ClipOval(
-                            child: Image.asset(
-                              'assets/imagenes/logo_ceiba.jpeg',
-                              width: 300,
-                              height: 300,
-                              fit: BoxFit.cover,
+                    ScaleTransition(
+                      scale: _logo,
+                      child: SizedBox(
+                        width: 390,
+                        height: 390,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            CustomPaint(
+                              size: const Size(390, 390),
+                              painter: TextoOvaladoPainter(_letras),
                             ),
-                          ),
-                        ],
+                            const PolloAnimado(tamano: 300),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 40),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const Inicio(),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        texto('haz_click_aqui'),
-                        style: GoogleFonts.inter(
-                          color: AppColors.goldSand,
-                          fontSize: 25,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
+                    FadeTransition(
+                      opacity: _boton,
+                      child: Pulsante(hijo: _botonEntrar()),
                     ),
                   ],
                 ),
@@ -112,89 +112,39 @@ class _BienvenidaState extends State<Bienvenida> {
       ),
     );
   }
-}
 
-class TextoOvaladoPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final ovalo = Rect.fromCenter(
-      center: Offset(size.width / 2, size.height / 2),
-      width: size.width - 10,
-      height: size.height - 10,
+  Widget _botonIdioma() {
+    return TextButton(
+      onPressed: () async {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const Idiomas()),
+        );
+        setState(() {});
+      },
+      child: Text(
+        'Cambio de idioma',
+        style: GoogleFonts.inter(color: AppColors.goldSand, fontSize: 14),
+      ),
     );
-
-    final arriba = Path()
-      ..addArc(ovalo, math.pi, math.pi);
-
-    final abajo = Path()
-      ..addArc(ovalo, math.pi, -math.pi);
-
-    const estilo = TextStyle(
-      color: AppColors.goldSand,
-      fontSize: 20,
-      fontWeight: FontWeight.bold,
-      letterSpacing: 1.5,
-    );
-
-    dibujarTexto(canvas, 'ASADERO', arriba, estilo);
-    dibujarTexto(canvas, 'LA CEIBA', abajo, estilo);
   }
 
-  void dibujarTexto(
-    Canvas canvas,
-    String texto,
-    Path camino,
-    TextStyle estilo,
-  ) {
-    final metricas = camino.computeMetrics().toList();
-
-    if (metricas.isEmpty) return;
-
-    final metrica = metricas.first;
-
-    final letras = texto.split('').map((letra) {
-      return TextPainter(
-        text: TextSpan(
-          text: letra,
-          style: estilo,
+  Widget _botonEntrar() {
+    return TextButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const Inicio()),
+        );
+      },
+      child: Text(
+        texto('haz_click_aqui'),
+        style: GoogleFonts.inter(
+          color: AppColors.goldSand,
+          fontSize: 25,
+          fontStyle: FontStyle.italic,
         ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-    }).toList();
-
-    final anchoTexto = letras.fold<double>(
-      0,
-      (total, letra) => total + letra.width,
+      ),
     );
-
-    double distancia = (metrica.length - anchoTexto) / 2;
-
-    for (final letra in letras) {
-      final posicion = distancia + letra.width / 2;
-
-      final tangente = metrica.getTangentForOffset(
-        posicion.clamp(0.0, metrica.length).toDouble(),
-      );
-
-      if (tangente != null) {
-        canvas.save();
-        canvas.translate(
-          tangente.position.dx,
-          tangente.position.dy,
-        );
-        canvas.rotate(tangente.angle);
-        letra.paint(
-          canvas,
-          Offset(-letra.width / 2, -letra.height / 2),
-        );
-        canvas.restore();
-      }
-
-      distancia += letra.width;
-    }
   }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
-

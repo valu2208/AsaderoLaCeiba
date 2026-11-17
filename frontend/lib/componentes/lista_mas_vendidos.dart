@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:asadero/core/colores.dart';
 import '../models/reporte.dart';
+import 'tarjeta_vidrio.dart';
 
 // Platos más vendidos del periodo, del que más salió al que menos
 class ListaMasVendidos extends StatelessWidget {
@@ -16,12 +16,12 @@ class ListaMasVendidos extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 14,
-            backgroundColor: AppColors.redPrayerFlag.withValues(alpha: 0.12),
+            backgroundColor: TarjetaVidrio.colorTexto.withValues(alpha: 0.2),
             child: Text(
               '$posicion',
               style: GoogleFonts.josefinSans(
                 fontWeight: FontWeight.bold,
-                color: AppColors.redPrayerFlag,
+                color: TarjetaVidrio.colorTexto,
               ),
             ),
           ),
@@ -32,7 +32,10 @@ class ListaMasVendidos extends StatelessWidget {
               children: [
                 Text(
                   plato.nombre,
-                  style: GoogleFonts.josefinSans(fontSize: 15, color: AppColors.asphalt),
+                  style: GoogleFonts.josefinSans(
+                    fontSize: 15,
+                    color: TarjetaVidrio.colorTexto,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 ClipRRect(
@@ -40,8 +43,9 @@ class ListaMasVendidos extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: maximo == 0 ? 0 : plato.cantidad / maximo,
                     minHeight: 6,
-                    color: AppColors.redPrayerFlag,
-                    backgroundColor: AppColors.earthBrown.withValues(alpha: 0.12),
+                    color: TarjetaVidrio.colorTexto,
+                    backgroundColor:
+                        TarjetaVidrio.colorTexto.withValues(alpha: 0.2),
                   ),
                 ),
               ],
@@ -52,7 +56,7 @@ class ListaMasVendidos extends StatelessWidget {
             '${plato.cantidad} uds',
             style: GoogleFonts.josefinSans(
               fontWeight: FontWeight.bold,
-              color: AppColors.earthBrown,
+              color: TarjetaVidrio.colorTexto,
             ),
           ),
         ],
@@ -64,33 +68,29 @@ class ListaMasVendidos extends StatelessWidget {
   Widget build(BuildContext context) {
     final maximo = platos.isEmpty ? 0 : platos.first.cantidad;
 
-    return Card(
-      color: Colors.white,
-      elevation: 3,
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+    return TarjetaVidrio(
+      tinte: TarjetaVidrio.tinteCiruela,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Platos más vendidos',
+            style: GoogleFonts.josefinSans(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: TarjetaVidrio.colorTexto,
+            ),
+          ),
+          const SizedBox(height: 6),
+          if (platos.isEmpty)
             Text(
-              'Platos más vendidos',
+              'Sin ventas en este periodo.',
               style: GoogleFonts.josefinSans(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: AppColors.asphalt,
+                color: TarjetaVidrio.colorTextoSuave,
               ),
             ),
-            const SizedBox(height: 6),
-            if (platos.isEmpty)
-              Text(
-                'Sin ventas en este periodo.',
-                style: GoogleFonts.josefinSans(color: AppColors.earthBrown),
-              ),
-            for (var i = 0; i < platos.length; i++) _fila(i + 1, platos[i], maximo),
-          ],
-        ),
+          for (var i = 0; i < platos.length; i++) _fila(i + 1, platos[i], maximo),
+        ],
       ),
     );
   }

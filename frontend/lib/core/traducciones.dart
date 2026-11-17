@@ -108,6 +108,8 @@ final Map<String, String> espanol = {
   'notificaciones': 'Notificaciones',
   'consulta_avisos': 'Consulta tus avisos',
   'salir_cuenta': 'Salir de tu cuenta',
+  'ayuda': 'Ayuda',
+  'consulta_manual_usuario': 'Consulta el manual de usuario',
   'eliminar_cuenta': 'Eliminar cuenta',
   'borrar_permanentemente_cuenta': 'Borra permanentemente tu cuenta',
   'pregunta_eliminar_cuenta':
@@ -277,6 +279,8 @@ final Map<String, String> ingles = {
   'notificaciones': 'Notifications',
   'consulta_avisos': 'View your notifications',
   'salir_cuenta': 'Sign out of your account',
+  'ayuda': 'Help',
+  'consulta_manual_usuario': 'Open the user manual',
   'eliminar_cuenta': 'Delete account',
   'borrar_permanentemente_cuenta': 'Permanently delete your account',
   'pregunta_eliminar_cuenta':
@@ -445,6 +449,8 @@ final Map<String, String> portugues = {
   'notificaciones': 'Notificações',
   'consulta_avisos': 'Consulte seus avisos',
   'salir_cuenta': 'Sair da sua conta',
+  'ayuda': 'Ajuda',
+  'consulta_manual_usuario': 'Consulte o manual do usuário',
   'eliminar_cuenta': 'Excluir conta',
   'borrar_permanentemente_cuenta': 'Excluir sua conta permanentemente',
   'pregunta_eliminar_cuenta':

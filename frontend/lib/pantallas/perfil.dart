@@ -13,6 +13,7 @@ import 'package:asadero/pantallas/historial.dart';
 import 'package:asadero/pantallas/carrito.dart';
 import 'package:asadero/pantallas/informacion_personal.dart';
 import 'package:asadero/pantallas/notificaciones.dart';
+import 'package:asadero/pantallas/pantalla_manual.dart';
 import 'package:asadero/pantallas/productos.dart';
 
 class Perfil extends StatefulWidget {
@@ -40,6 +41,13 @@ class _PerfilState extends State<Perfil> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const Notificaciones()),
+    );
+  }
+
+  void _abrirManual() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const PantallaManual()),
     );
   }
 
@@ -367,6 +375,12 @@ class _PerfilState extends State<Perfil> {
                                 titulo: texto('cerrar_sesion'),
                                 subtitulo: texto('salir_cuenta'),
                                 onTap: _confirmarSalida,
+                              ),
+                              _opcion(
+                                icono: Icons.help_outline,
+                                titulo: texto('ayuda'),
+                                subtitulo: texto('consulta manual usuario'),
+                                onTap: _abrirManual,
                               ),
                               const SizedBox(height: 20),
                               _opcion(

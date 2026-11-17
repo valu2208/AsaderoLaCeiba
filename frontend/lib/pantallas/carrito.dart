@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/componentes/imagen_adaptable.dart';
 import 'package:asadero/core/carrito_estado.dart';
 import 'package:asadero/core/idioma.dart';
 import 'package:asadero/core/traducciones.dart';
@@ -261,7 +262,7 @@ class _CarritoState extends State<Carrito> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Image.asset(
-              'assets/imagenes/qr_pago.png',
+              'assets/imagenes/qr_pago.jpeg',
               width: 220,
               height: 220,
               fit: BoxFit.contain,
@@ -445,41 +446,11 @@ class _CarritoState extends State<Carrito> {
                             ),
                             leading: ClipRRect(
                               borderRadius: BorderRadius.circular(8),
-                              child: item.imagen.startsWith('http')
-                                  ? Image.network(
-                                      item.imagen,
-                                      width: 55,
-                                      height: 55,
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                            return const SizedBox(
-                                              width: 55,
-                                              height: 55,
-                                              child: Icon(
-                                                Icons.restaurant,
-                                                color: AppColors.goldSand,
-                                              ),
-                                            );
-                                          },
-                                    )
-                                  : Image.asset(
-                                      item.imagen,
-                                      width: 55,
-                                      height: 55,
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                            return const SizedBox(
-                                              width: 55,
-                                              height: 55,
-                                              child: Icon(
-                                                Icons.restaurant,
-                                                color: AppColors.goldSand,
-                                              ),
-                                            );
-                                          },
-                                    ),
+                              child: ImagenAdaptable(
+                                ruta: item.imagen,
+                                ancho: 55,
+                                alto: 55,
+                              ),
                             ),
                             title: Text(
                               nombreProducto(item),

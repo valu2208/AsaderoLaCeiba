@@ -71,7 +71,7 @@ class UserService {
             headers: ApiConfig.headers,
             body: jsonEncode({'refreshToken': refreshToken}),
           )
-          .timeout(const Duration(seconds: 20));
+          .timeout(const Duration(seconds: 60));
     } catch (error) {
       throw Exception('No se pudo conectar para renovar la sesión: $error');
     }
@@ -90,6 +90,11 @@ class UserService {
         'Código HTTP: ${respuesta.statusCode}. '
         'Respuesta: ${respuesta.body}',
       );
+    }
+
+    if (respuesta.statusCode == 400 || respuesta.statusCode == 401) {
+      await cerrarSesion();
+      return null;
     }
 
     if (respuesta.statusCode != 200) {

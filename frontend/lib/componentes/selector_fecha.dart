@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:asadero/core/colores.dart';
+import 'tarjeta_vidrio.dart';
 
 const _meses = [
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -39,16 +39,14 @@ class SelectorFecha extends StatelessWidget {
     final hoy = DateTime(ahora.year, ahora.month, ahora.day);
     final hayAdelante = !_mover(1).isAfter(hoy);
 
-    return Card(
-      color: Colors.white,
-      elevation: 3,
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    return TarjetaVidrio(
+      tinte: TarjetaVidrio.tinteCafe,
+      padding: EdgeInsets.zero,
       child: Row(
         children: [
           IconButton(
             icon: const Icon(Icons.chevron_left),
-            color: AppColors.earthBrown,
+            color: TarjetaVidrio.colorTexto,
             onPressed: () => onCambio(_mover(-1)),
           ),
           Expanded(
@@ -58,13 +56,14 @@ class SelectorFecha extends StatelessWidget {
               style: GoogleFonts.josefinSans(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: AppColors.asphalt,
+                color: TarjetaVidrio.colorTexto,
               ),
             ),
           ),
           IconButton(
             icon: const Icon(Icons.chevron_right),
-            color: AppColors.earthBrown,
+            color: TarjetaVidrio.colorTexto,
+            disabledColor: TarjetaVidrio.colorTexto.withValues(alpha: 0.3),
             onPressed: hayAdelante ? () => onCambio(_mover(1)) : null,
           ),
         ],

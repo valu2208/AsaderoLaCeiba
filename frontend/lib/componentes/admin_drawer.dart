@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:asadero/componentes/boton_ayuda.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/navegacion_rol.dart';
 import 'package:asadero/pantallas/admin_inventario_page.dart';
@@ -70,58 +71,65 @@ class _AdminDrawerState extends State<AdminDrawer> {
   Widget build(BuildContext context) {
     return Drawer(
       backgroundColor: AppColors.goldSand,
-      child: ListTileTheme(
-        iconColor: AppColors.earthBrown,
-        textColor: AppColors.asphalt,
-        selectedColor: AppColors.redPrayerFlag,
-        selectedTileColor: AppColors.redPrayerFlag.withValues(alpha: 0.12),
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-          UserAccountsDrawerHeader(
-            accountName: Text(
-              _nombre,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            accountEmail: Text(_email),
-            currentAccountPicture: const CircleAvatar(
-              backgroundColor: AppColors.goldSand,
-              child: Icon(
-                Icons.admin_panel_settings,
-                size: 40,
-                color: AppColors.redPrayerFlag,
+      child: Column(
+        children: [
+          Expanded(
+            child: ListTileTheme(
+              iconColor: AppColors.earthBrown,
+              textColor: AppColors.asphalt,
+              selectedColor: AppColors.redPrayerFlag,
+              selectedTileColor: AppColors.redPrayerFlag.withValues(alpha: 0.12),
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  UserAccountsDrawerHeader(
+                    accountName: Text(
+                      _nombre,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    accountEmail: Text(_email),
+                    currentAccountPicture: const CircleAvatar(
+                      backgroundColor: AppColors.goldSand,
+                      child: Icon(
+                        Icons.admin_panel_settings,
+                        size: 40,
+                        color: AppColors.redPrayerFlag,
+                      ),
+                    ),
+                    decoration: const BoxDecoration(color: AppColors.earthBrown),
+                  ),
+                  _opcion(Icons.fastfood, 'Gestionar Productos', 'productos',
+                      const AdminProductListPage()),
+                  _opcion(Icons.restaurant_menu, 'Menú', 'menu', const AdminMenuPage()),
+                  _opcion(Icons.inventory_2, 'Inventario', 'inventario',
+                      const AdminInventarioPage()),
+                  _opcion(Icons.receipt_long, 'Pedidos', 'pedidos',
+                      const AdminPedidosPage()),
+                  _opcion(Icons.bar_chart, 'Reportes', 'reportes',
+                      const AdminReportesPage()),
+                  _opcion(Icons.people, 'Usuarios y roles', 'usuarios',
+                      const AdminUsuariosPage()),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.menu_book),
+                    title: const Text('Ver carta (cliente)'),
+                    onTap: _verCartaCliente,
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.exit_to_app, color: Colors.red),
+                    title: const Text(
+                      'Cerrar Sesión',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    onTap: () => cerrarSesionYSalir(context),
+                  ),
+                ],
               ),
             ),
-            decoration: const BoxDecoration(color: AppColors.earthBrown),
           ),
-          _opcion(Icons.fastfood, 'Gestionar Productos', 'productos',
-              const AdminProductListPage()),
-          _opcion(Icons.restaurant_menu, 'Menú', 'menu', const AdminMenuPage()),
-          _opcion(Icons.inventory_2, 'Inventario', 'inventario',
-              const AdminInventarioPage()),
-          _opcion(Icons.receipt_long, 'Pedidos', 'pedidos',
-              const AdminPedidosPage()),
-          _opcion(Icons.bar_chart, 'Reportes', 'reportes',
-              const AdminReportesPage()),
-          _opcion(Icons.people, 'Usuarios y roles', 'usuarios',
-              const AdminUsuariosPage()),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.menu_book),
-            title: const Text('Ver carta (cliente)'),
-            onTap: _verCartaCliente,
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.exit_to_app, color: Colors.red),
-            title: const Text(
-              'Cerrar Sesión',
-              style: TextStyle(color: Colors.red),
-            ),
-            onTap: () => cerrarSesionYSalir(context),
-          ),
-          ],
-        ),
+          const BotonAyuda(),
+        ],
       ),
     );
   }

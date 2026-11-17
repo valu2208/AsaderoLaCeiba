@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/componentes/imagen_adaptable.dart';
 import 'package:asadero/core/formato.dart';
 import 'package:asadero/models/producto_model.dart';
 
@@ -17,25 +18,13 @@ class TarjetaAdminProducto extends StatelessWidget {
   });
 
   Widget _foto() {
-    final url = producto.imagenUrl;
-    final vacia = Container(
-      width: 70,
-      height: 70,
-      color: AppColors.earthBrown,
-      child: const Icon(Icons.fastfood, color: AppColors.goldSand),
-    );
-
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: (url == null || url.isEmpty)
-          ? vacia
-          : Image.network(
-              url,
-              width: 70,
-              height: 70,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => vacia,
-            ),
+      child: ImagenAdaptable(
+        ruta: producto.imagenUrl ?? '',
+        ancho: 70,
+        alto: 70,
+      ),
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:asadero/componentes/boton_ayuda.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/navegacion_rol.dart';
 import 'package:asadero/core/roles.dart';
@@ -87,44 +88,51 @@ class _PersonalDrawerState extends State<PersonalDrawer> {
   Widget build(BuildContext context) {
     return Drawer(
       backgroundColor: AppColors.goldSand,
-      child: ListTileTheme(
-        iconColor: AppColors.earthBrown,
-        textColor: AppColors.asphalt,
-        selectedColor: AppColors.redPrayerFlag,
-        selectedTileColor: AppColors.redPrayerFlag.withValues(alpha: 0.12),
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            UserAccountsDrawerHeader(
-              accountName: Text(
-                _nombre,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+      child: Column(
+        children: [
+          Expanded(
+            child: ListTileTheme(
+              iconColor: AppColors.earthBrown,
+              textColor: AppColors.asphalt,
+              selectedColor: AppColors.redPrayerFlag,
+              selectedTileColor: AppColors.redPrayerFlag.withValues(alpha: 0.12),
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  UserAccountsDrawerHeader(
+                    accountName: Text(
+                      _nombre,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    accountEmail: Text(_email.isEmpty ? nombreRol(widget.rol) : _email),
+                    currentAccountPicture: CircleAvatar(
+                      backgroundColor: AppColors.goldSand,
+                      child: Icon(
+                        _esCocinero ? Icons.soup_kitchen : Icons.room_service,
+                        size: 36,
+                        color: AppColors.redPrayerFlag,
+                      ),
+                    ),
+                    decoration: const BoxDecoration(color: AppColors.earthBrown),
+                  ),
+                  ..._opcionesPorRol(),
+                  ListTile(
+                    leading: const Icon(Icons.notifications_none),
+                    title: const Text('Notificaciones'),
+                    onTap: _abrirNotificaciones,
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.exit_to_app, color: Colors.red),
+                    title: const Text('Cerrar Sesión', style: TextStyle(color: Colors.red)),
+                    onTap: () => cerrarSesionYSalir(context),
+                  ),
+                ],
               ),
-              accountEmail: Text(_email.isEmpty ? nombreRol(widget.rol) : _email),
-              currentAccountPicture: CircleAvatar(
-                backgroundColor: AppColors.goldSand,
-                child: Icon(
-                  _esCocinero ? Icons.soup_kitchen : Icons.room_service,
-                  size: 36,
-                  color: AppColors.redPrayerFlag,
-                ),
-              ),
-              decoration: const BoxDecoration(color: AppColors.earthBrown),
             ),
-            ..._opcionesPorRol(),
-            ListTile(
-              leading: const Icon(Icons.notifications_none),
-              title: const Text('Notificaciones'),
-              onTap: _abrirNotificaciones,
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.exit_to_app, color: Colors.red),
-              title: const Text('Cerrar Sesión', style: TextStyle(color: Colors.red)),
-              onTap: () => cerrarSesionYSalir(context),
-            ),
-          ],
-        ),
+          ),
+          const BotonAyuda(),
+        ],
       ),
     );
   }

@@ -1,24 +1,98 @@
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/core/contenido_imagen.dart';
+import 'package:asadero/componentes/foto_pintor.dart';
 
-// Muestra una imagen que puede ser una URL (Cloudinary), un asset del proyecto
-// o estar vacía (producto sin foto). Si falla, deja un ícono en su lugar.
-class ImagenAdaptable extends StatelessWidget {
+// Muestra una foto (URL de Cloudinary o asset) llenando TODO su espacio.
+// Antes de dibujarla quita los márgenes blancos que traiga la foto, así la comida
+// ocupa el cuadro y se recorta lo mínimo. Si la foto falla o no hay, muestra un ícono.
+class ImagenAdaptable extends StatefulWidget {
   final String ruta;
   final double? ancho;
   final double? alto;
 
-  const ImagenAdaptable({
-    super.key,
-    required this.ruta,
-    this.ancho,
-    this.alto,
-  });
+  const ImagenAdaptable({super.key, required this.ruta, this.ancho, this.alto});
+
+  @override
+  State<ImagenAdaptable> createState() => _ImagenAdaptableState();
+}
+
+class _ImagenAdaptableState extends State<ImagenAdaptable> {
+  static final Map<String, Rect> _contenidos = {};
+
+  late final ImageStreamListener _oyente = ImageStreamListener(
+    _alCargar,
+    onError: (error, stack) {
+      if (mounted) setState(() => _fallo = true);
+    },
+  );
+
+  ImageStream? _flujo;
+  ui.Image? _imagen;
+  Rect? _contenido;
+  bool _fallo = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _cargar();
+  }
+
+  @override
+  void didUpdateWidget(ImagenAdaptable anterior) {
+    super.didUpdateWidget(anterior);
+    if (anterior.ruta != widget.ruta) _cargar();
+  }
+
+  void _cargar() {
+    _flujo?.removeListener(_oyente);
+    _imagen?.dispose();
+    _imagen = null;
+    _contenido = null;
+    _fallo = false;
+
+    if (widget.ruta.isEmpty) return;
+
+    final ImageProvider proveedor = widget.ruta.startsWith('http')
+        ? NetworkImage(widget.ruta)
+        : AssetImage(widget.ruta);
+
+    _flujo = proveedor.resolve(ImageConfiguration.empty)..addListener(_oyente);
+  }
+
+  Future<void> _alCargar(ImageInfo info, bool sincrona) async {
+    final ruta = widget.ruta;
+    final copia = info.image.clone();
+
+    var contenido = _contenidos[ruta];
+    if (contenido == null) {
+      contenido = await detectarContenido(copia);
+      _contenidos[ruta] = contenido;
+      debugPrint('Foto ${copia.width}x${copia.height}, parte útil: $contenido');
+    }
+
+    if (!mounted || ruta != widget.ruta) {
+      copia.dispose();
+      return;
+    }
+
+    _imagen?.dispose();
+    setState(() {
+      _imagen = copia;
+      _contenido = contenido;
+    });
+  }
+
+  @override
+  void dispose() {
+    _flujo?.removeListener(_oyente);
+    _imagen?.dispose();
+    super.dispose();
+  }
 
   Widget _reemplazo({bool cargando = false}) {
     return Container(
-      width: ancho,
-      height: alto,
       color: AppColors.earthBrown,
       alignment: Alignment.center,
       child: cargando
@@ -29,26 +103,18 @@ class ImagenAdaptable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (ruta.isEmpty) return _reemplazo();
+    final imagen = _imagen;
+    final contenido = _contenido;
 
-    if (ruta.startsWith('http')) {
-      return Image.network(
-        ruta,
-        width: ancho,
-        height: alto,
-        fit: BoxFit.cover,
-        loadingBuilder: (context, child, progreso) =>
-            progreso == null ? child : _reemplazo(cargando: true),
-        errorBuilder: (context, error, stack) => _reemplazo(),
-      );
+    final Widget hijo;
+    if (widget.ruta.isEmpty || _fallo) {
+      hijo = _reemplazo();
+    } else if (imagen == null || contenido == null) {
+      hijo = _reemplazo(cargando: true);
+    } else {
+      hijo = CustomPaint(painter: FotoPintor(imagen, contenido));
     }
 
-    return Image.asset(
-      ruta,
-      width: ancho,
-      height: alto,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stack) => _reemplazo(),
-    );
+    return SizedBox(width: widget.ancho, height: widget.alto, child: hijo);
   }
 }
