@@ -35,7 +35,7 @@ class _RegistroState extends State<Registro> {
     super.initState();
     googleInicializado = googleSignIn.initialize(
       serverClientId:
-          '1048054296808-qmul3sdksffmij6scb9rs71o16rjnm84.apps.googleusercontent.com',
+          '978670292562-6f3qglp23eod82ig7vcj1h3i52p3p0gm.apps.googleusercontent.com',
     );
   }
 

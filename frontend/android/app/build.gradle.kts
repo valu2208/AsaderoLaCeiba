@@ -17,7 +17,7 @@ dependencies {
 }
 
 android {
-    namespace = "com.example.asadero"
+    namespace = "com.asadero.la.ceiba" // CAMBIO
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -30,7 +30,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.asadero"
+        applicationId = "com.asadero.la.ceiba" // CAMBIO
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
