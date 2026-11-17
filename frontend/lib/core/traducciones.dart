@@ -77,6 +77,8 @@ final Map<String, String> espanol = {
   'eliminar_producto': 'Eliminar producto',
   'realizar_pedido': 'Realizar pedido',
   'descripcion_generica': 'Delicioso producto preparado especialmente para ti.',
+  'login_requerido':
+      'Para realizar un pedido debes iniciar sesión o registrarte.',
   'actualizar': 'Actualizar',
   'borrar_historial': 'Borrar historial',
   'cancelar_pedido': 'Cancelar pedido',
@@ -248,6 +250,7 @@ final Map<String, String> ingles = {
   'eliminar_producto': 'Remove product',
   'realizar_pedido': 'Place order',
   'descripcion_generica': 'A delicious product prepared especially for you.',
+  'login_requerido': 'To place an order you must log in or sign up.',
   'actualizar': 'Refresh',
   'borrar_historial': 'Delete history',
   'cancelar_pedido': 'Cancel order',
@@ -418,6 +421,7 @@ final Map<String, String> portugues = {
   'realizar_pedido': 'Fazer pedido',
   'descripcion_generica':
       'Um produto delicioso preparado especialmente para você.',
+  'login_requerido': 'Para fazer um pedido você deve entrar ou se cadastrar.',
   'actualizar': 'Atualizar',
   'borrar_historial': 'Apagar histórico',
   'cancelar_pedido': 'Cancelar pedido',

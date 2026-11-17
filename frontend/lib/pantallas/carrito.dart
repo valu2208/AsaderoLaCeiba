@@ -30,6 +30,8 @@ class _CarritoState extends State<Carrito> {
 
   final ImagePicker _imagePicker = ImagePicker();
 
+  bool get _hayPedidoPendiente => _pedidoPendienteComprobanteId != null;
+
   @override
   void initState() {
     super.initState();
@@ -76,6 +78,19 @@ class _CarritoState extends State<Carrito> {
     );
   }
 
+  /// Cambia el método de pago. Si ya hay un pedido registrado esperando
+  /// comprobante, no se permite cambiar para evitar pedidos duplicados.
+  void _cambiarMetodoPago(String valor) {
+    if (_enviandoPedido || _hayPedidoPendiente) return;
+
+    setState(() {
+      _metodoPago = valor;
+      if (valor == 'presencial') {
+        _comprobante = null;
+      }
+    });
+  }
+
   Future<void> _seleccionarComprobante() async {
     if (_enviandoPedido) return;
 
@@ -90,7 +105,7 @@ class _CarritoState extends State<Carrito> {
       setState(() {
         _comprobante = imagen;
       });
-    } catch (e) {
+    } catch (_) {
       _mostrarMensaje(texto('error_seleccionar_imagen'), error: true);
     }
   }
@@ -100,17 +115,15 @@ class _CarritoState extends State<Carrito> {
 
     final items = List<CarritoItem>.from(CarritoEstado.items.value);
 
-    if (items.isEmpty && _pedidoPendienteComprobanteId == null) return;
+    if (items.isEmpty && !_hayPedidoPendiente) return;
+
     // Exigir sesión para confirmar un pedido.
     final token = await UserService.getToken();
 
     if (!mounted) return;
 
     if (token == null || token.isEmpty) {
-      _mostrarMensaje(
-        'Para realizar un pedido debes iniciar sesión o registrarte.',
-        error: true,
-      );
+      _mostrarMensaje(texto('login_requerido'), error: true);
 
       await Navigator.push(
         context,
@@ -125,29 +138,31 @@ class _CarritoState extends State<Carrito> {
       return;
     }
 
+    // Se bloquea el botón desde el inicio para evitar dobles toques.
     setState(() => _enviandoPedido = true);
 
     try {
       final servicio = PedidoService();
 
-      if (_pedidoPendienteComprobanteId == null) {
+      // Paso 1: registrar el pedido (solo si aún no existe).
+      if (!_hayPedidoPendiente) {
         final pedidoId = await servicio.realizarPedido(
           items,
           metodoPago: _metodoPago,
         );
 
+        if (!mounted) return;
+
         if (_metodoPago == 'nequi') {
           _pedidoPendienteComprobanteId = pedidoId;
         } else {
-          if (!mounted) return;
-
           CarritoEstado.vaciar();
-
           _mostrarMensaje(texto('pedido_registrado'));
           return;
         }
       }
 
+      // Paso 2: subir el comprobante (Nequi).
       if (_metodoPago == 'nequi') {
         await servicio.subirComprobante(
           pedidoId: _pedidoPendienteComprobanteId!,
@@ -186,19 +201,10 @@ class _CarritoState extends State<Carrito> {
     required IconData icono,
   }) {
     final seleccionado = _metodoPago == valor;
+    final bloqueado = _enviandoPedido || _hayPedidoPendiente;
 
     return InkWell(
-      onTap: _enviandoPedido
-          ? null
-          : () {
-              setState(() {
-                _metodoPago = valor;
-                if (valor == 'presencial') {
-                  _comprobante = null;
-                  _pedidoPendienteComprobanteId = null;
-                }
-              });
-            },
+      onTap: bloqueado ? null : () => _cambiarMetodoPago(valor),
       borderRadius: BorderRadius.circular(12),
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
@@ -238,18 +244,10 @@ class _CarritoState extends State<Carrito> {
               value: valor,
               groupValue: _metodoPago,
               activeColor: AppColors.goldSand,
-              onChanged: _enviandoPedido
+              onChanged: bloqueado
                   ? null
                   : (nuevoValor) {
-                      if (nuevoValor != null) {
-                        setState(() {
-                          _metodoPago = nuevoValor;
-                          if (nuevoValor == 'presencial') {
-                            _comprobante = null;
-                            _pedidoPendienteComprobanteId = null;
-                          }
-                        });
-                      }
+                      if (nuevoValor != null) _cambiarMetodoPago(nuevoValor);
                     },
             ),
           ],
@@ -337,7 +335,7 @@ class _CarritoState extends State<Carrito> {
               style: const TextStyle(color: Colors.greenAccent, fontSize: 12),
             ),
           ],
-          if (_pedidoPendienteComprobanteId != null) ...[
+          if (_hayPedidoPendiente) ...[
             const SizedBox(height: 10),
             Text(
               texto('pedido_registrado_reintentar'),
@@ -392,14 +390,81 @@ class _CarritoState extends State<Carrito> {
     );
   }
 
+  Widget _carritoVacio() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(25),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.shopping_cart_outlined,
+              size: 80,
+              color: AppColors.goldSand,
+            ),
+            const SizedBox(height: 20),
+            Text(
+              texto('carrito_vacio'),
+              style: const TextStyle(
+                color: AppColors.goldSand,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              texto('agrega_favoritos'),
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _itemCarrito(CarritoItem item) {
+    return Card(
+      color: AppColors.fondoComponentes,
+      margin: const EdgeInsets.only(bottom: 12),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: ImagenAdaptable(ruta: item.imagen, ancho: 55, alto: 55),
+        ),
+        title: Text(
+          nombreProducto(item),
+          style: const TextStyle(
+            color: AppColors.goldSand,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        subtitle: Text(
+          '${item.precio}\n${texto('cantidad')}: ${item.cantidad}',
+          style: const TextStyle(color: Colors.white),
+        ),
+        trailing: IconButton(
+          tooltip: texto('eliminar_producto'),
+          icon: const Icon(Icons.delete_outline, color: AppColors.goldSand),
+          // No se puede eliminar mientras haya un pedido ya registrado
+          // esperando comprobante.
+          onPressed: (_enviandoPedido || _hayPedidoPendiente)
+              ? null
+              : () => CarritoEstado.eliminar(item.nombre),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<String>(
       valueListenable: Idioma.seleccionado,
-      builder: (context, idioma, child) {
+      builder: (context, idioma, _) {
         return ValueListenableBuilder<List<CarritoItem>>(
           valueListenable: CarritoEstado.items,
-          builder: (context, items, child) {
+          builder: (context, items, _) {
             return Scaffold(
               backgroundColor: AppColors.asphalt,
               appBar: AppBar(
@@ -415,87 +480,18 @@ class _CarritoState extends State<Carrito> {
                 centerTitle: true,
               ),
               body: items.isEmpty
-                  ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(25),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.shopping_cart_outlined,
-                              size: 80,
-                              color: AppColors.goldSand,
-                            ),
-                            const SizedBox(height: 20),
-                            Text(
-                              texto('carrito_vacio'),
-                              style: const TextStyle(
-                                color: AppColors.goldSand,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              texto('agrega_favoritos'),
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
+                  ? _carritoVacio()
                   : ListView.builder(
                       padding: const EdgeInsets.all(15),
                       itemCount: items.length + 1,
                       itemBuilder: (context, index) {
                         if (index == items.length) {
-                          return _selectorPago();
+                          // El admin no puede hacer pedidos.
+                          return _esAdmin
+                              ? const SizedBox.shrink()
+                              : _selectorPago();
                         }
-
-                        final item = items[index];
-
-                        return Card(
-                          color: AppColors.fondoComponentes,
-                          margin: const EdgeInsets.only(bottom: 12),
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 6,
-                            ),
-                            leading: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: ImagenAdaptable(
-                                ruta: item.imagen,
-                                ancho: 55,
-                                alto: 55,
-                              ),
-                            ),
-                            title: Text(
-                              nombreProducto(item),
-                              style: const TextStyle(
-                                color: AppColors.goldSand,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            subtitle: Text(
-                              '${item.precio}\n${texto('cantidad')}: ${item.cantidad}',
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            trailing: IconButton(
-                              tooltip: texto('eliminar_producto'),
-                              icon: const Icon(
-                                Icons.delete_outline,
-                                color: AppColors.goldSand,
-                              ),
-                              onPressed: _enviandoPedido
-                                  ? null
-                                  : () {
-                                      CarritoEstado.eliminar(item.nombre);
-                                    },
-                            ),
-                          ),
-                        );
+                        return _itemCarrito(items[index]);
                       },
                     ),
               bottomNavigationBar: items.isEmpty || _esAdmin || _verificandoRol
@@ -519,7 +515,7 @@ class _CarritoState extends State<Carrito> {
                                 ),
                               )
                             : Text(
-                                _pedidoPendienteComprobanteId != null
+                                _hayPedidoPendiente
                                     ? texto('reintentar_envio')
                                     : texto('realizar_pedido'),
                                 style: const TextStyle(

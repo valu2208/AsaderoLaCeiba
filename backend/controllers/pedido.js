@@ -10,6 +10,10 @@ import {
 
 import { crearNotificacion, avisarRol } from '../models/notificacion.js';
 
+// AJUSTA esta ruta a donde esté tu cliente de Supabase
+// (mira los imports de la parte de arriba de models/pedido.js)
+import { supabase } from '../config/supabase.js';
+
 // Crear un pedido
 export const crearPedido = async (req, res) => {
   try {
@@ -84,6 +88,74 @@ if (!['presencial', 'qr', 'nequi'].includes(metodoPago)) {
     return res.status(201).json({
       message: 'Pedido creado exitosamente',
       pedido: data
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+// Subir comprobante de pago (Nequi / QR)
+export const subirComprobante = async (req, res) => {
+  try {
+    const pedidoId = Number(req.params.id);
+    const usuario_id = req.usuario.id;
+
+    if (!Number.isInteger(pedidoId)) {
+      return res.status(400).json({ error: 'Id de pedido inválido' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({
+        error: 'No se recibió ninguna imagen'
+      });
+    }
+
+    // Verificar que el pedido exista y sea del usuario autenticado
+    const { data: pedido, error: errorPedido } = await supabase
+      .from('pedidos')
+      .select('id, usuario_id')
+      .eq('id', pedidoId)
+      .maybeSingle();
+
+    if (errorPedido) {
+      return res.status(500).json({ error: errorPedido.message });
+    }
+
+    if (!pedido || String(pedido.usuario_id) !== String(usuario_id)) {
+      return res.status(404).json({ error: 'Pedido no encontrado' });
+    }
+
+    // Subir la imagen a Supabase Storage
+    const extension =
+      (req.file.originalname.split('.').pop() || 'jpg').toLowerCase();
+    const nombreArchivo = `pedido-${pedidoId}-${Date.now()}.${extension}`;
+
+    const { error: errorSubida } = await supabase.storage
+      .from('comprobantes')
+      .upload(nombreArchivo, req.file.buffer, {
+        contentType: req.file.mimetype
+      });
+
+    if (errorSubida) {
+      return res.status(500).json({ error: errorSubida.message });
+    }
+
+    const { data: urlData } = supabase.storage
+      .from('comprobantes')
+      .getPublicUrl(nombreArchivo);
+
+    const { error: errorActualizar } = await supabase
+      .from('pedidos')
+      .update({ comprobante_url: urlData.publicUrl })
+      .eq('id', pedidoId);
+
+    if (errorActualizar) {
+      return res.status(500).json({ error: errorActualizar.message });
+    }
+
+    return res.status(200).json({
+      message: 'Comprobante recibido',
+      comprobante_url: urlData.publicUrl
     });
   } catch (error) {
     return res.status(500).json({ error: error.message });
