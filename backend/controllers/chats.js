@@ -67,24 +67,14 @@ const respuestaTemaAjeno = (idioma) => {
     return 'Solo puedo ayudarte con Asadero La Ceiba, su menú, productos, precios y pedidos. ¿Qué deseas saber sobre nuestro restaurante?';
 };
 
-// Traducciones de los nombres de los productos al portugués.
-const nombresProductosPortugues = {
-    'un pollo asado completo': 'Frango assado inteiro',
-    'medio de pollo asado': 'Meio frango assado',
-    'cuarto de pollo': 'Quarto de frango',
-    'pechuga con frijoles': 'Peito de frango com feijão',
-    'asado huilense': 'Asado Huilense'
-};
-
+// Obtener el nombre según el idioma seleccionado.
 const obtenerNombreProducto = (producto, idioma) => {
     if (idioma === 'English') {
         return producto.nombre_en || producto.nombre;
     }
 
     if (idioma === 'Português') {
-        return nombresProductosPortugues[
-            normalizarTexto(producto.nombre)
-        ] || producto.nombre;
+        return producto.nombre_pt || producto.nombre;
     }
 
     return producto.nombre;
@@ -277,7 +267,13 @@ export const enviarMensaje = async (req, res) => {
                 return {
                     ...producto,
                     id: productoOriginal?.id,
+
                     nombre_en: productoOriginal?.nombre_en || '',
+                    description_en: productoOriginal?.description_en || '',
+
+                    nombre_pt: productoOriginal?.nombre_pt || '',
+                    descripcion_pt: productoOriginal?.descripcion_pt || '',
+
                     presentacion: productoOriginal?.presentacion || '',
                     categoria: productoOriginal?.categoria || ''
                 };
@@ -316,7 +312,12 @@ export const enviarMensaje = async (req, res) => {
             id: String(producto.id),
             nombre: producto.nombre || '',
             nombre_en: producto.nombre_en || '',
+            nombre_pt: producto.nombre_pt || '',
+
             descripcion: producto.descripcion || '',
+            description_en: producto.description_en || '',
+            descripcion_pt: producto.descripcion_pt || '',
+
             presentacion: producto.presentacion || '',
             precio: producto.precio_cop,
             categoria: producto.categoria || ''
@@ -418,6 +419,7 @@ REGLAS:
 - Si el cliente solicita dólares y hay un producto identificado,
   considera que quiere conocer su precio.
 - Si no identificas el producto, deja los campos vacíos.
+- Reconoce los nombres de productos en español, inglés y portugués.
 
 PRODUCTOS QUE SE PUEDEN OFRECER HOY:
 ${JSON.stringify(productosParaGroq, null, 2)}
@@ -510,10 +512,12 @@ Devuelve únicamente JSON válido:
                 producto => {
                     const nombre = normalizarTexto(producto.nombre);
                     const nombreIngles = normalizarTexto(producto.nombre_en);
+                    const nombrePortugues = normalizarTexto(producto.nombre_pt);
 
                     return (
                         (nombre && nombreBuscado.includes(nombre)) ||
-                        (nombreIngles && nombreBuscado.includes(nombreIngles))
+                        (nombreIngles && nombreBuscado.includes(nombreIngles)) ||
+                        (nombrePortugues && nombreBuscado.includes(nombrePortugues))
                     );
                 }
             );
@@ -536,11 +540,14 @@ Devuelve únicamente JSON válido:
                         const nombreIngles = normalizarTexto(
                             producto.nombre_en
                         );
+                        const nombrePortugues = normalizarTexto(
+                            producto.nombre_pt
+                        );
 
                         return (
                             (nombre && textoAnterior.includes(nombre)) ||
-                            (nombreIngles &&
-                                textoAnterior.includes(nombreIngles))
+                            (nombreIngles && textoAnterior.includes(nombreIngles)) ||
+                            (nombrePortugues && textoAnterior.includes(nombrePortugues))
                         );
                     }
                 );
@@ -662,6 +669,16 @@ REGLAS GENERALES:
 - Si preguntan por un producto que no aparece en la lista,
   explica que no está disponible en el menú de hoy.
 - Si preguntan por un producto, utiliza sus datos reales.
+
+IDIOMA DE LOS PRODUCTOS:
+- Si el idioma seleccionado es English, utiliza nombre_en
+  y description_en cuando estén disponibles.
+- Si el idioma seleccionado es Português, utiliza nombre_pt
+  y descripcion_pt cuando estén disponibles.
+- Si el idioma seleccionado es Español, utiliza nombre
+  y descripcion.
+- No mezcles idiomas en los nombres ni descripciones.
+- Si una traducción está vacía, utiliza el texto original.
 
 RESTRICCIÓN MATEMÁTICA:
 No realices sumas, restas, multiplicaciones, divisiones,

@@ -1,6 +1,15 @@
-// Ayudas para el chat del asistente: qué datos ve la IA y cómo se limpia lo que responde
 
-const DIAS = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+// Ayudas para el chat del asistente: qué datos ve la IA y cómo se limpia lo que responde.
+
+const DIAS = [
+    'domingo',
+    'lunes',
+    'martes',
+    'miercoles',
+    'jueves',
+    'viernes',
+    'sabado'
+];
 
 const SECCIONES = {
     desayuno: 'Desayuno',
@@ -9,33 +18,50 @@ const SECCIONES = {
     fin_de_semana: 'Fin de semana'
 };
 
-// Día de hoy en Colombia (el servidor de Render trabaja en hora UTC)
+// Día de hoy en Colombia.
 export const diaDeHoy = () => {
     const ahora = new Date(
-        new Date().toLocaleString('en-US', { timeZone: 'America/Bogota' })
+        new Date().toLocaleString('en-US', {
+            timeZone: 'America/Bogota'
+        })
     );
 
     return DIAS[ahora.getDay()];
 };
 
-// Solo lo que un cliente debe saber: sin stock exacto, sin enlaces de imagen
-export const productosParaCliente = (productos, hoy = diaDeHoy()) =>
+// Datos del producto que puede consultar el chatbot.
+export const productosParaCliente = (
+    productos,
+    hoy = diaDeHoy()
+) =>
     (productos || []).map((producto) => {
-        const dias = Array.isArray(producto.dias) ? producto.dias : [];
+        const dias = Array.isArray(producto.dias)
+            ? producto.dias
+            : [];
 
         return {
             nombre: producto.nombre || '',
+            nombre_en: producto.nombre_en || '',
+            nombre_pt: producto.nombre_pt || '',
+
             descripcion: producto.descripcion || '',
+            description_en: producto.description_en || '',
+            descripcion_pt: producto.descripcion_pt || '',
+
             precio_cop: Number(producto.precio),
+
             seccion: producto.mas_pedido
                 ? 'Lo más pedido'
                 : SECCIONES[producto.categoria] || 'Otros',
-            se_sirve_hoy: dias.length === 0 || dias.includes(hoy),
+
+            se_sirve_hoy:
+                dias.length === 0 || dias.includes(hoy),
+
             disponible: producto.disponible !== false
         };
     });
 
-// Quita markdown, enlaces y líneas de imagen/stock por si la IA los escribe igual
+// Quita markdown, enlaces y líneas de imagen/stock.
 export const limpiarRespuesta = (texto) =>
     String(texto || '')
         .replace(/https?:\/\/\S+/gi, '')
