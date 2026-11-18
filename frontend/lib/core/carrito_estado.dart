@@ -68,17 +68,20 @@ class CarritoEstado {
       if (lista[indice].cantidad >= LimitesPedido.maxPorPlato) {
         return 'limite_plato';
       }
-      lista[indice] =
-          lista[indice].copiarConCantidad(lista[indice].cantidad + 1);
+      lista[indice] = lista[indice].copiarConCantidad(
+        lista[indice].cantidad + 1,
+      );
     } else {
-      lista.add(CarritoItem(
-        productoId: productoId,
-        nombre: nombre,
-        precio: precio,
-        imagen: imagen,
-        nombreEn: nombreEn,
-        nombrePt: nombrePt,
-      ));
+      lista.add(
+        CarritoItem(
+          productoId: productoId,
+          nombre: nombre,
+          precio: precio,
+          imagen: imagen,
+          nombreEn: nombreEn,
+          nombrePt: nombrePt,
+        ),
+      );
     }
 
     items.value = lista;
@@ -92,17 +95,21 @@ class CarritoEstado {
     if (indice == -1) return;
 
     if (lista[indice].cantidad > 1) {
-      lista[indice] =
-          lista[indice].copiarConCantidad(lista[indice].cantidad - 1);
+      lista[indice] = lista[indice].copiarConCantidad(
+        lista[indice].cantidad - 1,
+      );
     } else {
       lista.removeAt(indice);
     }
 
     items.value = lista;
+    if (lista.isEmpty) mesa.value = null;
   }
 
   static void eliminar(String nombre) {
     items.value = items.value.where((item) => item.nombre != nombre).toList();
+    // Sin platos en el carrito, la mesa se libera para elegir otra.
+    if (items.value.isEmpty) mesa.value = null;
   }
 
   static void vaciar() {
