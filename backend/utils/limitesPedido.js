@@ -1,6 +1,9 @@
 export const MAX_POR_PLATO = 10;
 export const MAX_PLATOS_PEDIDO = 30;
 export const MAX_MESAS = 19;         // mesas que tiene el asadero
+// Una mesa con pedido sin pagar se considera ocupada, pero solo por este tiempo.
+// Así una mesa no se queda bloqueada para siempre si nadie cierra el pedido.
+export const HORAS_MESA_OCUPADA = 4;
 
 export const validarLimitesPedido = (productos) => {
   let totalPlatos = 0;

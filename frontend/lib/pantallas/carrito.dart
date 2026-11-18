@@ -37,10 +37,12 @@ class _CarritoState extends State<Carrito> {
 
   void _mensaje(String texto, {bool error = false}) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(texto),
-      backgroundColor: error ? AppColors.redPrayerFlag : Colors.green,
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(texto),
+        backgroundColor: error ? AppColors.redPrayerFlag : Colors.green,
+      ),
+    );
   }
 
   Future<void> _realizarPedido() async {
@@ -54,7 +56,9 @@ class _CarritoState extends State<Carrito> {
     if (token == null || token.isEmpty) {
       _mensaje(texto('login_requerido'), error: true);
       await Navigator.push(
-          context, MaterialPageRoute(builder: (_) => const Login()));
+        context,
+        MaterialPageRoute(builder: (_) => const Login()),
+      );
       return;
     }
 
@@ -71,7 +75,10 @@ class _CarritoState extends State<Carrito> {
       CarritoEstado.vaciar();
       _mensaje(texto('pedido_registrado'));
     } catch (e) {
-      _mensaje(e.toString().replaceFirst('Exception: ', ''), error: true);
+      final mensaje = e.toString().replaceFirst('Exception: ', '');
+      // Otra persona tomó la mesa mientras tanto: hay que elegir otra.
+      if (mensaje.contains('ocupada')) CarritoEstado.mesa.value = null;
+      _mensaje(mensaje, error: true);
     } finally {
       if (mounted) setState(() => _enviando = false);
     }
@@ -92,7 +99,9 @@ class _CarritoState extends State<Carrito> {
                 width: 22,
                 height: 22,
                 child: CircularProgressIndicator(
-                    color: Colors.white, strokeWidth: 2),
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
               )
             : Text(
                 texto('realizar_pedido'),
@@ -110,34 +119,41 @@ class _CarritoState extends State<Carrito> {
   Widget build(BuildContext context) {
     return ValueListenableBuilder<String>(
       valueListenable: Idioma.seleccionado,
-      builder: (context, idioma, _) => ValueListenableBuilder<List<CarritoItem>>(
-        valueListenable: CarritoEstado.items,
-        builder: (context, items, _) => Scaffold(
-          backgroundColor: AppColors.asphalt,
-          appBar: AppBar(
-            backgroundColor: AppColors.earthBrown,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: AppColors.goldSand),
-              onPressed: () => Navigator.pop(context),
-            ),
-            title: Text(texto('carrito'),
-                style: const TextStyle(color: AppColors.goldSand)),
-            centerTitle: true,
-          ),
-          body: items.isEmpty
-              ? const CarritoVacio()
-              : ListView(
-                  padding: const EdgeInsets.all(15),
-                  children: [
-                    for (final item in items)
-                      ItemCarrito(item: item, bloqueado: _enviando),
-                    if (!_esAdmin) ...const [SelectorMesa(), NotaPagoFinal()],
-                  ],
+      builder: (context, idioma, _) =>
+          ValueListenableBuilder<List<CarritoItem>>(
+            valueListenable: CarritoEstado.items,
+            builder: (context, items, _) => Scaffold(
+              backgroundColor: AppColors.asphalt,
+              appBar: AppBar(
+                backgroundColor: AppColors.earthBrown,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: AppColors.goldSand),
+                  onPressed: () => Navigator.pop(context),
                 ),
-          bottomNavigationBar:
-              items.isEmpty || _esAdmin || _verificandoRol ? null : _botonPedido(),
-        ),
-      ),
+                title: Text(
+                  texto('carrito'),
+                  style: const TextStyle(color: AppColors.goldSand),
+                ),
+                centerTitle: true,
+              ),
+              body: items.isEmpty
+                  ? const CarritoVacio()
+                  : ListView(
+                      padding: const EdgeInsets.all(15),
+                      children: [
+                        for (final item in items)
+                          ItemCarrito(item: item, bloqueado: _enviando),
+                        if (!_esAdmin) ...const [
+                          SelectorMesa(),
+                          NotaPagoFinal(),
+                        ],
+                      ],
+                    ),
+              bottomNavigationBar: items.isEmpty || _esAdmin || _verificandoRol
+                  ? null
+                  : _botonPedido(),
+            ),
+          ),
     );
   }
 }

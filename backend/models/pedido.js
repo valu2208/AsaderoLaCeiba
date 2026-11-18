@@ -1,5 +1,5 @@
-
 import { supabase } from '../config/supabase.js';
+import { HORAS_MESA_OCUPADA } from '../utils/limitesPedido.js';
 
 // Crear un nuevo pedido con sus detalles
 export const crearPedidoBD = async (datosPedido, productos) => {
@@ -210,4 +210,25 @@ export const cancelarPedidoBD = async (pedido_id, usuario_id) => {
     .maybeSingle();
 
   return { data, error };
+};
+
+// Mesas ocupadas: tienen un pedido que no está cancelado ni pagado
+// y que se hizo hace menos de HORAS_MESA_OCUPADA horas.
+export const obtenerMesasOcupadasBD = async () => {
+  const desde = new Date(Date.now() - HORAS_MESA_OCUPADA * 60 * 60 * 1000).toISOString();
+
+  const { data, error } = await supabase
+    .from('pedidos')
+    .select('numero_mesa')
+    .not('numero_mesa', 'is', null)
+    .neq('estado', 'Cancelado')
+    .or('estado_pago.is.null,estado_pago.neq.Aprobado')
+    .gte('fecha_pedido', desde);
+
+  if (error) return { error };
+
+  const mesas = [...new Set((data || []).map(p => Number(p.numero_mesa)))]
+    .sort((a, b) => a - b);
+
+  return { data: mesas };
 };

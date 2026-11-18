@@ -4,7 +4,8 @@ import {
   obtenerPedidosPorUsuarioBD,
   cambiarEstadoPedidoBD,
   cancelarPedidoBD,
-  ocultarHistorialPedidosBD
+  ocultarHistorialPedidosBD,
+  obtenerMesasOcupadasBD
 } from '../models/pedido.js';
 
 import { crearNotificacion, avisarRol } from '../models/notificacion.js';
@@ -47,6 +48,17 @@ export const crearPedido = async (req, res) => {
     const mesa = Number(numero_mesa);
     if (!mesaValida(mesa)) {
       return res.status(400).json({ error: 'Indica en qué mesa estás.' });
+    }
+
+    // La mesa no puede tener ya un pedido sin pagar de otra persona.
+    const { data: ocupadas, error: errorMesas } = await obtenerMesasOcupadasBD();
+    if (errorMesas) {
+      return res.status(500).json({ error: errorMesas.message });
+    }
+    if (ocupadas.includes(mesa)) {
+      return res.status(409).json({
+        error: `La mesa ${mesa} está ocupada. Elige otra mesa.`
+      });
     }
 
     // El método de pago se define al final, cuando el cliente sube su comprobante.
@@ -332,6 +344,21 @@ export const actualizarEstado = async (req, res) => {
       message: 'Estado actualizado',
       pedido: pedidoActualizado
     });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+// Lista de mesas ocupadas para que la app las muestre bloqueadas.
+export const mesasOcupadas = async (req, res) => {
+  try {
+    const { data, error } = await obtenerMesasOcupadasBD();
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    return res.status(200).json(data);
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

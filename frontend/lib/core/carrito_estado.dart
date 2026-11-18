@@ -103,13 +103,10 @@ class CarritoEstado {
     }
 
     items.value = lista;
-    if (lista.isEmpty) mesa.value = null;
   }
 
   static void eliminar(String nombre) {
     items.value = items.value.where((item) => item.nombre != nombre).toList();
-    // Sin platos en el carrito, la mesa se libera para elegir otra.
-    if (items.value.isEmpty) mesa.value = null;
   }
 
   static void vaciar() {

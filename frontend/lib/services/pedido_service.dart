@@ -86,6 +86,30 @@ class PedidoService {
     return (pedido['id'] as num).toInt();
   }
 
+  // Números de mesa que ya tienen un pedido sin pagar.
+  // Si falla la consulta devuelve vacío; el servidor igual valida al pedir.
+  Future<Set<int>> mesasOcupadas() async {
+    final token = await UserService.getToken();
+
+    if (token == null || token.isEmpty) return <int>{};
+
+    try {
+      final respuesta = await http.get(
+        Uri.parse('${ApiConfig.baseUrl}/api/pedidos/mesas-ocupadas'),
+        headers: {...ApiConfig.headers, 'Authorization': 'Bearer $token'},
+      );
+
+      if (respuesta.statusCode != 200) return <int>{};
+
+      final datos = jsonDecode(respuesta.body);
+      if (datos is! List) return <int>{};
+
+      return datos.map((m) => (m as num).toInt()).toSet();
+    } catch (_) {
+      return <int>{};
+    }
+  }
+
   Future<void> subirComprobante({
     required int pedidoId,
     required XFile imagen,

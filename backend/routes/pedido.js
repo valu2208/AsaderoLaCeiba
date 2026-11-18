@@ -5,7 +5,8 @@ import {
   misPedidos,
   limpiarHistorial,
   actualizarEstado,
-  cancelarPedido
+  cancelarPedido,
+  mesasOcupadas
 } from '../controllers/pedido.js';
 
 import {
@@ -29,6 +30,9 @@ const router = Router();
 
 // Cliente: crear pedido.
 router.post('/pedidos', verificarToken, verificarNoAdmin, crearPedido);
+
+// Cliente: mesas ocupadas (con pedido sin pagar).
+router.get('/pedidos/mesas-ocupadas', verificarToken, mesasOcupadas);
 
 // Cliente: consultar sus pedidos visibles.
 router.get('/pedidos/mis-pedidos', verificarToken, misPedidos);

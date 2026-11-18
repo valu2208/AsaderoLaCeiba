@@ -19,6 +19,7 @@ final Map<String, String> espanol = {
   'mesa_cambiar': 'cambiar',
   'mesa_titulo': '¿En qué mesa estás?',
   'mesa_requerida': 'Indica tu mesa para que el mesero te encuentre.',
+  'mesa_ocupada_aviso': 'Las mesas en rojo están ocupadas.',
   'limite_plato': 'Máximo {n} unidades de un mismo plato por pedido.',
   'limite_pedido': 'Máximo {n} platos por pedido.',
   'pago_al_final':
@@ -216,6 +217,7 @@ final Map<String, String> ingles = {
   'mesa_cambiar': 'change',
   'mesa_titulo': 'Which table are you at?',
   'mesa_requerida': 'Select your table so the waiter can find you.',
+  'mesa_ocupada_aviso': 'Tables in red are occupied.',
   'limite_plato': 'Maximum {n} units of the same dish per order.',
   'limite_pedido': 'Maximum {n} dishes per order.',
   'pago_al_final':
@@ -409,6 +411,7 @@ final Map<String, String> portugues = {
   'mesa_cambiar': 'mudar',
   'mesa_titulo': 'Em qual mesa você está?',
   'mesa_requerida': 'Indique sua mesa para que o garçom encontre você.',
+  'mesa_ocupada_aviso': 'As mesas em vermelho estão ocupadas.',
   'limite_plato': 'Máximo de {n} unidades do mesmo prato por pedido.',
   'limite_pedido': 'Máximo de {n} pratos por pedido.',
   'pago_al_final':
