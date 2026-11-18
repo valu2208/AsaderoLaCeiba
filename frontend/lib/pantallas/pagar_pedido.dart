@@ -23,16 +23,20 @@ class _PagarPedidoState extends State<PagarPedido> {
 
   void _mensaje(String texto, {bool error = false}) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(texto),
-      backgroundColor: error ? AppColors.redPrayerFlag : Colors.green,
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(texto),
+        backgroundColor: error ? AppColors.redPrayerFlag : Colors.green,
+      ),
+    );
   }
 
   Future<void> _elegir() async {
     try {
-      final imagen =
-          await _picker.pickImage(source: ImageSource.gallery, imageQuality: 85);
+      final imagen = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85,
+      );
       if (imagen != null && mounted) setState(() => _comprobante = imagen);
     } catch (_) {
       _mensaje(texto('error_seleccionar_imagen'), error: true);
@@ -47,13 +51,15 @@ class _PagarPedidoState extends State<PagarPedido> {
 
     setState(() => _enviando = true);
     try {
-      await PedidoService()
-          .subirComprobante(pedidoId: widget.pedidoId, imagen: _comprobante!);
+      await PedidoService().subirComprobante(
+        pedidoId: widget.pedidoId,
+        imagen: _comprobante!,
+      );
       if (!mounted) return;
       _mensaje(texto('pedido_comprobante_enviado'));
       Navigator.pop(context, true);
-    } catch (e) {
-      _mensaje(e.toString().replaceFirst('Exception: ', ''), error: true);
+    } catch (_) {
+      _mensaje(texto('error_enviar_comprobante'), error: true);
     } finally {
       if (mounted) setState(() => _enviando = false);
     }
@@ -101,14 +107,17 @@ class _PagarPedidoState extends State<PagarPedido> {
                     width: 22,
                     height: 22,
                     child: CircularProgressIndicator(
-                        color: Colors.white, strokeWidth: 2),
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
                   )
                 : Text(
                     texto('enviar_comprobante'),
                     style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
           ),
         ],

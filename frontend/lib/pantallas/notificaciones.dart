@@ -38,7 +38,7 @@ class _NotificacionesState extends State<Notificaciones> {
       final token = await UserService.getToken();
 
       if (token == null || token.isEmpty) {
-        throw Exception(texto('debes_iniciar_sesion_notificaciones'));
+        throw Exception('debes_iniciar_sesion_notificaciones');
       }
 
       final respuesta = await http.get(
@@ -47,7 +47,7 @@ class _NotificacionesState extends State<Notificaciones> {
       );
 
       if (respuesta.statusCode != 200) {
-        throw Exception(texto('error_cargar_notificaciones'));
+        throw Exception('error_cargar_notificaciones');
       }
 
       final List<dynamic> datos = jsonDecode(respuesta.body);
@@ -63,8 +63,10 @@ class _NotificacionesState extends State<Notificaciones> {
     } catch (e) {
       if (!mounted) return;
 
+      final clave = e.toString().replaceFirst('Exception: ', '');
+
       setState(() {
-        error = e.toString().replaceFirst('Exception: ', '');
+        error = texto(clave);
         cargando = false;
       });
     }
@@ -77,7 +79,7 @@ class _NotificacionesState extends State<Notificaciones> {
       final token = await UserService.getToken();
 
       if (token == null || token.isEmpty) {
-        throw Exception(texto('debes_iniciar_sesion_nuevamente'));
+        throw Exception('debes_iniciar_sesion_nuevamente');
       }
 
       final respuesta = await http.patch(
@@ -88,7 +90,7 @@ class _NotificacionesState extends State<Notificaciones> {
       );
 
       if (respuesta.statusCode != 200) {
-        throw Exception(texto('error_marcar_notificacion'));
+        throw Exception('error_marcar_notificacion');
       }
 
       if (!mounted) return;
@@ -99,8 +101,10 @@ class _NotificacionesState extends State<Notificaciones> {
     } catch (e) {
       if (!mounted) return;
 
+      final clave = e.toString().replaceFirst('Exception: ', '');
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+        SnackBar(content: Text(texto(clave))),
       );
     }
   }
@@ -151,7 +155,7 @@ class _NotificacionesState extends State<Notificaciones> {
       final token = await UserService.getToken();
 
       if (token == null || token.isEmpty) {
-        throw Exception(texto('debes_iniciar_sesion_nuevamente'));
+        throw Exception('debes_iniciar_sesion_nuevamente');
       }
 
       final respuesta = await http.delete(
@@ -160,7 +164,7 @@ class _NotificacionesState extends State<Notificaciones> {
       );
 
       if (respuesta.statusCode != 200) {
-        throw Exception(texto('error_eliminar_notificaciones'));
+        throw Exception('error_eliminar_notificaciones');
       }
 
       if (!mounted) return;
@@ -176,12 +180,14 @@ class _NotificacionesState extends State<Notificaciones> {
     } catch (e) {
       if (!mounted) return;
 
+      final clave = e.toString().replaceFirst('Exception: ', '');
+
       setState(() {
         eliminando = false;
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+        SnackBar(content: Text(texto(clave))),
       );
     }
   }

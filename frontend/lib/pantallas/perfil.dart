@@ -68,7 +68,6 @@ class _PerfilState extends State<Perfil> {
     });
   }
 
-  // Seleccionar y subir fotografía de perfil.
   Future<void> _seleccionarFoto() async {
     if (subiendoAvatar) return;
 
@@ -95,10 +94,10 @@ class _PerfilState extends State<Perfil> {
       });
 
       _mensaje(texto('foto_actualizada'));
-    } catch (e) {
+    } catch (_) {
       if (!mounted) return;
 
-      _mensaje(e.toString().replaceFirst('Exception: ', ''));
+      _mensaje(texto('error_actualizar_foto'));
     } finally {
       if (mounted) {
         setState(() {
@@ -108,7 +107,6 @@ class _PerfilState extends State<Perfil> {
     }
   }
 
-  // Barra inferior: 0 Home, 1 Perfil, 2 Menú, 3 Historial, 4 Carrito.
   void _navegar(int indice) {
     if (indice == 1) return;
 
@@ -196,10 +194,10 @@ class _PerfilState extends State<Perfil> {
       );
 
       await cerrarSesionYSalir(context);
-    } catch (e) {
+    } catch (_) {
       if (!mounted) return;
 
-      _mensaje(e.toString().replaceFirst('Exception: ', ''));
+      _mensaje(texto('error_eliminar_cuenta'));
     } finally {
       if (mounted) {
         setState(() {
@@ -271,8 +269,6 @@ class _PerfilState extends State<Perfil> {
                                 ],
                               ),
                               const SizedBox(height: 20),
-
-                              // Fotografía con botón para editar.
                               Stack(
                                 children: [
                                   CircleAvatar(
@@ -328,7 +324,6 @@ class _PerfilState extends State<Perfil> {
                                   ),
                                 ],
                               ),
-
                               const SizedBox(height: 15),
                               Text(
                                 cargando
@@ -379,7 +374,7 @@ class _PerfilState extends State<Perfil> {
                               _opcion(
                                 icono: Icons.help_outline,
                                 titulo: texto('ayuda'),
-                                subtitulo: texto('consulta manual usuario'),
+                                subtitulo: texto('consulta_manual_usuario'),
                                 onTap: _abrirManual,
                               ),
                               const SizedBox(height: 20),

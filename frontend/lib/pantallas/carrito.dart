@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:asadero/componentes/carrito_vacio.dart';
 import 'package:asadero/componentes/item_carrito.dart';
@@ -47,6 +48,7 @@ class _CarritoState extends State<Carrito> {
 
   Future<void> _realizarPedido() async {
     if (_enviando || _esAdmin || _verificandoRol) return;
+
     final items = List<CarritoItem>.from(CarritoEstado.items.value);
     if (items.isEmpty) return;
 
@@ -70,15 +72,20 @@ class _CarritoState extends State<Carrito> {
     }
 
     setState(() => _enviando = true);
+
     try {
       await PedidoService().realizarPedido(items, mesa: mesa);
       CarritoEstado.vaciar();
       _mensaje(texto('pedido_registrado'));
     } catch (e) {
       final mensaje = e.toString().replaceFirst('Exception: ', '');
+
       // Otra persona tomó la mesa mientras tanto: hay que elegir otra.
-      if (mensaje.contains('ocupada')) CarritoEstado.mesa.value = null;
-      _mensaje(mensaje, error: true);
+      if (mensaje.contains('ocupada')) {
+        CarritoEstado.mesa.value = null;
+      }
+
+      _mensaje(texto('error_registrar_pedido'), error: true);
     } finally {
       if (mounted) setState(() => _enviando = false);
     }
@@ -121,39 +128,40 @@ class _CarritoState extends State<Carrito> {
       valueListenable: Idioma.seleccionado,
       builder: (context, idioma, _) =>
           ValueListenableBuilder<List<CarritoItem>>(
-            valueListenable: CarritoEstado.items,
-            builder: (context, items, _) => Scaffold(
-              backgroundColor: AppColors.asphalt,
-              appBar: AppBar(
-                backgroundColor: AppColors.earthBrown,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back, color: AppColors.goldSand),
-                  onPressed: () => Navigator.pop(context),
+        valueListenable: CarritoEstado.items,
+        builder: (context, items, _) => Scaffold(
+          backgroundColor: AppColors.asphalt,
+          appBar: AppBar(
+            backgroundColor: AppColors.earthBrown,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: AppColors.goldSand),
+              onPressed: () => Navigator.pop(context),
+            ),
+            title: Text(
+              texto('carrito'),
+              style: const TextStyle(color: AppColors.goldSand),
+            ),
+            centerTitle: true,
+          ),
+          body: items.isEmpty
+              ? const CarritoVacio()
+              : ListView(
+                  padding: const EdgeInsets.all(15),
+                  children: [
+                    for (final item in items)
+                      ItemCarrito(item: item, bloqueado: _enviando),
+                    if (!_esAdmin) ...const [
+                      SelectorMesa(),
+                      NotaPagoFinal(),
+                    ],
+                  ],
                 ),
-                title: Text(
-                  texto('carrito'),
-                  style: const TextStyle(color: AppColors.goldSand),
-                ),
-                centerTitle: true,
-              ),
-              body: items.isEmpty
-                  ? const CarritoVacio()
-                  : ListView(
-                      padding: const EdgeInsets.all(15),
-                      children: [
-                        for (final item in items)
-                          ItemCarrito(item: item, bloqueado: _enviando),
-                        if (!_esAdmin) ...const [
-                          SelectorMesa(),
-                          NotaPagoFinal(),
-                        ],
-                      ],
-                    ),
-              bottomNavigationBar: items.isEmpty || _esAdmin || _verificandoRol
+          bottomNavigationBar:
+              items.isEmpty || _esAdmin || _verificandoRol
                   ? null
                   : _botonPedido(),
-            ),
-          ),
+        ),
+      ),
     );
   }
 }

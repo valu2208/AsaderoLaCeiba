@@ -13,7 +13,7 @@ String texto(String clave) {
 }
 
 final Map<String, String> espanol = {
-  // ---- Nuevas: mesa, límites, pago al final y términos ----
+  // Mesa, límites, pagos y términos
   'mesa': 'Mesa',
   'mesa_boton': 'Indicar mi mesa',
   'mesa_cambiar': 'cambiar',
@@ -37,7 +37,8 @@ final Map<String, String> espanol = {
   'terminos_titulo': 'Términos y condiciones',
   'terminos_texto':
       'Al crear tu cuenta en Asadero La Ceiba aceptas estos términos.\n\n1. Datos que recopilamos: nombre, teléfono, correo electrónico, historial de pedidos y comprobantes de pago.\n\n2. Para qué los usamos: crear tu cuenta, tomar y entregar tus pedidos, validar tus pagos, enviarte notificaciones sobre tus pedidos y generar reportes internos del asadero.\n\n3. Tus datos no se venden ni se comparten con terceros, salvo los proveedores necesarios para operar la app (correo, almacenamiento de imágenes y notificaciones).\n\n4. Tus derechos: conocer, actualizar, corregir o solicitar la eliminación de tus datos cuando quieras, escribiendo al asadero.\n\n5. Pedidos: cada pedido tiene un límite de platos y debes indicar tu mesa. El pago se realiza al terminar de comer.\n\n6. El asadero puede actualizar estos términos y te avisará en la app.',
-  // ---- Las que ya tenías ----
+
+  // Bienvenida, registro e inicio de sesión
   'haz_click_aqui': 'Haz click aquí!',
   'tu_proxima_gran_idea':
       '¡Ven y disfruta el auténtico sabor de Asadero La Ceiba!🍗',
@@ -58,12 +59,6 @@ final Map<String, String> espanol = {
   'recordarme': 'Recordarme',
   'no_tienes_cuenta': '¿No tienes cuenta? Regístrate',
   'continuar_con': 'O Continuar Con',
-  'historial': 'Historial de pedidos',
-  'resenas': 'Reseñas',
-  'menu': 'Menú',
-  'perfil': 'Perfil',
-  'mensajes': 'Mensajes',
-  'cerrar_sesion': 'Cerrar sesión',
   'registro': 'Regístrese',
   'crear_cuenta_boton': 'Crear Cuenta',
   'error_contrasenas': 'Las contraseñas no coinciden',
@@ -83,6 +78,16 @@ final Map<String, String> espanol = {
   'nueva_contrasena': 'Nueva contraseña',
   'confirmar_nueva_contrasena': 'Confirmar nueva contraseña',
   'continuar': 'Continuar',
+
+  // Navegación
+  'historial': 'Historial de pedidos',
+  'resenas': 'Reseñas',
+  'menu': 'Menú',
+  'perfil': 'Perfil',
+  'mensajes': 'Mensajes',
+  'cerrar_sesion': 'Cerrar sesión',
+
+  // Inicio y productos
   'lo_mas_pedido': '¡Lo más pedido!',
   'pollo_completo': 'Pollo Asado completo',
   'descripcion_pollo_completo':
@@ -95,38 +100,81 @@ final Map<String, String> espanol = {
       'Porción individual de pollo asado con papa, arepa y ensalada fresca.',
   'bienvenido_usuario': '¡Bienvenido, usuario! 👋',
   'buscar': 'Buscar...',
+  'descripcion_generica': 'Delicioso producto preparado especialmente para ti.',
+  'sin_platos_disponibles': 'Aún no hay platos disponibles',
+  'mas_informacion': 'Más información',
+  'descripcion_plato_generica':
+      'Delicioso plato preparado especialmente para ti.',
+  'detalles': 'Detalles',
+  'ver_mas': 'Ver más',
+  'ver_menos': 'Ver menos',
+  'toca_ver_mas': 'Toca para ver más',
+
+  // Menú por categorías
+  'categoria_desayuno': 'Desayuno',
+  'descripcion_desayuno': 'Huevos, caldos y bebidas para empezar el día',
+  'categoria_almuerzo': 'Almuerzo',
+  'descripcion_almuerzo': 'Platos fuertes y sopas del día',
+  'categoria_gaseosas': 'Gaseosas',
+  'descripcion_gaseosas': 'Gaseosas y bebidas frías',
+  'categoria_fin_semana': 'Fin de semana',
+  'descripcion_fin_semana': 'Especiales de sábado y domingo',
+  'menu_desayuno_titulo': 'Desayuno',
+  'menu_desayuno_descripcion': 'Huevos, caldos y bebidas para empezar el día',
+  'menu_almuerzo_titulo': 'Almuerzo',
+  'menu_almuerzo_descripcion': 'Platos fuertes y sopas del día',
+  'menu_gaseosas_titulo': 'Gaseosas',
+  'menu_gaseosas_descripcion': 'Gaseosas y bebidas frías',
+  'menu_fin_semana_titulo': 'Fin de semana',
+  'menu_fin_semana_descripcion': 'Especiales de sábado y domingo',
+
+  // Carrito y pedidos
   'carrito': 'Carrito de compras',
   'carrito_vacio': 'Tu carrito está vacío',
   'agrega_favoritos': 'Agrega tus productos favoritos para verlos aquí.',
   'cantidad': 'Cantidad',
   'eliminar_producto': 'Eliminar producto',
   'realizar_pedido': 'Realizar pedido',
-  'descripcion_generica': 'Delicioso producto preparado especialmente para ti.',
   'login_requerido':
       'Para realizar un pedido debes iniciar sesión o registrarte.',
+  'pedido_registrado': 'Pedido registrado correctamente.',
+  'pedido': 'Pedido',
+  'fecha': 'Fecha',
+  'total': 'Total',
+  'productos': 'Productos',
+  'estado': 'Estado',
+  'ver_detalle': 'Ver detalle',
+  'cerrar': 'Cerrar',
+  'sin_fecha': 'Sin fecha',
+  'sin_productos': 'Sin productos',
+  'producto_generico': 'Producto',
+  'sin_pedidos': 'Todavía no tienes pedidos.',
+  'reintentar': 'Reintentar',
   'actualizar': 'Actualizar',
+
+  // Historial
   'borrar_historial': 'Borrar historial',
+  'borrar_historial_titulo': 'Borrar historial',
+  'pregunta_borrar_historial':
+      '¿Estás seguro de que deseas borrar todo tu historial de pedidos? Los pedidos no se eliminarán de los registros del asadero.',
+  'borrar_todo': 'Borrar todo',
+  'cancelar': 'Cancelar',
+  'historial_eliminado': 'Historial eliminado correctamente.',
+  'error_borrar_historial':
+      'No se pudo borrar el historial. Inténtalo nuevamente.',
+  'error_cargar_historial':
+      'No se pudo cargar el historial. Inténtalo nuevamente.',
+  'estado_entregado': 'Entregado',
+  'estado_pendiente': 'Pendiente',
+
+  // Cancelación de pedidos
   'cancelar_pedido': 'Cancelar pedido',
   'pregunta_cancelar_pedido': '¿Estás seguro de que deseas cancelar',
   'volver': 'Volver',
   'si_cancelar': 'Sí, cancelar',
   'pedido_cancelado_correctamente': 'Pedido cancelado correctamente.',
-  'borrar_historial_titulo': 'Borrar historial',
-  'pregunta_borrar_historial':
-      '¿Estás seguro de que deseas borrar todo tu historial de pedidos? Los pedidos no se eliminarán de los registros del asadero.',
-  'borrar_todo': 'Borrar todo',
-  'historial_eliminado': 'Historial eliminado correctamente.',
-  'reintentar': 'Reintentar',
-  'sin_pedidos': 'Todavía no tienes pedidos.',
-  'sin_fecha': 'Sin fecha',
-  'sin_productos': 'Sin productos',
-  'producto_generico': 'Producto',
-  'fecha': 'Fecha',
-  'total': 'Total',
-  'ver_detalle': 'Ver detalle',
-  'productos': 'Productos',
-  'estado': 'Estado',
-  'cerrar': 'Cerrar',
+
+  // Perfil
   'mi_perfil': 'Mi perfil',
   'cargando': 'Cargando...',
   'usuario': 'Usuario',
@@ -146,7 +194,6 @@ final Map<String, String> espanol = {
   'pregunta_cerrar_sesion': '¿Seguro que deseas salir de tu cuenta?',
   'salir': 'Salir',
   'foto_actualizada': 'Foto de perfil actualizada correctamente.',
-  'cancelar': 'Cancelar',
   'tus_avisos': 'Tus avisos',
   'borrar_notificaciones': 'Borrar notificaciones',
   'pregunta_borrar_notificaciones':
@@ -173,25 +220,8 @@ final Map<String, String> espanol = {
   'barrio_opcional': 'Barrio (opcional)',
   'guardar_cambios': 'Guardar cambios',
   'informacion_actualizada': 'Información personal actualizada correctamente',
-  'categoria_desayuno': 'Desayuno',
-  'descripcion_desayuno': 'Huevos, caldos y bebidas para empezar el día',
-  'categoria_almuerzo': 'Almuerzo',
-  'descripcion_almuerzo': 'Platos fuertes y sopas del día',
-  'categoria_gaseosas': 'Gaseosas',
-  'descripcion_gaseosas': 'Gaseosas y bebidas frías',
-  'categoria_fin_semana': 'Fin de semana',
-  'descripcion_fin_semana': 'Especiales de sábado y domingo',
-  'mas_informacion': 'Más información',
-  'descripcion_plato_generica':
-      'Delicioso plato preparado especialmente para ti.',
-  'detalles': 'Detalles',
-  'ver_mas': 'Ver más',
-  'ver_menos': 'Ver menos',
-  'error_seleccionar_imagen': 'No se pudo seleccionar la imagen.',
-  'selecciona_comprobante': 'Selecciona la foto del comprobante de pago.',
-  'pedido_registrado': 'Pedido registrado correctamente.',
-  'pedido_comprobante_enviado':
-      'Pedido registrado y comprobante enviado. El administrador verificará tu pago.',
+
+  // Pagos
   'metodo_pago': 'Método de pago',
   'pago_presencial': 'Pago presencial',
   'paga_asadero': 'Paga directamente en el asadero.',
@@ -204,14 +234,34 @@ final Map<String, String> espanol = {
   'seleccionar_comprobante': 'Seleccionar comprobante',
   'cambiar_comprobante': 'Cambiar comprobante',
   'comprobante_seleccionado': 'Comprobante seleccionado',
+  'selecciona_comprobante': 'Selecciona la foto del comprobante de pago.',
+  'error_seleccionar_imagen': 'No se pudo seleccionar la imagen.',
+  'pedido_comprobante_enviado':
+      'Pedido registrado y comprobante enviado. El administrador verificará tu pago.',
   'pedido_registrado_reintentar':
       'Tu pedido ya está registrado. Puedes reintentar el envío del comprobante sin crear otro pedido.',
   'reintentar_envio': 'Reintentar envío',
-  'sin_platos_disponibles': 'Aún no hay platos disponibles',
+  'error_enviar_comprobante':
+      'No se pudo enviar el comprobante. Inténtalo nuevamente.',
+
+  // Idioma y sesión
+  'selecciona_idioma': 'Selecciona tu idioma',
+  'cambiar_idioma': 'Cambio de idioma',
+  'mensaje_error_sesion': 'No se pudo comprobar la sesión. Intenta nuevamente.',
+  'error_registrar_pedido':
+      'No se pudo registrar el pedido. Inténtalo nuevamente.',
+  'error_actualizar_foto': 'No se pudo actualizar la foto.',
+  'error_eliminar_cuenta': 'No se pudo eliminar la cuenta.',
+  'error_actualizar_informacion':
+      'No se pudo actualizar la información personal.',
+  'ingresa_correo_contrasena': 'Ingresa tu correo y contraseña.',
+  'error_iniciar_sesion':
+      'No se pudo iniciar sesión. Verifica tus datos e inténtalo nuevamente.',
+  'error_registro_google': 'No se pudo completar el registro con Google.',
 };
 
 final Map<String, String> ingles = {
-  // ---- New: table, limits, pay at the end and terms ----
+  // Table, limits, payments and terms
   'mesa': 'Table',
   'mesa_boton': 'Select my table',
   'mesa_cambiar': 'change',
@@ -234,7 +284,8 @@ final Map<String, String> ingles = {
   'terminos_titulo': 'Terms and conditions',
   'terminos_texto':
       'By creating your Asadero La Ceiba account you accept these terms.\n\n1. Data we collect: name, phone, email, order history and payment receipts.\n\n2. What we use it for: creating your account, taking and delivering your orders, validating payments, sending you order notifications and internal reports.\n\n3. Your data is not sold or shared with third parties, except providers needed to run the app (email, image storage and notifications).\n\n4. Your rights: to know, update, correct or request deletion of your data at any time by contacting the restaurant.\n\n5. Orders: each order has a dish limit and you must indicate your table. Payment is made when you finish eating.\n\n6. The restaurant may update these terms and will notify you in the app.',
-  // ---- Existing ----
+
+  // Welcome, registration and login
   'haz_click_aqui': 'Click here!',
   'tu_proxima_gran_idea':
       'Come and enjoy the authentic flavor of Asadero La Ceiba!🍗',
@@ -255,12 +306,6 @@ final Map<String, String> ingles = {
   'recordarme': 'Remember me',
   'no_tienes_cuenta': 'Don\'t have an account? Sign up',
   'continuar_con': 'Or Continue With',
-  'historial': 'Order History',
-  'resenas': 'Reviews',
-  'menu': 'Menu',
-  'perfil': 'Profile',
-  'mensajes': 'Messages',
-  'cerrar_sesion': 'Log out',
   'registro': 'Sign Up',
   'crear_cuenta_boton': 'Create Account',
   'error_contrasenas': 'Passwords do not match',
@@ -280,6 +325,16 @@ final Map<String, String> ingles = {
   'nueva_contrasena': 'New password',
   'confirmar_nueva_contrasena': 'Confirm new password',
   'continuar': 'Continue',
+
+  // Navigation
+  'historial': 'Order History',
+  'resenas': 'Reviews',
+  'menu': 'Menu',
+  'perfil': 'Profile',
+  'mensajes': 'Messages',
+  'cerrar_sesion': 'Log out',
+
+  // Home and products
   'lo_mas_pedido': 'Most Popular!',
   'pollo_completo': 'Whole Roasted Chicken',
   'descripcion_pollo_completo':
@@ -292,37 +347,78 @@ final Map<String, String> ingles = {
       'Individual serving of roasted chicken with potato, arepa, and fresh salad.',
   'bienvenido_usuario': 'Welcome, user! 👋',
   'buscar': 'Search...',
+  'descripcion_generica': 'A delicious product prepared especially for you.',
+  'sin_platos_disponibles': 'There are no dishes available yet',
+  'mas_informacion': 'More information',
+  'descripcion_plato_generica': 'Delicious dish specially prepared for you.',
+  'detalles': 'Details',
+  'ver_mas': 'See more',
+  'ver_menos': 'See less',
+  'toca_ver_mas': 'Tap to see more',
+
+  // Menu categories
+  'categoria_desayuno': 'Breakfast',
+  'descripcion_desayuno': 'Eggs, soups and drinks to start your day',
+  'categoria_almuerzo': 'Lunch',
+  'descripcion_almuerzo': 'Main dishes and soups of the day',
+  'categoria_gaseosas': 'Soft drinks',
+  'descripcion_gaseosas': 'Soft drinks and cold beverages',
+  'categoria_fin_semana': 'Weekend',
+  'descripcion_fin_semana': 'Saturday and Sunday specials',
+  'menu_desayuno_titulo': 'Breakfast',
+  'menu_desayuno_descripcion': 'Eggs, soups and drinks to start your day',
+  'menu_almuerzo_titulo': 'Lunch',
+  'menu_almuerzo_descripcion': 'Main dishes and soups of the day',
+  'menu_gaseosas_titulo': 'Soft drinks',
+  'menu_gaseosas_descripcion': 'Soft drinks and cold beverages',
+  'menu_fin_semana_titulo': 'Weekend',
+  'menu_fin_semana_descripcion': 'Saturday and Sunday specials',
+
+  // Cart and orders
   'carrito': 'Shopping Cart',
   'carrito_vacio': 'Your cart is empty',
   'agrega_favoritos': 'Add your favorite products to see them here.',
   'cantidad': 'Quantity',
   'eliminar_producto': 'Remove product',
   'realizar_pedido': 'Place order',
-  'descripcion_generica': 'A delicious product prepared especially for you.',
   'login_requerido': 'To place an order you must log in or sign up.',
+  'pedido_registrado': 'Order registered successfully.',
+  'pedido': 'Order',
+  'fecha': 'Date',
+  'total': 'Total',
+  'productos': 'Products',
+  'estado': 'Status',
+  'ver_detalle': 'View details',
+  'cerrar': 'Close',
+  'sin_fecha': 'No date',
+  'sin_productos': 'No products',
+  'producto_generico': 'Product',
+  'sin_pedidos': 'You do not have any orders yet.',
+  'reintentar': 'Retry',
   'actualizar': 'Refresh',
+
+  // Order history
   'borrar_historial': 'Delete history',
+  'borrar_historial_titulo': 'Delete history',
+  'pregunta_borrar_historial':
+      'Are you sure you want to delete your entire order history? Orders will not be deleted from the restaurant records.',
+  'borrar_todo': 'Delete all',
+  'cancelar': 'Cancel',
+  'historial_eliminado': 'History deleted successfully.',
+  'error_borrar_historial': 'Could not clear the history. Please try again.',
+  'error_cargar_historial':
+      'Could not load your order history. Please try again.',
+  'estado_entregado': 'Delivered',
+  'estado_pendiente': 'Pending',
+
+  // Order cancellation
   'cancelar_pedido': 'Cancel order',
   'pregunta_cancelar_pedido': 'Are you sure you want to cancel',
   'volver': 'Back',
   'si_cancelar': 'Yes, cancel',
   'pedido_cancelado_correctamente': 'Order cancelled successfully.',
-  'borrar_historial_titulo': 'Delete history',
-  'pregunta_borrar_historial':
-      'Are you sure you want to delete your entire order history? Orders will not be deleted from the restaurant records.',
-  'borrar_todo': 'Delete all',
-  'historial_eliminado': 'History deleted successfully.',
-  'reintentar': 'Retry',
-  'sin_pedidos': 'You do not have any orders yet.',
-  'sin_fecha': 'No date',
-  'sin_productos': 'No products',
-  'producto_generico': 'Product',
-  'fecha': 'Date',
-  'total': 'Total',
-  'ver_detalle': 'View details',
-  'productos': 'Products',
-  'estado': 'Status',
-  'cerrar': 'Close',
+
+  // Profile
   'mi_perfil': 'My profile',
   'cargando': 'Loading...',
   'usuario': 'User',
@@ -342,7 +438,6 @@ final Map<String, String> ingles = {
   'pregunta_cerrar_sesion': 'Are you sure you want to sign out?',
   'salir': 'Sign out',
   'foto_actualizada': 'Profile picture updated successfully.',
-  'cancelar': 'Cancel',
   'tus_avisos': 'Your notifications',
   'borrar_notificaciones': 'Delete notifications',
   'pregunta_borrar_notificaciones':
@@ -368,24 +463,8 @@ final Map<String, String> ingles = {
   'barrio_opcional': 'Neighborhood (optional)',
   'guardar_cambios': 'Save changes',
   'informacion_actualizada': 'Personal information updated successfully',
-  'categoria_desayuno': 'Breakfast',
-  'descripcion_desayuno': 'Eggs, soups and drinks to start your day',
-  'categoria_almuerzo': 'Lunch',
-  'descripcion_almuerzo': 'Main dishes and soups of the day',
-  'categoria_gaseosas': 'Soft drinks',
-  'descripcion_gaseosas': 'Soft drinks and cold beverages',
-  'categoria_fin_semana': 'Weekend',
-  'descripcion_fin_semana': 'Saturday and Sunday specials',
-  'mas_informacion': 'More information',
-  'descripcion_plato_generica': 'Delicious dish specially prepared for you.',
-  'detalles': 'Details',
-  'ver_mas': 'See more',
-  'ver_menos': 'See less',
-  'error_seleccionar_imagen': 'Could not select the image.',
-  'selecciona_comprobante': 'Select the payment receipt photo.',
-  'pedido_registrado': 'Order registered successfully.',
-  'pedido_comprobante_enviado':
-      'Order registered and receipt sent. The administrator will verify your payment.',
+
+  // Payments
   'metodo_pago': 'Payment method',
   'pago_presencial': 'In-person payment',
   'paga_asadero': 'Pay directly at the restaurant.',
@@ -398,14 +477,32 @@ final Map<String, String> ingles = {
   'seleccionar_comprobante': 'Select receipt',
   'cambiar_comprobante': 'Change receipt',
   'comprobante_seleccionado': 'Receipt selected',
+  'selecciona_comprobante': 'Select the payment receipt photo.',
+  'error_seleccionar_imagen': 'Could not select the image.',
+  'pedido_comprobante_enviado':
+      'Order registered and receipt sent. The administrator will verify your payment.',
   'pedido_registrado_reintentar':
       'Your order is already registered. You can retry sending the receipt without creating another order.',
   'reintentar_envio': 'Retry sending',
-  'sin_platos_disponibles': 'There are no dishes available yet',
+  'error_enviar_comprobante':
+      'Could not send the payment receipt. Please try again.',
+
+  // Language and session
+  'selecciona_idioma': 'Select your language',
+  'cambiar_idioma': 'Change language',
+  'mensaje_error_sesion': 'Could not verify the session. Please try again.',
+  'error_registrar_pedido': 'The order could not be placed. Please try again.',
+  'error_actualizar_foto': 'Could not update the photo.',
+  'error_eliminar_cuenta': 'Could not delete the account.',
+  'error_actualizar_informacion': 'Could not update personal information.',
+  'ingresa_correo_contrasena': 'Enter your email and password.',
+  'error_iniciar_sesion':
+      'Could not sign in. Check your details and try again.',
+  'error_registro_google': 'Could not complete registration with Google.',
 };
 
 final Map<String, String> portugues = {
-  // ---- Novas: mesa, limites, pagamento no final e termos ----
+  // Mesa, limites, pagamentos e termos
   'mesa': 'Mesa',
   'mesa_boton': 'Indicar minha mesa',
   'mesa_cambiar': 'mudar',
@@ -429,7 +526,8 @@ final Map<String, String> portugues = {
   'terminos_titulo': 'Termos e condições',
   'terminos_texto':
       'Ao criar sua conta no Asadero La Ceiba você aceita estes termos.\n\n1. Dados que coletamos: nome, telefone, e-mail, histórico de pedidos e comprovantes de pagamento.\n\n2. Para que usamos: criar sua conta, receber e entregar seus pedidos, validar pagamentos, enviar notificações e gerar relatórios internos.\n\n3. Seus dados não são vendidos nem compartilhados com terceiros, exceto provedores necessários para operar o app (e-mail, armazenamento de imagens e notificações).\n\n4. Seus direitos: conhecer, atualizar, corrigir ou solicitar a exclusão dos seus dados a qualquer momento, entrando em contato com o restaurante.\n\n5. Pedidos: cada pedido tem um limite de pratos e você deve indicar sua mesa. O pagamento é feito ao terminar de comer.\n\n6. O restaurante pode atualizar estes termos e avisará no app.',
-  // ---- Existentes ----
+
+  // Boas-vindas, cadastro e login
   'haz_click_aqui': 'Clique aqui!',
   'tu_proxima_gran_idea':
       'Venha e desfrute do autêntico sabor do Asadero La Ceiba!🍗',
@@ -450,12 +548,6 @@ final Map<String, String> portugues = {
   'recordarme': 'Lembrar de mim',
   'no_tienes_cuenta': 'Não tem uma conta? Cadastre-se',
   'continuar_con': 'Ou continuar com',
-  'historial': 'Histórico de pedidos',
-  'resenas': 'Avaliações',
-  'menu': 'Menu',
-  'perfil': 'Perfil',
-  'mensajes': 'Mensagens',
-  'cerrar_sesion': 'Sair',
   'registro': 'Cadastre-se',
   'crear_cuenta_boton': 'Criar conta',
   'error_contrasenas': 'As senhas não coincidem',
@@ -475,6 +567,16 @@ final Map<String, String> portugues = {
   'nueva_contrasena': 'Nova senha',
   'confirmar_nueva_contrasena': 'Confirmar nova senha',
   'continuar': 'Continuar',
+
+  // Navegação
+  'historial': 'Histórico de pedidos',
+  'resenas': 'Avaliações',
+  'menu': 'Menu',
+  'perfil': 'Perfil',
+  'mensajes': 'Mensagens',
+  'cerrar_sesion': 'Sair',
+
+  // Início e produtos
   'lo_mas_pedido': 'Mais pedidos!',
   'pollo_completo': 'Frango assado inteiro',
   'descripcion_pollo_completo':
@@ -487,38 +589,81 @@ final Map<String, String> portugues = {
       'Porção individual de frango assado com batata, arepa e salada fresca.',
   'bienvenido_usuario': 'Bem-vindo, usuário! 👋',
   'buscar': 'Buscar...',
+  'descripcion_generica':
+      'Um produto delicioso preparado especialmente para você.',
+  'sin_platos_disponibles': 'Ainda não há pratos disponíveis',
+  'mas_informacion': 'Mais informações',
+  'descripcion_plato_generica':
+      'Um prato delicioso preparado especialmente para você.',
+  'detalles': 'Detalhes',
+  'ver_mas': 'Ver mais',
+  'ver_menos': 'Ver menos',
+  'toca_ver_mas': 'Toque para ver mais',
+
+  // Menu por categorias
+  'categoria_desayuno': 'Café da manhã',
+  'descripcion_desayuno': 'Ovos, caldos e bebidas para começar o dia',
+  'categoria_almuerzo': 'Almoço',
+  'descripcion_almuerzo': 'Pratos principais e sopas do dia',
+  'categoria_gaseosas': 'Refrigerantes',
+  'descripcion_gaseosas': 'Refrigerantes e bebidas geladas',
+  'categoria_fin_semana': 'Fim de semana',
+  'descripcion_fin_semana': 'Especiais de sábado e domingo',
+  'menu_desayuno_titulo': 'Café da manhã',
+  'menu_desayuno_descripcion': 'Ovos, caldos e bebidas para começar o dia',
+  'menu_almuerzo_titulo': 'Almoço',
+  'menu_almuerzo_descripcion': 'Pratos principais e sopas do dia',
+  'menu_gaseosas_titulo': 'Refrigerantes',
+  'menu_gaseosas_descripcion': 'Refrigerantes e bebidas geladas',
+  'menu_fin_semana_titulo': 'Fim de semana',
+  'menu_fin_semana_descripcion': 'Especiais de sábado e domingo',
+
+  // Carrinho e pedidos
   'carrito': 'Carrinho de compras',
   'carrito_vacio': 'Seu carrinho está vazio',
   'agrega_favoritos': 'Adicione seus produtos favoritos para vê-los aqui.',
   'cantidad': 'Quantidade',
   'eliminar_producto': 'Remover produto',
   'realizar_pedido': 'Fazer pedido',
-  'descripcion_generica':
-      'Um produto delicioso preparado especialmente para você.',
   'login_requerido': 'Para fazer um pedido você deve entrar ou se cadastrar.',
+  'pedido_registrado': 'Pedido registrado com sucesso.',
+  'pedido': 'Pedido',
+  'fecha': 'Data',
+  'total': 'Total',
+  'productos': 'Produtos',
+  'estado': 'Estado',
+  'ver_detalle': 'Ver detalhes',
+  'cerrar': 'Fechar',
+  'sin_fecha': 'Sem data',
+  'sin_productos': 'Sem produtos',
+  'producto_generico': 'Produto',
+  'sin_pedidos': 'Você ainda não tem pedidos.',
+  'reintentar': 'Tentar novamente',
   'actualizar': 'Atualizar',
+
+  // Histórico
   'borrar_historial': 'Apagar histórico',
+  'borrar_historial_titulo': 'Apagar histórico',
+  'pregunta_borrar_historial':
+      'Tem certeza de que deseja apagar todo o seu histórico de pedidos? Os pedidos não serão removidos dos registros do restaurante.',
+  'borrar_todo': 'Apagar tudo',
+  'cancelar': 'Cancelar',
+  'historial_eliminado': 'Histórico apagado com sucesso.',
+  'error_borrar_historial':
+      'Não foi possível limpar o histórico. Tente novamente.',
+  'error_cargar_historial':
+      'Não foi possível carregar o histórico. Tente novamente.',
+  'estado_entregado': 'Entregue',
+  'estado_pendiente': 'Pendente',
+
+  // Cancelamento de pedidos
   'cancelar_pedido': 'Cancelar pedido',
   'pregunta_cancelar_pedido': 'Tem certeza de que deseja cancelar',
   'volver': 'Voltar',
   'si_cancelar': 'Sim, cancelar',
   'pedido_cancelado_correctamente': 'Pedido cancelado com sucesso.',
-  'borrar_historial_titulo': 'Apagar histórico',
-  'pregunta_borrar_historial':
-      'Tem certeza de que deseja apagar todo o seu histórico de pedidos? Os pedidos não serão removidos dos registros do restaurante.',
-  'borrar_todo': 'Apagar tudo',
-  'historial_eliminado': 'Histórico apagado com sucesso.',
-  'reintentar': 'Tentar novamente',
-  'sin_pedidos': 'Você ainda não tem pedidos.',
-  'sin_fecha': 'Sem data',
-  'sin_productos': 'Sem produtos',
-  'producto_generico': 'Produto',
-  'fecha': 'Data',
-  'total': 'Total',
-  'ver_detalle': 'Ver detalhes',
-  'productos': 'Produtos',
-  'estado': 'Estado',
-  'cerrar': 'Fechar',
+
+  // Perfil
   'mi_perfil': 'Meu perfil',
   'cargando': 'Carregando...',
   'usuario': 'Usuário',
@@ -538,7 +683,6 @@ final Map<String, String> portugues = {
   'pregunta_cerrar_sesion': 'Tem certeza de que deseja sair da sua conta?',
   'salir': 'Sair',
   'foto_actualizada': 'Foto de perfil atualizada com sucesso.',
-  'cancelar': 'Cancelar',
   'tus_avisos': 'Seus avisos',
   'borrar_notificaciones': 'Excluir notificações',
   'pregunta_borrar_notificaciones':
@@ -565,25 +709,8 @@ final Map<String, String> portugues = {
   'barrio_opcional': 'Bairro (opcional)',
   'guardar_cambios': 'Salvar alterações',
   'informacion_actualizada': 'Informações pessoais atualizadas com sucesso',
-  'categoria_desayuno': 'Café da manhã',
-  'descripcion_desayuno': 'Ovos, caldos e bebidas para começar o dia',
-  'categoria_almuerzo': 'Almoço',
-  'descripcion_almuerzo': 'Pratos principais e sopas do dia',
-  'categoria_gaseosas': 'Refrigerantes',
-  'descripcion_gaseosas': 'Refrigerantes e bebidas geladas',
-  'categoria_fin_semana': 'Fim de semana',
-  'descripcion_fin_semana': 'Especiais de sábado e domingo',
-  'mas_informacion': 'Mais informações',
-  'descripcion_plato_generica':
-      'Um prato delicioso preparado especialmente para você.',
-  'detalles': 'Detalhes',
-  'ver_mas': 'Ver mais',
-  'ver_menos': 'Ver menos',
-  'error_seleccionar_imagen': 'Não foi possível selecionar a imagem.',
-  'selecciona_comprobante': 'Selecione o comprovante de pagamento',
-  'pedido_registrado': 'Pedido registrado com sucesso.',
-  'pedido_comprobante_enviado':
-      'Pedido registrado e comprovante enviado. O administrador verificará seu pagamento.',
+
+  // Pagamentos
   'metodo_pago': 'Método de pagamento',
   'pago_presencial': 'Pagamento presencial',
   'paga_asadero': 'Pague diretamente no restaurante.',
@@ -596,8 +723,29 @@ final Map<String, String> portugues = {
   'seleccionar_comprobante': 'Selecionar comprovante',
   'cambiar_comprobante': 'Alterar comprovante',
   'comprobante_seleccionado': 'Comprovante selecionado',
+  'selecciona_comprobante': 'Selecione o comprovante de pagamento',
+  'error_seleccionar_imagen': 'Não foi possível selecionar a imagem.',
+  'pedido_comprobante_enviado':
+      'Pedido registrado e comprovante enviado. O administrador verificará seu pagamento.',
   'pedido_registrado_reintentar':
       'Seu pedido já está registrado. Você pode tentar enviar o comprovante novamente sem criar outro pedido.',
   'reintentar_envio': 'Tentar enviar novamente',
-  'sin_platos_disponibles': 'Ainda não há pratos disponíveis',
+  'error_enviar_comprobante':
+      'Não foi possível enviar o comprovante. Tente novamente.',
+
+  // Idioma e sessão
+  'selecciona_idioma': 'Selecione seu idioma',
+  'cambiar_idioma': 'Alterar idioma',
+  'mensaje_error_sesion':
+      'Não foi possível verificar a sessão. Tente novamente.',
+  'error_registrar_pedido':
+      'Não foi possível registrar o pedido. Tente novamente.',
+  'error_actualizar_foto': 'Não foi possível atualizar a foto.',
+  'error_eliminar_cuenta': 'Não foi possível excluir a conta.',
+  'error_actualizar_informacion':
+      'Não foi possível atualizar as informações pessoais.',
+  'ingresa_correo_contrasena': 'Digite seu e-mail e sua senha.',
+  'error_iniciar_sesion':
+      'Não foi possível entrar. Verifique seus dados e tente novamente.',
+  'error_registro_google': 'Não foi possível concluir o cadastro com o Google.',
 };

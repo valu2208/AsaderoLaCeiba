@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/avisar_limite.dart';
 import 'package:asadero/core/carrito_estado.dart';
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/core/traducciones.dart';
 import 'package:asadero/componentes/boton_agregar.dart';
 import 'package:asadero/componentes/imagen_adaptable.dart';
 import 'package:asadero/componentes/visor_imagen.dart';
@@ -100,7 +101,9 @@ class FilaProducto extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      descripcion.trim().isEmpty ? 'Toca para ver más' : descripcion,
+                      descripcion.trim().isEmpty
+                          ? texto('toca_ver_mas')
+                          : descripcion,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.josefinSans(

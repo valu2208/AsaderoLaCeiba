@@ -116,6 +116,12 @@ class _RegistroState extends State<Registro> {
 
       debugPrint(respuesta.body);
     } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(texto('error_registro_google'))));
+
       debugPrint('Error al registrarse con Google: $e');
     }
   }
@@ -187,7 +193,7 @@ class _RegistroState extends State<Registro> {
               ),
               const SizedBox(height: 20),
               CampoTexto(
-                texto: texto('mensaje_contrasena'),
+                texto: texto('confirmar_contrasena'),
                 icono: Icons.lock_outline,
                 ocultar: !mostrarConfirmar,
                 controller: confirmar,

@@ -50,22 +50,22 @@ class _HistorialState extends State<Historial> {
         pedidos = resultado;
         cargando = false;
       });
-    } catch (e) {
+    } catch (_) {
       if (!mounted) return;
 
       setState(() {
-        error = e.toString().replaceFirst('Exception: ', '');
+        error = 'error_cargar_historial';
         cargando = false;
       });
     }
   }
 
   String formatearFecha(dynamic fecha) {
-    if (fecha == null) return 'Sin fecha';
+    if (fecha == null) return texto('sin_fecha');
 
     final date = DateTime.tryParse(fecha.toString());
 
-    if (date == null) return 'Sin fecha';
+    if (date == null) return texto('sin_fecha');
 
     return '${date.day.toString().padLeft(2, '0')}/'
         '${date.month.toString().padLeft(2, '0')}/'
@@ -88,12 +88,12 @@ class _HistorialState extends State<Historial> {
     final detalles = pedido['detalle_pedido'];
 
     if (detalles is! List || detalles.isEmpty) {
-      return 'Sin productos';
+      return texto('sin_productos');
     }
 
     return detalles
         .map((detalle) {
-          final nombre = detalle['nombre'] ?? 'Producto';
+          final nombre = detalle['nombre'] ?? texto('producto');
           final cantidad = detalle['cantidad'] ?? 1;
 
           return '$nombre x$cantidad';
@@ -101,12 +101,23 @@ class _HistorialState extends State<Historial> {
         .join(', ');
   }
 
+  String traducirEstado(String estado) {
+    switch (estado) {
+      case 'Entregado':
+        return texto('estado_entregado');
+      case 'Pendiente':
+        return texto('estado_pendiente');
+      default:
+        return estado;
+    }
+  }
+
   Map<String, String> convertirPedido(Map<String, dynamic> pedido) {
     final id = pedido['id'];
 
     return {
       'id': id.toString(),
-      'numero': 'Pedido #$id',
+      'numero': '${texto('pedido')} #$id',
       'fecha': formatearFecha(pedido['fecha_pedido']),
       'productos': obtenerProductos(pedido),
       'total': formatearTotal(pedido['total']),
@@ -117,8 +128,7 @@ class _HistorialState extends State<Historial> {
     };
   }
 
-  // Se puede pagar cuando el pedido ya fue entregado y no hay pago aprobado
-  // ni un comprobante en revisión.
+  // Se conserva el estado original para las condiciones del backend.
   bool puedePagar(Map<String, String> pedido) {
     final pago = pedido['estado_pago'];
     return pedido['estado'] == 'Entregado' &&
@@ -140,34 +150,33 @@ class _HistorialState extends State<Historial> {
     if (enviado == true) await cargarPedidos();
   }
 
-  // Confirmar que se desea limpiar todo el historial
+  // Confirmar que se desea limpiar todo el historial.
   Future<void> confirmarEliminarHistorial() async {
     final confirmar = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.asphalt,
-        title: const Text(
-          'Borrar historial',
-          style: TextStyle(color: AppColors.goldSand),
+        title: Text(
+          texto('borrar_historial'),
+          style: const TextStyle(color: AppColors.goldSand),
         ),
-        content: const Text(
-          '¿Estás seguro de que deseas borrar todo tu historial de pedidos? '
-          'Los pedidos no se eliminarán de los registros del asadero.',
-          style: TextStyle(color: Colors.white),
+        content: Text(
+          texto('confirmar_borrar_historial'),
+          style: const TextStyle(color: Colors.white),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text(
-              'Cancelar',
-              style: TextStyle(color: AppColors.goldSand),
+            child: Text(
+              texto('cancelar'),
+              style: const TextStyle(color: AppColors.goldSand),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'Borrar todo',
-              style: TextStyle(color: Colors.redAccent),
+            child: Text(
+              texto('borrar_todo'),
+              style: const TextStyle(color: Colors.redAccent),
             ),
           ),
         ],
@@ -179,7 +188,7 @@ class _HistorialState extends State<Historial> {
     }
   }
 
-  // Ocultar los pedidos del historial
+  // Ocultar los pedidos del historial.
   Future<void> eliminarHistorial() async {
     setState(() {
       eliminando = true;
@@ -195,19 +204,19 @@ class _HistorialState extends State<Historial> {
         eliminando = false;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Historial eliminado correctamente.')),
-      );
-    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(texto('historial_eliminado'))));
+    } catch (_) {
       if (!mounted) return;
 
       setState(() {
         eliminando = false;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(texto('error_borrar_historial'))));
     }
   }
 
@@ -231,7 +240,7 @@ class _HistorialState extends State<Historial> {
               IconButton(
                 onPressed: cargando || eliminando ? null : cargarPedidos,
                 icon: const Icon(Icons.refresh),
-                tooltip: 'Actualizar',
+                tooltip: texto('actualizar'),
               ),
               if (pedidos.isNotEmpty)
                 IconButton(
@@ -248,7 +257,7 @@ class _HistorialState extends State<Historial> {
                           ),
                         )
                       : const Icon(Icons.delete_outline),
-                  tooltip: 'Borrar historial',
+                  tooltip: texto('borrar_historial'),
                 ),
             ],
           ),
@@ -285,24 +294,24 @@ class _HistorialState extends State<Historial> {
                       child: Column(
                         children: [
                           Text(
-                            error!,
+                            texto(error!),
                             textAlign: TextAlign.center,
                             style: const TextStyle(color: AppColors.asphalt),
                           ),
                           TextButton(
                             onPressed: cargarPedidos,
-                            child: const Text('Reintentar'),
+                            child: Text(texto('reintentar')),
                           ),
                         ],
                       ),
                     )
                   else if (pedidos.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.all(30),
+                    Padding(
+                      padding: const EdgeInsets.all(30),
                       child: Center(
                         child: Text(
-                          'Todavía no tienes pedidos.',
-                          style: TextStyle(
+                          texto('sin_pedidos_historial'),
+                          style: const TextStyle(
                             color: AppColors.asphalt,
                             fontSize: 16,
                           ),
@@ -313,7 +322,8 @@ class _HistorialState extends State<Historial> {
                     ...pedidos.map((pedidoOriginal) {
                       final pedido = convertirPedido(pedidoOriginal);
                       final producto = pedido['productos']!;
-                      final estado = pedido['estado']!;
+                      final estadoOriginal = pedido['estado']!;
+                      final estado = traducirEstado(estadoOriginal);
 
                       return TarjetaPedido(
                         pedido: pedido,

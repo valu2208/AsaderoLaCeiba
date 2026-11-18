@@ -36,9 +36,12 @@ class _LoginState extends State<Login> {
     super.dispose();
   }
 
-  void _mensaje(String texto) {
+  void _mensaje(String mensaje) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(texto), backgroundColor: AppColors.redPrayerFlag),
+      SnackBar(
+        content: Text(mensaje),
+        backgroundColor: AppColors.redPrayerFlag,
+      ),
     );
   }
 
@@ -52,7 +55,7 @@ class _LoginState extends State<Login> {
       irSegunRol(context, usuario.rol);
     } catch (e) {
       if (mounted) {
-        _mensaje(e.toString().replaceAll('Exception: ', ''));
+        _mensaje(texto('error_iniciar_sesion'));
       }
     } finally {
       if (mounted) setState(() => cargando = false);
@@ -64,7 +67,7 @@ class _LoginState extends State<Login> {
     final clave = contrasenaController.text;
 
     if (correo.isEmpty || clave.isEmpty) {
-      return _mensaje('Ingresa tu correo y contraseña');
+      return _mensaje(texto('ingresa_correo_contrasena'));
     }
 
     _entrar(() => UserService.loginUsuario(correo, clave));
@@ -156,7 +159,7 @@ class _LoginState extends State<Login> {
                         const SizedBox(height: 20),
                         const SeparadorContinuar(),
                         TextButton.icon(
-                          onPressed: cargando? null :iniciarSesionGoogle,
+                          onPressed: cargando ? null : iniciarSesionGoogle,
                           icon: const Icon(
                             Icons.g_mobiledata,
                             color: AppColors.goldSand,

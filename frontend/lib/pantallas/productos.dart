@@ -20,44 +20,45 @@ import 'package:asadero/services/user_service.dart';
 // Pantalla Menú (botón del centro de la barra): las opciones de la carta
 class Productos extends StatelessWidget {
   const Productos({super.key});
-  static const List<OpcionMenu> _opciones = [
+
+  static List<OpcionMenu> _opciones() => [
     OpcionMenu(
-      titulo: 'Desayuno',
+      titulo: texto('menu_desayuno_titulo'),
       categoria: 'desayuno',
-      descripcion: 'Huevos, caldos y bebidas para empezar el día',
+      descripcion: texto('menu_desayuno_descripcion'),
       imagen: 'assets/imagenes/menu_desayuno.jpg',
       icono: Icons.free_breakfast,
-      color: Color(0xFFD9611A),
-      colorFin: Color(0xFFA92A0A),
+      color: const Color(0xFFD9611A),
+      colorFin: const Color(0xFFA92A0A),
       porDia: true,
     ),
     OpcionMenu(
-      titulo: 'Almuerzo',
+      titulo: texto('menu_almuerzo_titulo'),
       categoria: 'almuerzo',
-      descripcion: 'Platos fuertes y sopas del día',
+      descripcion: texto('menu_almuerzo_descripcion'),
       imagen: 'assets/imagenes/menu_almuerzo.jpg',
       icono: Icons.lunch_dining,
-      color: Color(0xFFC41E14),
-      colorFin: Color(0xFF7B1103),
+      color: const Color(0xFFC41E14),
+      colorFin: const Color(0xFF7B1103),
       porDia: true,
     ),
     OpcionMenu(
-      titulo: 'Gaseosas',
+      titulo: texto('menu_gaseosas_titulo'),
       categoria: 'gaseosas',
-      descripcion: 'Gaseosas y bebidas frías',
+      descripcion: texto('menu_gaseosas_descripcion'),
       imagen: 'assets/imagenes/menu_gaseosas.jpg',
       icono: Icons.local_drink,
-      color: Color(0xFFA12A55),
-      colorFin: Color(0xFF5E1230),
+      color: const Color(0xFFA12A55),
+      colorFin: const Color(0xFF5E1230),
     ),
     OpcionMenu(
-      titulo: 'Fin de semana',
+      titulo: texto('menu_fin_semana_titulo'),
       categoria: 'fin_de_semana',
-      descripcion: 'Especiales de sábado y domingo',
+      descripcion: texto('menu_fin_semana_descripcion'),
       imagen: 'assets/imagenes/menu_fin_de_semana.jpg',
       icono: Icons.celebration,
-      color: Color(0xFF4A2312),
-      colorFin: Color(0xFF1C0A0A),
+      color: const Color(0xFF4A2312),
+      colorFin: const Color(0xFF1C0A0A),
     ),
   ];
 
@@ -120,7 +121,7 @@ class Productos extends StatelessWidget {
               child: Column(
                 children: [
                   // Cada opción ocupa la misma parte de la pantalla
-                  for (final opcion in _opciones)
+                  for (final opcion in _opciones())
                     Expanded(
                       child: TarjetaOpcionMenu(
                         opcion: opcion,

@@ -32,11 +32,9 @@ class Inicio extends StatelessWidget {
     } catch (e) {
       if (!context.mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No se pudo comprobar la sesión. Intenta nuevamente.'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(texto('mensaje_error_sesion'))));
     }
   }
 

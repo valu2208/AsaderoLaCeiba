@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:asadero/pantallas/inicio.dart';
 import 'package:asadero/pantallas/idiomas.dart';
@@ -123,7 +124,7 @@ class _BienvenidaState extends State<Bienvenida> with SingleTickerProviderStateM
         setState(() {});
       },
       child: Text(
-        'Cambio de idioma',
+        texto('cambiar_idioma'),
         style: GoogleFonts.inter(color: AppColors.goldSand, fontSize: 14),
       ),
     );

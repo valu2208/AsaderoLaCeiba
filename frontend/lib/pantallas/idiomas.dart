@@ -1,35 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:asadero/core/idioma.dart';
 
-class Idiomas extends StatefulWidget {
+import 'package:asadero/core/idioma.dart';
+import 'package:asadero/core/traducciones.dart';
+
+class Idiomas extends StatelessWidget {
   const Idiomas({super.key});
 
-  @override
-  State<Idiomas> createState() => _IdiomasState();
-}
-
-class _IdiomasState extends State<Idiomas> {
-  final List<Map<String, String>> idiomas = [
-    {
-      'bandera': '🇨🇴',
-      'nombre': 'Español',
-    },
-    {
-      'bandera': '🇺🇸',
-      'nombre': 'English',
-    },
-    {
-      'bandera': '🇧🇷',
-      'nombre': 'Português',
-    },
+  final List<Map<String, String>> idiomas = const [
+    {'bandera': '🇨🇴', 'nombre': 'Español'},
+    {'bandera': '🇺🇸', 'nombre': 'English'},
+    {'bandera': '🇧🇷', 'nombre': 'Português'},
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Selecciona tu idioma'),
-      ),
+      appBar: AppBar(title: Text(texto('selecciona_idioma'))),
       body: ValueListenableBuilder<String>(
         valueListenable: Idioma.seleccionado,
         builder: (context, seleccionado, child) {
@@ -37,6 +23,8 @@ class _IdiomasState extends State<Idiomas> {
             itemCount: idiomas.length,
             itemBuilder: (context, index) {
               final idioma = idiomas[index]['nombre']!;
+
+              final estaSeleccionado = seleccionado == idioma;
 
               return ListTile(
                 leading: Text(
@@ -50,12 +38,15 @@ class _IdiomasState extends State<Idiomas> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                trailing: seleccionado == idioma
-                    ? const Icon(Icons.check)
+                trailing: estaSeleccionado
+                    ? const Icon(Icons.check_circle, color: Colors.green)
                     : null,
-                onTap: () {
-                  Idioma.seleccionado.value = idioma;
-                  Navigator.pop(context);
+                onTap: () async {
+                  await Idioma.cambiar(idioma);
+
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                  }
                 },
               );
             },

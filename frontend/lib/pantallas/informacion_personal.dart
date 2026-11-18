@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -60,9 +61,15 @@ class _InformacionPersonalState extends State<InformacionPersonal> {
 
       final prefs = await SharedPreferences.getInstance();
 
-      await prefs.setString('user_direccion', _direccionController.text.trim());
+      await prefs.setString(
+        'user_direccion',
+        _direccionController.text.trim(),
+      );
 
-      await prefs.setString('user_barrio', _barrioController.text.trim());
+      await prefs.setString(
+        'user_barrio',
+        _barrioController.text.trim(),
+      );
 
       if (!mounted) return;
 
@@ -77,10 +84,11 @@ class _InformacionPersonalState extends State<InformacionPersonal> {
     } catch (e) {
       if (!mounted) return;
 
-      final mensaje = e.toString().replaceFirst('Exception: ', '');
-
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(mensaje), backgroundColor: AppColors.earthBrown),
+        SnackBar(
+          content: Text(texto('error_actualizar_informacion')),
+          backgroundColor: AppColors.earthBrown,
+        ),
       );
     } finally {
       if (mounted) {
@@ -241,8 +249,8 @@ class _InformacionPersonalState extends State<InformacionPersonal> {
                                                   AppColors.goldSand,
                                               padding:
                                                   const EdgeInsets.symmetric(
-                                                    vertical: 16,
-                                                  ),
+                                                vertical: 16,
+                                              ),
                                               shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(14),
@@ -254,10 +262,10 @@ class _InformacionPersonalState extends State<InformacionPersonal> {
                                                     height: 22,
                                                     child:
                                                         CircularProgressIndicator(
-                                                          strokeWidth: 2,
-                                                          color: AppColors
-                                                              .goldSand,
-                                                        ),
+                                                      strokeWidth: 2,
+                                                      color:
+                                                          AppColors.goldSand,
+                                                    ),
                                                   )
                                                 : Text(
                                                     texto('guardar_cambios'),
@@ -324,7 +332,10 @@ class _InformacionPersonalState extends State<InformacionPersonal> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: AppColors.asphalt, width: 2),
+              borderSide: const BorderSide(
+                color: AppColors.asphalt,
+                width: 2,
+              ),
             ),
           ),
         ),
