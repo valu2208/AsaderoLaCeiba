@@ -85,9 +85,9 @@ class _PedidosPersonalVistaState extends State<PedidosPersonalVista> {
   }
 
   Future<void> _cambiar(PedidoPersonal pedido, String estado) async {
-    // Al enviar a cocina el mesero debe indicar la mesa
+    // La mesa la indica el cliente; el mesero solo la pide si el pedido no la trae
     int? mesa;
-    if (widget.rol == 'mesero' && estado == 'En cocina') {
+    if (widget.rol == 'mesero' && estado == 'En cocina' && pedido.mesa == null) {
       mesa = await pedirMesa(context, pedido);
       if (mesa == null) return;
     }

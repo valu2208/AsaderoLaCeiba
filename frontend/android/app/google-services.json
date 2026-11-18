@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "978670292562-ae185md7lg8hfqu8s6v4ca7mrs6gnlas.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.asadero.la.ceiba",
+            "certificate_hash": "656033ac62761abc06618da97e1787ecff8d7b47"
+          }
+        },
+        {
           "client_id": "978670292562-clg4ho9aidctdopp34r3lhg5vuvsog10.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -21,35 +29,6 @@
             "certificate_hash": "b69dd41b92cf8b314e59f2cc17635be9d40e166e"
           }
         },
-        {
-          "client_id": "978670292562-6f3qglp23eod82ig7vcj1h3i52p3p0gm.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDYpeVPLa-NYFRzWZv84-5vnGS_M5yKlxo"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "978670292562-6f3qglp23eod82ig7vcj1h3i52p3p0gm.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:978670292562:android:b2ae11de753ef395ead98b",
-        "android_client_info": {
-          "package_name": "com.example.asadero"
-        }
-      },
-      "oauth_client": [
         {
           "client_id": "978670292562-6f3qglp23eod82ig7vcj1h3i52p3p0gm.apps.googleusercontent.com",
           "client_type": 3

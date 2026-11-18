@@ -8,16 +8,14 @@ import 'package:asadero/services/api_config.dart';
 import 'package:asadero/services/user_service.dart';
 
 class PedidoService {
+  // El método de pago ya no se elige aquí: se define al final, cuando el
+  // cliente sube su comprobante. La mesa sí es obligatoria.
   Future<int> realizarPedido(
     List<CarritoItem> items, {
-    String metodoPago = 'presencial',
+    required int mesa,
   }) async {
     if (items.isEmpty) {
       throw Exception('El carrito está vacío.');
-    }
-
-    if (!['nequi', 'presencial'].contains(metodoPago.toLowerCase())) {
-      throw Exception('El método de pago no es válido.');
     }
 
     final token = await UserService.getToken();
@@ -56,7 +54,7 @@ class PedidoService {
       body: jsonEncode({
         'total': total,
         'moneda_pago': 'COP',
-        'metodo_pago': metodoPago.toLowerCase(),
+        'numero_mesa': mesa,
         'telefono': telefono.isEmpty ? null : telefono,
         'productos': productos,
       }),

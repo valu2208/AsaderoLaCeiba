@@ -8,6 +8,7 @@ import 'package:asadero/core/traducciones.dart';
 import 'package:asadero/componentes/barra_navegacion.dart';
 import 'package:asadero/componentes/campo_texto.dart';
 import 'package:asadero/componentes/boton_principal.dart';
+import 'package:asadero/componentes/check_terminos.dart';
 import 'package:asadero/pantallas/verificar_correo.dart';
 import 'package:asadero/services/api_config.dart';
 
@@ -26,6 +27,7 @@ class _RegistroState extends State<Registro> {
 
   bool mostrar = false;
   bool mostrarConfirmar = false;
+  bool aceptaTerminos = false;
 
   final GoogleSignIn googleSignIn = GoogleSignIn.instance;
   late Future<void> googleInicializado;
@@ -40,6 +42,13 @@ class _RegistroState extends State<Registro> {
   }
 
   Future<void> registrar() async {
+    if (!aceptaTerminos) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(texto('terminos_requeridos'))));
+      return;
+    }
+
     if (clave.text != confirmar.text) {
       ScaffoldMessenger.of(
         context,
@@ -56,6 +65,7 @@ class _RegistroState extends State<Registro> {
           'telefono': telefono.text.trim(),
           'email': correo.text.trim(),
           'password': clave.text,
+          'acepto_terminos': true,
         }),
       );
 
@@ -83,6 +93,13 @@ class _RegistroState extends State<Registro> {
   }
 
   Future<void> registrarConGoogle() async {
+    if (!aceptaTerminos) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(texto('terminos_requeridos'))));
+      return;
+    }
+
     try {
       await googleInicializado;
 
@@ -94,7 +111,7 @@ class _RegistroState extends State<Registro> {
       final respuesta = await http.post(
         Uri.parse('${ApiConfig.baseUrl}/auth/google'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'idToken': idToken}),
+        body: jsonEncode({'idToken': idToken, 'acepto_terminos': true}),
       );
 
       debugPrint(respuesta.body);
@@ -180,7 +197,12 @@ class _RegistroState extends State<Registro> {
                   });
                 },
               ),
-              const SizedBox(height: 35),
+              const SizedBox(height: 20),
+              CheckTerminos(
+                valor: aceptaTerminos,
+                onCambio: (v) => setState(() => aceptaTerminos = v),
+              ),
+              const SizedBox(height: 15),
               BotonPrincipal(
                 texto: texto('crear_cuenta_boton'),
                 onPressed: registrar,

@@ -1,4 +1,4 @@
-import { obtenerPedidosPorEstadosBD } from '../models/pedido.js';
+import { obtenerPedidosPorEstadosBD, obtenerPedidoPorIdBD } from '../models/pedido.js';
 import { avanzarPedido, PASOS_MESERO } from '../utils/flujoPedido.js';
 
 // Pedidos que el mesero debe atender, del más antiguo al más nuevo
@@ -19,7 +19,8 @@ export const listarPedidosMesero = async (req, res) => {
 };
 
 // El mesero envía a cocina (Pendiente -> En cocina) o entrega (Listo -> Entregado).
-// Al enviar a cocina debe indicar la mesa: { estado: 'En cocina', mesa: 4 }
+// La mesa normalmente ya la indicó el cliente al hacer el pedido.
+// Solo si el pedido no la trae, el mesero debe mandarla: { estado: 'En cocina', mesa: 4 }
 export const actualizarEstadoMesero = async (req, res) => {
     try {
         const { estado } = req.body;
@@ -31,15 +32,16 @@ export const actualizarEstadoMesero = async (req, res) => {
         const extras = {};
 
         if (estado === 'En cocina') {
-            const mesa = Number(req.body.mesa);
+            const { data: pedido } = await obtenerPedidoPorIdBD(req.params.id);
+            const mesaMesero = Number(req.body.mesa);
 
-            if (!Number.isInteger(mesa) || mesa <= 0) {
+            if (Number.isInteger(mesaMesero) && mesaMesero > 0) {
+                extras.numero_mesa = mesaMesero;
+            } else if (!pedido?.numero_mesa) {
                 return res.status(400).json({
-                    error: 'Indica el número de mesa para enviar el pedido a cocina'
+                    error: 'Este pedido no tiene mesa. Indica el número de mesa.'
                 });
             }
-
-            extras.numero_mesa = mesa;
         }
 
         const resultado = await avanzarPedido(req.params.id, estado, PASOS_MESERO, extras);

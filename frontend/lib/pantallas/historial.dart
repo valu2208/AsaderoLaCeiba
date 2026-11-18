@@ -12,6 +12,7 @@ import 'package:asadero/pantallas/home.dart';
 import 'package:asadero/pantallas/perfil.dart';
 import 'package:asadero/pantallas/carrito.dart';
 import 'package:asadero/pantallas/productos.dart';
+import 'package:asadero/pantallas/pagar_pedido.dart';
 
 class Historial extends StatefulWidget {
   const Historial({super.key});
@@ -110,60 +111,33 @@ class _HistorialState extends State<Historial> {
       'productos': obtenerProductos(pedido),
       'total': formatearTotal(pedido['total']),
       'estado': pedido['estado']?.toString() ?? 'Pendiente',
+      'estado_pago': pedido['estado_pago']?.toString() ?? '',
+      if (pedido['numero_mesa'] != null)
+        'mesa': pedido['numero_mesa'].toString(),
     };
   }
 
-  Future<void> confirmarCancelacion(Map<String, String> pedido) async {
-    final confirmar = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.asphalt,
-        title: const Text(
-          'Cancelar pedido',
-          style: TextStyle(color: AppColors.goldSand),
+  // Se puede pagar cuando el pedido ya fue entregado y no hay pago aprobado
+  // ni un comprobante en revisión.
+  bool puedePagar(Map<String, String> pedido) {
+    final pago = pedido['estado_pago'];
+    return pedido['estado'] == 'Entregado' &&
+        pago != 'Aprobado' &&
+        pago != 'Pendiente';
+  }
+
+  Future<void> abrirPago(Map<String, String> pedido) async {
+    final enviado = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PagarPedido(
+          pedidoId: int.parse(pedido['id']!),
+          total: pedido['total']!,
         ),
-        content: Text(
-          '¿Estás seguro de que deseas cancelar ${pedido['numero']}?',
-          style: const TextStyle(color: Colors.white),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text(
-              'Volver',
-              style: TextStyle(color: AppColors.goldSand),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'Sí, cancelar',
-              style: TextStyle(color: Colors.redAccent),
-            ),
-          ),
-        ],
       ),
     );
 
-    if (confirmar != true) return;
-
-    try {
-      await _pedidoService.cancelarPedido(int.parse(pedido['id']!));
-
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pedido cancelado correctamente.')),
-      );
-
-      await cargarPedidos();
-    } catch (e) {
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
-      );
-    }
+    if (enviado == true) await cargarPedidos();
   }
 
   // Confirmar que se desea limpiar todo el historial
@@ -355,8 +329,8 @@ class _HistorialState extends State<Historial> {
                             ),
                           );
                         },
-                        onCancelar: estado == 'Pendiente'
-                            ? () => confirmarCancelacion(pedido)
+                        onPagar: puedePagar(pedido)
+                            ? () => abrirPago(pedido)
                             : null,
                       );
                     }),

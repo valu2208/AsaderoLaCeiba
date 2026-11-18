@@ -1,4 +1,3 @@
-
 import bcrypt from 'bcrypt';
 import { enviarCodigoVerificacion } from '../utils/emailservice.js';
 import { crearNotificacion } from '../models/notificacion.js';
@@ -24,12 +23,19 @@ export const registrarUsuario = async (req, res) => {
             email,
             telefono,
             password,
-            rol
+            rol,
+            acepto_terminos
         } = req.body;
 
         if (!nombre || !email || !telefono || !password) {
             return res.status(400).json({
                 error: 'Nombre, email, teléfono y contraseña son requeridos'
+            });
+        }
+
+        if (acepto_terminos !== true) {
+            return res.status(400).json({
+                error: 'Debes aceptar los términos y condiciones y el uso de tus datos personales'
             });
         }
 
@@ -50,6 +56,7 @@ export const registrarUsuario = async (req, res) => {
             password: passwordHash,
             rol: 'usuario',
             isVerified: false,
+            terminos_aceptados_en: new Date().toISOString(),
             codigoVerificacion,
             codigoVerificacionExpiracion
         });

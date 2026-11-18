@@ -13,6 +13,30 @@ String texto(String clave) {
 }
 
 final Map<String, String> espanol = {
+  // ---- Nuevas: mesa, límites, pago al final y términos ----
+  'mesa': 'Mesa',
+  'mesa_boton': 'Indicar mi mesa',
+  'mesa_cambiar': 'cambiar',
+  'mesa_titulo': '¿En qué mesa estás?',
+  'mesa_requerida': 'Indica tu mesa para que el mesero te encuentre.',
+  'limite_plato': 'Máximo {n} unidades de un mismo plato por pedido.',
+  'limite_pedido': 'Máximo {n} platos por pedido.',
+  'pago_al_final':
+      'El pago se hace al terminar de comer: cuando pidas la cuenta, entra a Historial y toca "Pagar mi cuenta" para ver el QR.',
+  'pagar_cuenta': 'Pagar mi cuenta',
+  'enviar_comprobante': 'Enviar comprobante',
+  'pago_revision': 'Pago en revisión',
+  'pago_aprobado': 'Pago aprobado',
+  'pago_rechazado': 'Pago rechazado: envía el comprobante de nuevo',
+  'terminos_acepto':
+      'Acepto los términos y condiciones y el uso de mis datos personales.',
+  'terminos_leer': 'Leer',
+  'terminos_requeridos':
+      'Debes aceptar los términos y condiciones para registrarte.',
+  'terminos_titulo': 'Términos y condiciones',
+  'terminos_texto':
+      'Al crear tu cuenta en Asadero La Ceiba aceptas estos términos.\n\n1. Datos que recopilamos: nombre, teléfono, correo electrónico, historial de pedidos y comprobantes de pago.\n\n2. Para qué los usamos: crear tu cuenta, tomar y entregar tus pedidos, validar tus pagos, enviarte notificaciones sobre tus pedidos y generar reportes internos del asadero.\n\n3. Tus datos no se venden ni se comparten con terceros, salvo los proveedores necesarios para operar la app (correo, almacenamiento de imágenes y notificaciones).\n\n4. Tus derechos: conocer, actualizar, corregir o solicitar la eliminación de tus datos cuando quieras, escribiendo al asadero.\n\n5. Pedidos: cada pedido tiene un límite de platos y debes indicar tu mesa. El pago se realiza al terminar de comer.\n\n6. El asadero puede actualizar estos términos y te avisará en la app.',
+  // ---- Las que ya tenías ----
   'haz_click_aqui': 'Haz click aquí!',
   'tu_proxima_gran_idea':
       '¡Ven y disfruta el auténtico sabor de Asadero La Ceiba!🍗',
@@ -186,6 +210,29 @@ final Map<String, String> espanol = {
 };
 
 final Map<String, String> ingles = {
+  // ---- New: table, limits, pay at the end and terms ----
+  'mesa': 'Table',
+  'mesa_boton': 'Select my table',
+  'mesa_cambiar': 'change',
+  'mesa_titulo': 'Which table are you at?',
+  'mesa_requerida': 'Select your table so the waiter can find you.',
+  'limite_plato': 'Maximum {n} units of the same dish per order.',
+  'limite_pedido': 'Maximum {n} dishes per order.',
+  'pago_al_final':
+      'You pay when you finish eating: when you ask for the bill, go to History and tap "Pay my bill" to see the QR.',
+  'pagar_cuenta': 'Pay my bill',
+  'enviar_comprobante': 'Send receipt',
+  'pago_revision': 'Payment under review',
+  'pago_aprobado': 'Payment approved',
+  'pago_rechazado': 'Payment rejected: send the receipt again',
+  'terminos_acepto':
+      'I accept the terms and conditions and the use of my personal data.',
+  'terminos_leer': 'Read',
+  'terminos_requeridos': 'You must accept the terms and conditions to sign up.',
+  'terminos_titulo': 'Terms and conditions',
+  'terminos_texto':
+      'By creating your Asadero La Ceiba account you accept these terms.\n\n1. Data we collect: name, phone, email, order history and payment receipts.\n\n2. What we use it for: creating your account, taking and delivering your orders, validating payments, sending you order notifications and internal reports.\n\n3. Your data is not sold or shared with third parties, except providers needed to run the app (email, image storage and notifications).\n\n4. Your rights: to know, update, correct or request deletion of your data at any time by contacting the restaurant.\n\n5. Orders: each order has a dish limit and you must indicate your table. Payment is made when you finish eating.\n\n6. The restaurant may update these terms and will notify you in the app.',
+  // ---- Existing ----
   'haz_click_aqui': 'Click here!',
   'tu_proxima_gran_idea':
       'Come and enjoy the authentic flavor of Asadero La Ceiba!🍗',
@@ -356,6 +403,30 @@ final Map<String, String> ingles = {
 };
 
 final Map<String, String> portugues = {
+  // ---- Novas: mesa, limites, pagamento no final e termos ----
+  'mesa': 'Mesa',
+  'mesa_boton': 'Indicar minha mesa',
+  'mesa_cambiar': 'mudar',
+  'mesa_titulo': 'Em qual mesa você está?',
+  'mesa_requerida': 'Indique sua mesa para que o garçom encontre você.',
+  'limite_plato': 'Máximo de {n} unidades do mesmo prato por pedido.',
+  'limite_pedido': 'Máximo de {n} pratos por pedido.',
+  'pago_al_final':
+      'O pagamento é feito ao terminar de comer: ao pedir a conta, vá em Histórico e toque em "Pagar minha conta" para ver o QR.',
+  'pagar_cuenta': 'Pagar minha conta',
+  'enviar_comprobante': 'Enviar comprovante',
+  'pago_revision': 'Pagamento em análise',
+  'pago_aprobado': 'Pagamento aprovado',
+  'pago_rechazado': 'Pagamento rejeitado: envie o comprovante novamente',
+  'terminos_acepto':
+      'Aceito os termos e condições e o uso dos meus dados pessoais.',
+  'terminos_leer': 'Ler',
+  'terminos_requeridos':
+      'Você deve aceitar os termos e condições para se cadastrar.',
+  'terminos_titulo': 'Termos e condições',
+  'terminos_texto':
+      'Ao criar sua conta no Asadero La Ceiba você aceita estes termos.\n\n1. Dados que coletamos: nome, telefone, e-mail, histórico de pedidos e comprovantes de pagamento.\n\n2. Para que usamos: criar sua conta, receber e entregar seus pedidos, validar pagamentos, enviar notificações e gerar relatórios internos.\n\n3. Seus dados não são vendidos nem compartilhados com terceiros, exceto provedores necessários para operar o app (e-mail, armazenamento de imagens e notificações).\n\n4. Seus direitos: conhecer, atualizar, corrigir ou solicitar a exclusão dos seus dados a qualquer momento, entrando em contato com o restaurante.\n\n5. Pedidos: cada pedido tem um limite de pratos e você deve indicar sua mesa. O pagamento é feito ao terminar de comer.\n\n6. O restaurante pode atualizar estes termos e avisará no app.',
+  // ---- Existentes ----
   'haz_click_aqui': 'Clique aqui!',
   'tu_proxima_gran_idea':
       'Venha e desfrute do autêntico sabor do Asadero La Ceiba!🍗',

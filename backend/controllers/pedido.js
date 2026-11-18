@@ -1,4 +1,3 @@
-
 import {
   crearPedidoBD,
   obtenerTodosPedidosBD,
@@ -9,6 +8,8 @@ import {
 } from '../models/pedido.js';
 
 import { crearNotificacion, avisarRol } from '../models/notificacion.js';
+
+import { validarLimitesPedido, mesaValida } from '../utils/limitesPedido.js';
 
 // AJUSTA esta ruta a donde esté tu cliente de Supabase
 // (mira los imports de la parte de arriba de models/pedido.js)
@@ -35,17 +36,31 @@ export const crearPedido = async (req, res) => {
         error: 'El pedido debe incluir al menos un producto'
       });
     }
+
+    // Límite de platos por pedido (que no se pasen).
+    const errorLimite = validarLimitesPedido(productos);
+    if (errorLimite) {
+      return res.status(400).json({ error: errorLimite });
+    }
+
+    // La mesa la indica el cliente para que el mesero lo ubique.
+    const mesa = Number(numero_mesa);
+    if (!mesaValida(mesa)) {
+      return res.status(400).json({ error: 'Indica en qué mesa estás.' });
+    }
+
+    // El método de pago se define al final, cuando el cliente sube su comprobante.
     const metodoPago = String(metodo_pago || 'presencial').toLowerCase();
 
-if (!['presencial', 'qr', 'nequi'].includes(metodoPago)) {
-  return res.status(400).json({
-    error: 'El método de pago no es válido.'
-  });
-}
+    if (!['presencial', 'qr', 'nequi'].includes(metodoPago)) {
+      return res.status(400).json({
+        error: 'El método de pago no es válido.'
+      });
+    }
 
     const datosPedido = {
       usuario_id,
-      numero_mesa,
+      numero_mesa: mesa,
       total,
       moneda_pago,
       total_moneda_extranjera,
@@ -78,7 +93,7 @@ if (!['presencial', 'qr', 'nequi'].includes(metodoPago)) {
       pedido_id: data.id,
       tipo: 'pedido',
       titulo: `Nuevo pedido #${data.id}`,
-      mensaje: 'Un cliente hizo un pedido. Revísalo y envíalo a cocina.'
+      mensaje: `Un cliente hizo un pedido en la mesa ${mesa}. Revísalo y envíalo a cocina.`
     });
 
     if (errorMeseros) {
