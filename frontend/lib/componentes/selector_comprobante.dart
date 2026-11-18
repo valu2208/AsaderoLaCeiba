@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:asadero/componentes/visor_imagen.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/traducciones.dart';
 
+// Botón para elegir la foto del comprobante y vista previa (se puede ampliar).
 class SelectorComprobante extends StatelessWidget {
   final XFile? comprobante;
   final bool deshabilitado;
@@ -16,6 +18,40 @@ class SelectorComprobante extends StatelessWidget {
     required this.onElegir,
     this.deshabilitado = false,
   });
+
+  Widget _vistaPrevia(BuildContext context) {
+    final archivo = File(comprobante!.path);
+
+    return GestureDetector(
+      onTap: () => verImagenGrande(
+        context,
+        Image.file(
+          archivo,
+          width: double.infinity,
+          height: double.infinity,
+          fit: BoxFit.contain,
+        ),
+      ),
+      child: Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.file(
+              archivo,
+              height: 180,
+              width: double.infinity,
+              fit: BoxFit.contain,
+            ),
+          ),
+          const Positioned(
+            right: 6,
+            bottom: 6,
+            child: Icon(Icons.zoom_in, color: Colors.white70),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,15 +78,7 @@ class SelectorComprobante extends StatelessWidget {
         ),
         if (comprobante != null) ...[
           const SizedBox(height: 12),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.file(
-              File(comprobante!.path),
-              height: 180,
-              width: double.infinity,
-              fit: BoxFit.contain,
-            ),
-          ),
+          _vistaPrevia(context),
         ],
       ],
     );

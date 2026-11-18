@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/componentes/imagen_adaptable.dart';
+import 'package:asadero/componentes/visor_imagen.dart';
 
 // Parte de arriba del detalle: fondo rojo curvo con el plato en círculo que sobresale
 class CabeceraDetalle extends StatelessWidget {
@@ -33,7 +34,14 @@ class CabeceraDetalle extends StatelessWidget {
                   color: AppColors.goldSand,
                 ),
               )
-            : ImagenAdaptable(ruta: imagen!, ancho: diametro, alto: diametro),
+            : FotoAmpliable(
+                ruta: imagen!,
+                child: ImagenAdaptable(
+                  ruta: imagen!,
+                  ancho: diametro,
+                  alto: diametro,
+                ),
+              ),
       ),
     );
   }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:asadero/core/avisar_limite.dart';
 import 'package:asadero/core/carrito_estado.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/componentes/boton_agregar.dart';
 import 'package:asadero/componentes/imagen_adaptable.dart';
+import 'package:asadero/componentes/visor_imagen.dart';
 
 // Un plato en fila (como la lista del carrito): foto a la izquierda, nombre,
 // descripción, precio y los botones − 1 +. Al tocar la fila se abre el detalle.
@@ -43,7 +45,10 @@ class FilaProducto extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(19),
-        child: ImagenAdaptable(ruta: imagen),
+        child: FotoAmpliable(
+          ruta: imagen,
+          child: ImagenAdaptable(ruta: imagen),
+        ),
       ),
     );
   }
@@ -54,7 +59,10 @@ class FilaProducto extends StatelessWidget {
       builder: (context, items, hijo) {
         return BotonAgregar(
           cantidad: CarritoEstado.cantidadDe(nombre),
-          onAgregar: () => CarritoEstado.agregar(productoId, nombre, precio, imagen),
+          onAgregar: () => avisarLimite(
+            context,
+            CarritoEstado.agregar(productoId, nombre, precio, imagen),
+          ),
           onRestar: () => CarritoEstado.restar(nombre),
         );
       },

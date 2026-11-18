@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:asadero/core/avisar_limite.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/carrito_estado.dart';
 import 'package:asadero/core/idioma.dart';
 import 'package:asadero/core/traducciones.dart';
 import 'package:asadero/componentes/imagen_producto.dart';
 import 'package:asadero/componentes/boton_agregar.dart';
+import 'package:asadero/componentes/visor_imagen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TarjetaProducto extends StatelessWidget {
@@ -109,7 +111,7 @@ class TarjetaProducto extends StatelessWidget {
                                   nombreOriginal,
                                 ),
                                 onAgregar: () {
-                                  CarritoEstado.agregar(
+                                  final limite = CarritoEstado.agregar(
                                     productoId,
                                     nombreOriginal,
                                     precio,
@@ -117,6 +119,7 @@ class TarjetaProducto extends StatelessWidget {
                                     nombreEn: nombreEn,
                                     nombrePt: nombrePt,
                                   );
+                                  avisarLimite(context, limite);
                                 },
                                 onRestar: () {
                                   CarritoEstado.restar(nombreOriginal);
@@ -133,7 +136,10 @@ class TarjetaProducto extends StatelessWidget {
                   top: 0,
                   left: ancho * 0.13,
                   right: ancho * 0.13,
-                  child: ImagenProducto(imagen: imagen, alto: altoImagen),
+                  child: FotoAmpliable(
+                    ruta: imagen,
+                    child: ImagenProducto(imagen: imagen, alto: altoImagen),
+                  ),
                 ),
               ],
             );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/componentes/imagen_adaptable.dart';
+import 'package:asadero/componentes/visor_imagen.dart';
 import 'package:asadero/core/formato.dart';
 import 'package:asadero/models/producto_model.dart';
 
@@ -18,12 +19,12 @@ class TarjetaAdminProducto extends StatelessWidget {
   });
 
   Widget _foto() {
+    final ruta = producto.imagenUrl ?? '';
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: ImagenAdaptable(
-        ruta: producto.imagenUrl ?? '',
-        ancho: 70,
-        alto: 70,
+      child: FotoAmpliable(
+        ruta: ruta,
+        child: ImagenAdaptable(ruta: ruta, ancho: 70, alto: 70),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/componentes/visor_imagen.dart';
 
 class TarjetaComprobante extends StatelessWidget {
   final Map<String, dynamic> pago;
@@ -15,12 +16,7 @@ class TarjetaComprobante extends StatelessWidget {
     this.ocupado = false,
   });
 
-  void _ampliar(BuildContext context, String url) {
-    showDialog<void>(
-      context: context,
-      builder: (_) => Dialog(child: InteractiveViewer(child: Image.network(url))),
-    );
-  }
+  void _ampliar(BuildContext context, String url) => verFoto(context, url);
 
   @override
   Widget build(BuildContext context) {

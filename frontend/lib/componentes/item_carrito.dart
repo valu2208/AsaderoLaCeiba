@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:asadero/componentes/imagen_adaptable.dart';
+import 'package:asadero/componentes/visor_imagen.dart';
 import 'package:asadero/core/carrito_estado.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/idioma.dart';
@@ -31,7 +32,10 @@ class ItemCarrito extends StatelessWidget {
         contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8),
-          child: ImagenAdaptable(ruta: item.imagen, ancho: 55, alto: 55),
+          child: FotoAmpliable(
+            ruta: item.imagen,
+            child: ImagenAdaptable(ruta: item.imagen, ancho: 55, alto: 55),
+          ),
         ),
         title: Text(
           _nombre(),
