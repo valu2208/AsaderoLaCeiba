@@ -167,15 +167,18 @@ export const obtenerPedidosPorEstadosBD = async (estados) => {
 
   const [usuarios, productos] = await Promise.all([
     supabase.from('usuarios').select('id, nombre').in('id', usuarioIds),
-    supabase.from('productos').select('id, nombre').in('id', productoIds)
+    supabase
+      .from('productos')
+      .select('id, nombre, descripcion, imagen_url')
+      .in('id', productoIds)
   ]);
 
   const nombreUsuario = new Map(
     (usuarios.data || []).map(u => [u.id, u.nombre])
   );
 
-  const nombreProducto = new Map(
-    (productos.data || []).map(p => [p.id, p.nombre])
+  const productoPorId = new Map(
+    (productos.data || []).map(p => [p.id, p])
   );
 
   const completos = pedidos.map(pedido => ({
@@ -186,10 +189,17 @@ export const obtenerPedidosPorEstadosBD = async (estados) => {
     notas: pedido.notas,
     mesa: pedido.numero_mesa,
     cliente: nombreUsuario.get(pedido.usuario_id) || 'Cliente',
-    items: (pedido.detalle_pedido || []).map(detalle => ({
-      nombre: nombreProducto.get(detalle.producto_id) || 'Plato',
-      cantidad: detalle.cantidad
-    }))
+    items: (pedido.detalle_pedido || []).map(detalle => {
+      const producto = productoPorId.get(detalle.producto_id);
+
+      return {
+        nombre: producto?.nombre || 'Plato',
+        descripcion: producto?.descripcion || '',
+        imagen_url: producto?.imagen_url || null,
+        precio: detalle.precio_unitario,
+        cantidad: detalle.cantidad
+      };
+    })
   }));
 
   return { data: completos };
