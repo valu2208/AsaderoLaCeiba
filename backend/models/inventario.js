@@ -9,6 +9,17 @@ export const obtenerInventario = async () => {
   return { data, error };
 };
 
+// Un ingrediente por su id (para saber cómo estaba antes de cambiarlo)
+export const obtenerIngredienteBD = async (id) => {
+  const { data, error } = await supabase
+    .from('inventario_ingredientes')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle();
+
+  return { data, error };
+};
+
 export const actualizarStockBD = async (id, stock_actual) => {
   const { data, error } = await supabase
     .from('inventario_ingredientes')

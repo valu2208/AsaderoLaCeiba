@@ -1,10 +1,12 @@
 import {
   obtenerInventario,
+  obtenerIngredienteBD,
   actualizarStockBD,
   crearIngredienteBD,
   editarIngredienteBD,
   eliminarIngredienteBD
 } from '../models/inventario.js';
+import { avisarSiBajoStock } from '../utils/avisoStock.js';
 
 const esEnteroValido = (valor) => Number.isInteger(valor) && valor >= 0;
 const conBajo = (i) => ({ ...i, bajo: i.stock_actual <= i.stock_minimo });
@@ -22,7 +24,8 @@ export const listarInventario = async (req, res) => {
   }
 };
 
-// Ajustar la cantidad disponible de un ingrediente
+// Ajustar la cantidad disponible de un ingrediente.
+// Si el stock llega al mínimo o se agota, se avisa a los administradores.
 export const actualizarStock = async (req, res) => {
   try {
     const stock = Number(req.body.stock_actual);
@@ -33,10 +36,15 @@ export const actualizarStock = async (req, res) => {
       });
     }
 
+    // Se guarda cómo estaba antes para avisar solo cuando cruza el mínimo
+    const { data: antes } = await obtenerIngredienteBD(req.params.id);
+
     const { data, error } = await actualizarStockBD(req.params.id, stock);
 
     if (error) return res.status(500).json({ error: error.message });
     if (!data) return res.status(404).json({ error: 'Ingrediente no encontrado' });
+
+    await avisarSiBajoStock(antes, data);
 
     return res.status(200).json({
       message: 'Stock actualizado',
