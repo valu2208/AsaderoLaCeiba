@@ -1,9 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:image_picker_android/image_picker_android.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 
 import 'package:asadero/core/idioma.dart';
+import 'package:asadero/core/notificaciones_push.dart';
 import 'package:asadero/pantallas/bienvenida.dart';
 
 Future<void> main() async {
@@ -18,6 +18,9 @@ Future<void> main() async {
 
   // Cargar el idioma guardado.
   await Idioma.cargar();
+
+  // Notificaciones push (Firebase).
+  await NotificacionesPush.iniciar();
 
   runApp(const MyApp());
 }

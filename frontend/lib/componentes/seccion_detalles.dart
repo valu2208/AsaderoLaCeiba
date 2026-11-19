@@ -4,7 +4,7 @@ import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/idioma.dart';
 import 'package:asadero/core/traducciones.dart';
 
-// Chip "Detalles" + descripción del plato.
+// Descripción del plato con "Ver más" / "Ver menos" si el texto es largo.
 class SeccionDetalles extends StatefulWidget {
   final String texto;
   final int lineasMax;
@@ -37,37 +37,6 @@ class _SeccionDetallesState extends State<SeccionDetalles> {
 
   void _cambiar() => setState(() => _abierto = !_abierto);
 
-  Widget _chip(bool largo) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(20),
-      onTap: largo ? _cambiar : null,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 9),
-        decoration: BoxDecoration(
-          color: AppColors.demonicPresence,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              texto('detalles'),
-              style: GoogleFonts.josefinSans(
-                color: AppColors.goldSand,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            if (largo)
-              Icon(
-                _abierto ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                color: AppColors.goldSand,
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<String>(
@@ -81,8 +50,6 @@ class _SeccionDetallesState extends State<SeccionDetalles> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _chip(largo),
-                const SizedBox(height: 14),
                 AnimatedSize(
                   duration: const Duration(milliseconds: 250),
                   alignment: Alignment.topCenter,

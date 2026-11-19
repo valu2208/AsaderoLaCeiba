@@ -9,6 +9,7 @@ class TarjetaPedidoPersonal extends StatelessWidget {
   final PedidoPersonal pedido;
   final String? accion; // texto del botón (null = sin botón)
   final VoidCallback? onAccion;
+  final VoidCallback? onTap; // al tocar la card se abre el detalle
   final bool ocupado; // true = botón desactivado mientras se envía
 
   const TarjetaPedidoPersonal({
@@ -16,6 +17,7 @@ class TarjetaPedidoPersonal extends StatelessWidget {
     required this.pedido,
     this.accion,
     this.onAccion,
+    this.onTap,
     this.ocupado = false,
   });
 
@@ -47,53 +49,57 @@ class TarjetaPedidoPersonal extends StatelessWidget {
       color: AppColors.demonicPresence,
       elevation: 4,
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(child: _linea('Pedido #${pedido.id}', size: 18, negrita: true)),
-                _estado(),
-              ],
-            ),
-            _linea('${pedido.cliente} · ${pedido.hace}', opacidad: 0.8),
-            if (pedido.mesa != null) ...[
-              const SizedBox(height: 4),
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Row(
                 children: [
-                  const Icon(Icons.table_restaurant, color: AppColors.goldSand, size: 18),
-                  const SizedBox(width: 6),
-                  _linea('Mesa ${pedido.mesa}', size: 16, negrita: true),
+                  Expanded(child: _linea('Pedido #${pedido.id}', size: 18, negrita: true)),
+                  _estado(),
                 ],
               ),
-            ],
-            Divider(color: AppColors.goldSand.withValues(alpha: 0.25), height: 20),
-            for (final item in pedido.items)
-              _linea('${item.cantidad} × ${item.nombre}', size: 16),
-            if (pedido.notas.isNotEmpty) ...[
-              const SizedBox(height: 6),
-              _linea('Nota: ${pedido.notas}', opacidad: 0.85),
-            ],
-            const SizedBox(height: 8),
-            _linea('Total ${formatoPesos(pedido.total)}', negrita: true),
-            if (accion != null) ...[
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.goldSand,
-                    foregroundColor: AppColors.demonicPresence,
-                  ),
-                  onPressed: ocupado ? null : onAccion,
-                  child: Text(accion!),
+              _linea('${pedido.cliente} · ${pedido.hace}', opacidad: 0.8),
+              if (pedido.mesa != null) ...[
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    const Icon(Icons.table_restaurant, color: AppColors.goldSand, size: 18),
+                    const SizedBox(width: 6),
+                    _linea('Mesa ${pedido.mesa}', size: 16, negrita: true),
+                  ],
                 ),
-              ),
+              ],
+              Divider(color: AppColors.goldSand.withValues(alpha: 0.25), height: 20),
+              for (final item in pedido.items)
+                _linea('${item.cantidad} × ${item.nombre}', size: 16),
+              if (pedido.notas.isNotEmpty) ...[
+                const SizedBox(height: 6),
+                _linea('Nota: ${pedido.notas}', opacidad: 0.85),
+              ],
+              const SizedBox(height: 8),
+              _linea('Total ${formatoPesos(pedido.total)}', negrita: true),
+              if (accion != null) ...[
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.goldSand,
+                      foregroundColor: AppColors.demonicPresence,
+                    ),
+                    onPressed: ocupado ? null : onAccion,
+                    child: Text(accion!),
+                  ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );

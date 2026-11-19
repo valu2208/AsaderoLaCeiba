@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../core/notificaciones_push.dart';
 import '../models/user_model.dart';
 import 'api_config.dart';
 
@@ -32,6 +33,9 @@ class UserService {
     } else {
       await prefs.remove('user_avatar');
     }
+
+    // Registrar este celular para recibir las push de este usuario
+    NotificacionesPush.registrarToken();
   }
 
   // Comprobar si el Access Token está próximo a caducar.
@@ -162,6 +166,9 @@ class UserService {
 
   // Cerrar sesión.
   static Future<void> cerrarSesion() async {
+    // Dejar de recibir las push de este usuario en este celular
+    await NotificacionesPush.quitarToken();
+
     final refreshToken = await _secureStorage.read(key: 'refresh_token');
 
     if (refreshToken != null && refreshToken.isNotEmpty) {

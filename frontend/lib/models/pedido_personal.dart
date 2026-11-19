@@ -2,13 +2,27 @@
 class ItemPedido {
   final String nombre;
   final int cantidad;
+  final String descripcion;
+  final String? imagen; // URL de la foto (null = sin foto)
+  final double precio; // precio de una unidad
 
-  const ItemPedido({required this.nombre, required this.cantidad});
+  const ItemPedido({
+    required this.nombre,
+    required this.cantidad,
+    this.descripcion = '',
+    this.imagen,
+    this.precio = 0,
+  });
 
   factory ItemPedido.fromJson(Map<String, dynamic> json) {
+    final foto = json['imagen_url']?.toString() ?? '';
+
     return ItemPedido(
       nombre: json['nombre']?.toString() ?? 'Plato',
       cantidad: (json['cantidad'] as num?)?.toInt() ?? 1,
+      descripcion: json['descripcion']?.toString() ?? '',
+      imagen: foto.isEmpty ? null : foto,
+      precio: double.tryParse(json['precio']?.toString() ?? '') ?? 0,
     );
   }
 }

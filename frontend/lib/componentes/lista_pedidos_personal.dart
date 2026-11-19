@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/colores.dart';
 import '../models/pedido_personal.dart';
+import '../pantallas/detalle_pedido_personal.dart';
 import 'pestana_pedidos.dart';
 import 'tarjeta_pedido_personal.dart';
 
@@ -43,6 +44,25 @@ class ListaPedidosPersonal extends StatelessWidget {
     );
   }
 
+  // Lo que hace el botón de la card (y del detalle) para este pedido
+  VoidCallback? _accionDe(PedidoPersonal pedido) {
+    if (pestana.estadoSiguiente == null || ocupado) return null;
+    return () => onCambiar(pedido, pestana.estadoSiguiente!);
+  }
+
+  void _abrirDetalle(BuildContext context, PedidoPersonal pedido) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => DetallePedidoPersonal(
+          pedido: pedido,
+          accion: pestana.accion,
+          onAccion: _accionDe(pedido),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (cargando) {
@@ -64,9 +84,8 @@ class ListaPedidosPersonal extends StatelessWidget {
                   pedido: pedido,
                   accion: pestana.accion,
                   ocupado: ocupado,
-                  onAccion: pestana.estadoSiguiente == null
-                      ? null
-                      : () => onCambiar(pedido, pestana.estadoSiguiente!),
+                  onAccion: _accionDe(pedido),
+                  onTap: () => _abrirDetalle(context, pedido),
                 );
               },
             ),
