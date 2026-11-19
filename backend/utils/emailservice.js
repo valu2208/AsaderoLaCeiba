@@ -1,15 +1,5 @@
-
 import 'dotenv/config';
-
-// Evitar que caracteres especiales dañen el HTML del correo.
-const escaparHtml = (texto) => {
-    return String(texto ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-};
+import { plantillaCodigo } from './plantillaCorreo.js';
 
 // Función general para enviar correos mediante Brevo.
 const enviarCorreoBrevo = async ({
@@ -97,60 +87,18 @@ export const enviarCodigoVerificacion = async (
     nombreDestino,
     codigo
 ) => {
-    const nombre = escaparHtml(nombreDestino);
-    const codigoSeguro = escaparHtml(codigo);
-
     return enviarCorreoBrevo({
         emailDestino,
         nombreDestino,
         asunto: 'Código de verificación - Asadero La Ceiba',
-        contenido: `
-            <div style="
-                font-family: Arial, sans-serif;
-                max-width: 500px;
-                margin: 0 auto;
-                padding: 24px;
-                border: 1px solid #eeeeee;
-                border-radius: 12px;
-            ">
-                <h2 style="text-align: center;">
-                    Asadero La Ceiba
-                </h2>
-
-                <h3 style="text-align: center;">
-                    Verifica tu cuenta
-                </h3>
-
-                <p>Hola <strong>${nombre}</strong>,</p>
-
-                <p>
-                    Gracias por registrarte en Asadero La Ceiba.
-                </p>
-
-                <p>Tu código de verificación es:</p>
-
-                <div style="
-                    text-align: center;
-                    margin: 30px 0;
-                ">
-                    <span style="
-                        font-size: 32px;
-                        font-weight: bold;
-                        letter-spacing: 8px;
-                        color: #8B0000;
-                    ">
-                        ${codigoSeguro}
-                    </span>
-                </div>
-
-                <p>
-                    Este código vence en
-                    <strong>10 minutos</strong>.
-                </p>
-
-                <p>Asadero La Ceiba</p>
-            </div>
-        `
+        contenido: plantillaCodigo({
+            titulo: 'Verifica tu cuenta',
+            nombre: nombreDestino,
+            mensaje: 'Gracias por registrarte en Asadero La Ceiba. '
+                + 'Usa el siguiente código para verificar tu correo:',
+            codigo,
+            aviso: 'Si no creaste esta cuenta, ignora este mensaje.'
+        })
     });
 };
 
@@ -160,65 +108,17 @@ export const enviarCodigoRecuperacion = async (
     nombreDestino,
     codigo
 ) => {
-    const nombre = escaparHtml(nombreDestino);
-    const codigoSeguro = escaparHtml(codigo);
-
     return enviarCorreoBrevo({
         emailDestino,
         nombreDestino,
         asunto: 'Código para recuperar tu contraseña - Asadero La Ceiba',
-        contenido: `
-            <div style="
-                font-family: Arial, sans-serif;
-                max-width: 500px;
-                margin: 0 auto;
-                padding: 24px;
-                border: 1px solid #eeeeee;
-                border-radius: 12px;
-            ">
-                <h2 style="text-align: center;">
-                    Asadero La Ceiba
-                </h2>
-
-                <h3 style="text-align: center;">
-                    Recuperación de contraseña
-                </h3>
-
-                <p>Hola <strong>${nombre}</strong>,</p>
-
-                <p>
-                    Recibimos una solicitud para recuperar la contraseña
-                    de tu cuenta en Asadero La Ceiba.
-                </p>
-
-                <p>Tu código de recuperación es:</p>
-
-                <div style="
-                    text-align: center;
-                    margin: 30px 0;
-                ">
-                    <span style="
-                        font-size: 32px;
-                        font-weight: bold;
-                        letter-spacing: 8px;
-                        color: #8B0000;
-                    ">
-                        ${codigoSeguro}
-                    </span>
-                </div>
-
-                <p>
-                    Este código tiene una duración de
-                    <strong>10 minutos</strong>.
-                </p>
-
-                <p>
-                    Si tú no solicitaste este cambio,
-                    puedes ignorar este correo.
-                </p>
-
-                <p>Asadero La Ceiba</p>
-            </div>
-        `
+        contenido: plantillaCodigo({
+            titulo: 'Recuperación de contraseña',
+            nombre: nombreDestino,
+            mensaje: 'Has solicitado restablecer tu contraseña. '
+                + 'Utiliza el siguiente código de verificación:',
+            codigo,
+            aviso: 'Si no solicitaste este cambio, ignora este mensaje.'
+        })
     });
 };
