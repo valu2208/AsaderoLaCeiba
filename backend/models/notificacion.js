@@ -1,5 +1,5 @@
-
 import { supabase } from '../config/supabase.js';
+import { enviarPush } from '../utils/push.js';
 
 // Crear una notificación para un usuario.
 export const crearNotificacion = async ({
@@ -20,6 +20,11 @@ export const crearNotificacion = async ({
         })
         .select()
         .single();
+
+    // Push en segundo plano: no se espera y nunca rompe el flujo
+    if (!error) {
+        enviarPush([usuario_id], { tipo, titulo, mensaje, pedido_id });
+    }
 
     return { data, error };
 };
@@ -95,6 +100,14 @@ export const avisarRol = async (
         .from('notificaciones')
         .insert(filas)
         .select();
+
+    // Push en segundo plano para todos los usuarios de ese rol
+    if (!errorInsert) {
+        enviarPush(
+            usuarios.map((usuario) => usuario.id),
+            { tipo, titulo, mensaje, pedido_id }
+        );
+    }
 
     return { data, error: errorInsert };
 };

@@ -12,6 +12,7 @@ import tasasCambioRouter from './routes/tasasCambio.js';
 import notificacionRouter from './routes/notificacion.js';
 import meseroRouter from './routes/mesero.js';
 import inventarioRouter from './routes/inventario.js';
+import dispositivoRouter from './routes/dispositivo.js';
 import cors from 'cors';
 
 
@@ -47,6 +48,7 @@ app.use('/cocina', cocinaRouter);
 app.use('/chat', chatRouter);
 app.use('/tasas-cambio', tasasCambioRouter);
 app.use('/notificaciones', notificacionRouter);
+app.use('/dispositivos', dispositivoRouter);
 
 // Rutas de mesero e inventario
 app.use('/mesero', meseroRouter);
