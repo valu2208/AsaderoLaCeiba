@@ -73,6 +73,25 @@ class ChatService {
         : 'En este momento no pudimos procesar tu solicitud.';
   }
 
+  // invitado: no hay sesión iniciada. Si no, la sesión existía y expiró.
+  static String _mensajeSesion(String idioma, bool invitado) {
+    if (idioma == 'English') {
+      return invitado
+          ? 'Sign in to use the assistant.'
+          : 'Your session has expired. Please sign in again.';
+    }
+
+    if (idioma == 'Português') {
+      return invitado
+          ? 'Faça login para usar o assistente.'
+          : 'Sua sessão expirou. Faça login novamente.';
+    }
+
+    return invitado
+        ? 'Inicia sesión para usar el asistente.'
+        : 'Tu sesión ha expirado. Inicia sesión nuevamente.';
+  }
+
   static Future<Map<String, String>> _headersAutenticados() async {
     final token = await UserService.getToken();
 
@@ -114,7 +133,7 @@ class ChatService {
 
       if (response.statusCode == 401 || response.statusCode == 403) {
         return RespuestaChat(
-          texto: 'Tu sesión ha expirado. Inicia sesión nuevamente.',
+          texto: _mensajeSesion(idioma, false),
           sesionId: sesionId,
         );
       }
@@ -128,7 +147,7 @@ class ChatService {
 
       return RespuestaChat(
         texto: e.toString().contains('sesión')
-            ? e.toString().replaceFirst('Exception: ', '')
+            ? _mensajeSesion(idioma, true)
             : _mensajeError(idioma, true),
         sesionId: sesionId,
       );

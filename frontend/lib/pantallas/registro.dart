@@ -79,9 +79,15 @@ class _RegistroState extends State<Registro> {
           ),
         );
       } else {
+        // 409: el correo ya está verificado. Cualquier otro código es un
+        // problema del servidor o de los datos enviados.
+        final mensaje = respuesta.statusCode == 409
+            ? 'correo_registrado'
+            : 'error_servidor';
+
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text(texto('correo_registrado'))));
+        ).showSnackBar(SnackBar(content: Text(texto(mensaje))));
       }
     } catch (e) {
       if (!mounted) return;
