@@ -5,6 +5,7 @@ import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/navegacion_rol.dart';
 import 'package:asadero/pantallas/admin_inventario_page.dart';
 import 'package:asadero/pantallas/admin_menu_page.dart';
+import 'package:asadero/pantallas/admin_pagos_page.dart';
 import 'package:asadero/pantallas/admin_pedidos_page.dart';
 import 'package:asadero/pantallas/admin_product_list_page.dart';
 import 'package:asadero/pantallas/admin_reportes_page.dart';
@@ -12,7 +13,7 @@ import 'package:asadero/pantallas/admin_usuarios_page.dart';
 import 'package:asadero/pantallas/home.dart';
 
 class AdminDrawer extends StatefulWidget {
-  // pantalla abierta: 'productos', 'menu', 'inventario', 'pedidos', 'reportes' o 'usuarios'
+  // pantalla abierta: 'productos', 'menu', 'inventario', 'pedidos', 'pagos', 'reportes' o 'usuarios'
   final String actual;
 
   const AdminDrawer({super.key, this.actual = 'productos'});
@@ -105,6 +106,8 @@ class _AdminDrawerState extends State<AdminDrawer> {
                       const AdminInventarioPage()),
                   _opcion(Icons.receipt_long, 'Pedidos', 'pedidos',
                       const AdminPedidosPage()),
+                  _opcion(Icons.payments, 'Pagos', 'pagos',
+                      const AdminPagosPage()),
                   _opcion(Icons.bar_chart, 'Reportes', 'reportes',
                       const AdminReportesPage()),
                   _opcion(Icons.people, 'Usuarios y roles', 'usuarios',

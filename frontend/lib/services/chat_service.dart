@@ -120,7 +120,7 @@ class ChatService {
               if (sesionId != null) 'sesion_id': sesionId,
             }),
           )
-          .timeout(const Duration(seconds: 30));
+          .timeout(const Duration(seconds: 60));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(utf8.decode(response.bodyBytes));
