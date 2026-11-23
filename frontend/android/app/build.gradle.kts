@@ -23,12 +23,12 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging")
 
     // ---> DEPENDENCIA DE DESUGARING REQUERIDA POR NOTIFICACIONES <---
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
 
 android {
     namespace = "com.asadero.la.ceiba"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
