@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import { enviarCodigoVerificacion } from '../utils/emailservice.js';
 import { crearNotificacion } from '../models/notificacion.js';
+import { eliminarCuentaCompleta } from '../models/eliminarCuenta.js';
 
 import {
     crearUsuario,
@@ -307,11 +308,19 @@ export const eliminarUsuario = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const { data, error } = await eliminarUsuarioBD(id);
+                const { data, error } = await eliminarCuentaCompleta(id);
 
         if (error) {
+            console.error('ERROR EN eliminarUsuario:', error);
+
             return res.status(500).json({
                 error: error.message
+            });
+        }
+
+        if (!data) {
+            return res.status(404).json({
+                error: 'La cuenta no existe o ya fue eliminada'
             });
         }
 

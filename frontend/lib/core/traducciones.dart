@@ -257,6 +257,8 @@ final Map<String, String> espanol = {
   'ingresa_correo_contrasena': 'Ingresa tu correo y contraseña.',
   'error_iniciar_sesion':
       'No se pudo iniciar sesión. Verifica tus datos e inténtalo nuevamente.',
+  'error_servidor_dormido': // NUEVO
+      'El servidor está despertando. Espera un minuto e inténtalo de nuevo.',
   'error_registro_google': 'No se pudo completar el registro con Google.',
 };
 
@@ -498,6 +500,8 @@ final Map<String, String> ingles = {
   'ingresa_correo_contrasena': 'Enter your email and password.',
   'error_iniciar_sesion':
       'Could not sign in. Check your details and try again.',
+  'error_servidor_dormido': // NUEVO
+      'The server is waking up. Wait a minute and try again.',
   'error_registro_google': 'Could not complete registration with Google.',
 };
 
@@ -747,5 +751,7 @@ final Map<String, String> portugues = {
   'ingresa_correo_contrasena': 'Digite seu e-mail e sua senha.',
   'error_iniciar_sesion':
       'Não foi possível entrar. Verifique seus dados e tente novamente.',
+  'error_servidor_dormido': // NUEVO
+      'O servidor está acordando. Aguarde um minuto e tente novamente.',
   'error_registro_google': 'Não foi possível concluir o cadastro com o Google.',
 };

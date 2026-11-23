@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../core/error_api.dart';
 import '../core/notificaciones_push.dart';
 import '../models/user_model.dart';
 import 'api_config.dart';
@@ -207,13 +208,15 @@ class UserService {
     final http.Response respuesta;
 
     try {
-      respuesta = await http.post(
-        Uri.parse('${ApiConfig.baseUrl}$ruta'),
-        headers: ApiConfig.headers,
-        body: jsonEncode(cuerpo),
-      );
+      respuesta = await http
+          .post(
+            Uri.parse('${ApiConfig.baseUrl}$ruta'),
+            headers: ApiConfig.headers,
+            body: jsonEncode(cuerpo),
+          )
+          .timeout(const Duration(seconds: 75));
     } catch (_) {
-      throw Exception('No se pudo conectar con el servidor');
+      throw const ErrorApi(null, 'No se pudo conectar con el servidor');
     }
 
     Map<String, dynamic> datos;
@@ -221,12 +224,16 @@ class UserService {
     try {
       datos = Map<String, dynamic>.from(jsonDecode(respuesta.body));
     } catch (_) {
-      throw Exception('Respuesta inesperada (código ${respuesta.statusCode})');
+      throw ErrorApi(
+        respuesta.statusCode,
+        'Respuesta inesperada (código ${respuesta.statusCode})',
+      );
     }
 
     if (respuesta.statusCode != 200) {
-      throw Exception(
-        datos['error'] ?? datos['message'] ?? 'No se pudo iniciar sesión',
+      throw ErrorApi(
+        respuesta.statusCode,
+        '${datos['error'] ?? datos['message'] ?? 'No se pudo iniciar sesión'}',
       );
     }
 

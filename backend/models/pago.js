@@ -37,7 +37,7 @@ export const listarComprobantesBD = async () => {
   if (error) return { error };
   if (!pedidos || pedidos.length === 0) return { data: [] };
 
-  const ids = [...new Set(pedidos.map(p => p.usuario_id))];
+  const ids = [...new Set(pedidos.map(p => p.usuario_id).filter(Boolean))];
   const { data: usuarios } = await supabase
     .from('usuarios').select('id, nombre, telefono').in('id', ids);
 

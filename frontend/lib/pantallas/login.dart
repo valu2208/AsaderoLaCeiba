@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/core/error_api.dart';
 import 'package:asadero/core/traducciones.dart';
 import 'package:asadero/core/navegacion_rol.dart';
 import 'package:asadero/models/user_model.dart';
@@ -53,7 +54,17 @@ class _LoginState extends State<Login> {
       final usuario = await autenticar();
       if (!mounted) return;
       irSegunRol(context, usuario.rol);
-    } catch (e) {
+    } on ErrorApi catch (e) {
+      if (!mounted) return;
+      if (e.servidorNoDisponible) {
+        _mensaje(texto('error_servidor_dormido'));
+      } else if (e.codigo == 403) {
+        // Cuenta sin verificar u otro bloqueo: el servidor explica el motivo.
+        _mensaje(e.mensaje);
+      } else {
+        _mensaje(texto('error_iniciar_sesion'));
+      }
+    } catch (_) {
       if (mounted) {
         _mensaje(texto('error_iniciar_sesion'));
       }

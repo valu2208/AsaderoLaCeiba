@@ -155,8 +155,9 @@ export const obtenerPedidosPorEstadosBD = async (estados) => {
   if (error) return { error };
   if (!pedidos || pedidos.length === 0) return { data: [] };
 
-  const usuarioIds = [...new Set(pedidos.map(p => p.usuario_id))];
-
+    const usuarioIds = [
+    ...new Set(pedidos.map(p => p.usuario_id).filter(Boolean))
+  ];
   const productoIds = [
     ...new Set(
       pedidos.flatMap(p =>
