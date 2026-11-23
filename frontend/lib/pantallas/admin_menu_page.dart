@@ -36,6 +36,13 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
   // Solo desayuno y almuerzo cambian según el día
   bool get _usaDias => _categoria == 'desayuno' || _categoria == 'almuerzo';
 
+  // Días que se pueden marcar al crear o editar un plato (null = no pide días)
+  List<String>? get _diasPermitidos {
+    if (_usaDias) return diasEntreSemana;
+    if (_categoria == 'fin_de_semana') return diasFinDeSemana;
+    return null;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -55,6 +62,7 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
   }
 
   Future<void> _formulario({ProductoModel? producto}) async {
+    final permitidos = _diasPermitidos;
     final guardado = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
@@ -63,8 +71,8 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
         producto: producto,
         categoria: _categoria,
         masPedido: false,
-        conDias: _usaDias,
-        diaInicial: _dia,
+        diasPermitidos: permitidos,
+        diaInicial: permitidos?.contains(_dia) == true ? _dia : null,
       ),
     );
 

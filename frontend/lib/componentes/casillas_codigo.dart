@@ -6,8 +6,9 @@ import 'package:asadero/core/colores.dart';
 // Un TextField invisible recibe lo que se teclea y las casillas lo muestran.
 class CasillasCodigo extends StatefulWidget {
   final TextEditingController controller;
+  final double alto;
 
-  const CasillasCodigo({super.key, required this.controller});
+  const CasillasCodigo({super.key, required this.controller, this.alto = 65});
 
   @override
   State<CasillasCodigo> createState() => _CasillasCodigoState();
@@ -62,7 +63,7 @@ class _CasillasCodigoState extends State<CasillasCodigo>
       onTap: _enfocar,
       child: Container(
         width: 45,
-        height: 65,
+        height: widget.alto,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: AppColors.goldSand,
@@ -89,7 +90,7 @@ class _CasillasCodigoState extends State<CasillasCodigo>
     final digitos = widget.controller.text.split('');
 
     return SizedBox(
-      height: 65,
+      height: widget.alto,
       child: Stack(
         children: [
           Positioned.fill(

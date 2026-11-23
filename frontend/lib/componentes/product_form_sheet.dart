@@ -12,7 +12,7 @@ class ProductFormSheet extends StatefulWidget {
   final ProductoModel? producto; // Si es nulo es CREAR, si tiene datos es EDITAR
   final String? categoria; // Menú: desayuno, almuerzo, fin_de_semana o gaseosas
   final bool? masPedido; // true = el plato sale en "Lo más pedido"
-  final bool conDias; // true = pide los días de la semana (desayuno y almuerzo)
+  final List<String>? diasPermitidos; // días que se pueden marcar; null = no pide días
   final String? diaInicial; // día marcado al crear un plato nuevo
 
   const ProductFormSheet({
@@ -20,7 +20,7 @@ class ProductFormSheet extends StatefulWidget {
     this.producto,
     this.categoria,
     this.masPedido,
-    this.conDias = false,
+    this.diasPermitidos,
     this.diaInicial,
   });
 
@@ -68,7 +68,7 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
 
   Future<void> _guardarProducto() async {
     if (!_formKey.currentState!.validate()) return;
-    if (widget.conDias && _dias.isEmpty) return _aviso('Elige al menos un día');
+    if (widget.diasPermitidos != null && _dias.isEmpty) return _aviso('Elige al menos un día');
 
     setState(() => _isLoading = true);
 
@@ -83,7 +83,7 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
         imagen: imagen, // null = se conserva la foto actual
         categoria: widget.categoria,
         masPedido: widget.masPedido,
-        dias: widget.conDias ? _dias : null,
+        dias: widget.diasPermitidos != null ? _dias : null,
       );
       if (mounted) Navigator.pop(context, true); // true = se guardó
     } catch (e) {
@@ -130,8 +130,9 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
                 maxLines: 3,
                 decoration: decoracionCampo('Descripción'),
               ),
-              if (widget.conDias)
+              if (widget.diasPermitidos != null)
                 SelectorDiasPlato(
+                  dias: widget.diasPermitidos!,
                   seleccionados: _dias,
                   onCambio: (nuevos) => setState(() => _dias = nuevos),
                 ),

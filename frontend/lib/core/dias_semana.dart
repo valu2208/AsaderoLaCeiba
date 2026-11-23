@@ -9,6 +9,16 @@ const List<String> diasSemana = [
   'domingo',
 ];
 
+// Días que se pueden marcar al crear o editar un plato
+const List<String> diasEntreSemana = [
+  'lunes',
+  'martes',
+  'miercoles',
+  'jueves',
+  'viernes',
+];
+const List<String> diasFinDeSemana = ['sabado', 'domingo'];
+
 // Nombre para mostrar en pantalla
 const Map<String, String> nombresDias = {
   'lunes': 'Lunes',

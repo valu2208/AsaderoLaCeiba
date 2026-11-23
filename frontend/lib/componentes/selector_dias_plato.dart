@@ -4,11 +4,13 @@ import 'package:asadero/core/dias_semana.dart';
 
 // En el formulario del plato: marca los días en que se sirve
 class SelectorDiasPlato extends StatelessWidget {
+  final List<String> dias; // días que se pueden marcar
   final List<String> seleccionados;
   final ValueChanged<List<String>> onCambio;
 
   const SelectorDiasPlato({
     super.key,
+    required this.dias,
     required this.seleccionados,
     required this.onCambio,
   });
@@ -25,7 +27,7 @@ class SelectorDiasPlato extends StatelessWidget {
         Wrap(
           spacing: 8,
           children: [
-            for (final dia in diasSemana)
+            for (final dia in dias)
               FilterChip(
                 label: Text(nombresDias[dia]!),
                 selected: seleccionados.contains(dia),
