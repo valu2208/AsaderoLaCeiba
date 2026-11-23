@@ -1,14 +1,6 @@
-
 import Groq from 'groq-sdk';
 
 export const traducirProducto = async ({ nombre, descripcion }) => {
-    const traduccionesVacias = {
-        nombre_en: '',
-        description_en: '',
-        nombre_pt: '',
-        descripcion_pt: ''
-    };
-
     try {
         if (!process.env.GROQ_API_KEY) {
             throw new Error('No está configurada GROQ_API_KEY');
@@ -33,9 +25,16 @@ REGLAS:
 - Conserva el significado original.
 - No inventes ingredientes ni características.
 - No agregues información que no esté en el texto.
-- Conserva nombres culturales y propios de platos
-  cuando su traducción pueda cambiar su identidad.
-- Mantén nombres como "Asado Huilense" cuando corresponda.
+- El nombre del producto SÍ debe traducirse al idioma de destino
+  siempre que exista una forma natural de decirlo.
+  Ejemplo: "Cuarto de Pollo" -> "Quarter Chicken" (inglés)
+  y "Quarto de Frango" (portugués).
+- Solo conserva el nombre original cuando sea una marca
+  (por ejemplo Sprite) o un plato típico sin equivalente
+  (por ejemplo Sancocho o Asado Huilense). En ese caso la
+  descripción sí debe quedar traducida.
+- "nombre_en" y "nombre_pt" no deben ser iguales al nombre
+  original, salvo en los casos de marca o plato típico.
 - El nombre debe ser natural para el idioma de destino.
 - Si la descripción está vacía, devuelve una cadena vacía.
 - Devuelve únicamente un objeto JSON válido.
@@ -93,6 +92,7 @@ FORMATO OBLIGATORIO:
         console.error('ERROR AL TRADUCIR PRODUCTO:', error);
 
         // El producto podrá guardarse en español aunque Groq falle.
-        return traduccionesVacias;
+        // Se devuelve null para NO borrar traducciones que ya existían.
+        return null;
     }
 };

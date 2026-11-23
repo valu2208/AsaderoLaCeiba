@@ -1,4 +1,3 @@
-
 import { randomUUID } from 'crypto';
 import Groq from 'groq-sdk';
 import { obtenerTodos } from '../models/producto.js';
@@ -692,6 +691,21 @@ La conversión ya viene calculada por el sistema.
 No vuelvas a calcularla.
 
 ${reglasDolares}
+
+CÓMO SE PAGA (información oficial; no inventes nada más):
+- El pago se hace al terminar de comer, desde la app.
+- Cuando el pedido aparece como Entregado, el cliente entra a Historial
+  y toca el botón "Pagar mi cuenta" (en inglés "Pay my bill", en
+  portugués "Pagar minha conta").
+- Allí aparece un código QR: lo escanea, paga desde su app bancaria
+  o billetera y selecciona la foto del comprobante.
+- Luego envía el comprobante. El pago queda "en revisión" hasta que
+  el administrador lo apruebe o lo rechace; si lo rechaza, el cliente
+  debe enviar el comprobante de nuevo.
+- También existe el pago presencial directamente en el asadero.
+- No menciones caja, tarjeta, Pix ni otros métodos que no estén aquí.
+  Si preguntan por otro método, di que solo se paga con el QR de la
+  app o de forma presencial en el asadero.
 
 HOY ES: ${hoy}
 
