@@ -40,6 +40,15 @@ export const registrarUsuario = async (req, res) => {
             });
         }
 
+        // Si el correo ya existe y está verificado, no se puede registrar otra vez.
+        const { data: existente } = await obtenerUsuarioPorEmail(email);
+
+        if (existente?.isVerified) {
+            return res.status(409).json({
+                error: 'El correo ya está registrado'
+            });
+        }
+
         const passwordHash = await bcrypt.hash(password, 10);
 
         const codigoVerificacion = Math.floor(
@@ -50,17 +59,28 @@ export const registrarUsuario = async (req, res) => {
             Date.now() + 10 * 60 * 1000
         ).toISOString();
 
-        const { data, error } = await crearUsuario({
-            nombre,
-            email,
-            telefono,
-            password: passwordHash,
-            rol: 'usuario',
-            isVerified: false,
-            terminos_aceptados_en: new Date().toISOString(),
-            codigoVerificacion,
-            codigoVerificacionExpiracion
-        });
+        // Si quedó a medias (sin verificar), se actualiza con los datos nuevos
+        // y se le envía un código nuevo. Si no existe, se crea.
+        const { data, error } = existente
+            ? await actualizarUsuario(existente.id, {
+                nombre,
+                telefono,
+                password: passwordHash,
+                terminos_aceptados_en: new Date().toISOString(),
+                codigoVerificacion,
+                codigoVerificacionExpiracion
+            })
+            : await crearUsuario({
+                nombre,
+                email,
+                telefono,
+                password: passwordHash,
+                rol: 'usuario',
+                isVerified: false,
+                terminos_aceptados_en: new Date().toISOString(),
+                codigoVerificacion,
+                codigoVerificacionExpiracion
+            });
 
         if (error) {
             return res.status(500).json({
@@ -87,7 +107,7 @@ export const registrarUsuario = async (req, res) => {
                 email: data.email,
                 telefono: data.telefono,
                 rol: data.rol,
-                isVerified: data.isVerified,
+                isVerified: data.isVerified ?? false,
                 creado_en: data.creado_en
             }
         });
