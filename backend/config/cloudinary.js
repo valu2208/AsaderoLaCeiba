@@ -1,4 +1,3 @@
-
 import { v2 as cloudinary } from 'cloudinary';
 import multer from 'multer';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
@@ -52,11 +51,16 @@ export const uploadComprobante = multer({
     fileSize: 8 * 1024 * 1024,
   },
   fileFilter: (req, file, cb) => {
-    const permitidos = ['image/jpeg', 'image/png', 'image/webp'];
+    // Algunos celulares mandan la foto como 'application/octet-stream'
+    // (el tipo se deduce de la extensión del archivo). Cloudinary comprueba
+    // después que el archivo sea realmente una imagen.
+    const tipo = String(file.mimetype || '').toLowerCase();
+    const permitido = tipo.startsWith('image/') || tipo === 'application/octet-stream';
 
-    if (permitidos.includes(file.mimetype)) {
+    if (permitido) {
       cb(null, true);
     } else {
+      console.log('Comprobante rechazado:', file.mimetype, file.originalname);
       cb(new Error('Formato de imagen no permitido.'));
     }
   },
