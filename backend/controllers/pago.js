@@ -1,4 +1,3 @@
-
 import {
   obtenerPedidoPagoBD,
   guardarComprobanteBD,
@@ -37,11 +36,8 @@ export const subirComprobante = async (req, res) => {
       });
     }
 
-    if (!['qr', 'nequi'].includes(String(pedido.metodo_pago).toLowerCase())) {
-      return res.status(400).json({
-        error: 'Este pedido no corresponde a un pago con QR.'
-      });
-    }
+    // El método de pago se define aquí, al subir el comprobante: el pedido
+    // se crea como 'presencial' y guardarComprobanteBD lo cambia a 'qr'.
 
     if (pedido.estado_pago === 'Aprobado') {
       return res.status(400).json({
