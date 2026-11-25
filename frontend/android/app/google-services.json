@@ -38,6 +38,14 @@
           }
         },
         {
+          "client_id": "978670292562-foijbuukrqpi4trj2k13eshqbqpbuo9b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.asadero.la.ceiba",
+            "certificate_hash": "3b1f631f1eb1141698ac88475d7d4e54127b6668"
+          }
+        },
+        {
           "client_id": "978670292562-vtdju5v7dceuu2smgatfphpg451r5dn2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
