@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:asadero/core/transicion.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/idioma.dart';
@@ -62,7 +63,7 @@ class _HomeState extends State<Home> {
 
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const Perfil()),
+      rutaInstantanea(const Perfil()),
     );
 
     if (!mounted) return;
@@ -79,7 +80,7 @@ class _HomeState extends State<Home> {
 
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const Historial()),
+      rutaInstantanea(const Historial()),
     );
   }
 
@@ -101,14 +102,14 @@ class _HomeState extends State<Home> {
           } else if (indice == 2) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const Productos()),
+              rutaInstantanea(const Productos()),
             );
           } else if (indice == 3) {
             _abrirHistorial();
           } else if (indice == 4) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const Carrito()),
+              rutaInstantanea(const Carrito()),
             );
           }
         },

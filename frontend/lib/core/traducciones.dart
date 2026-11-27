@@ -127,6 +127,7 @@ final Map<String, String> espanol = {
   'menu_gaseosas_descripcion': 'Gaseosas y bebidas frías',
   'menu_fin_semana_titulo': 'Fin de semana',
   'menu_fin_semana_descripcion': 'Especiales de sábado y domingo',
+  'menu_fin_semana_aviso': 'Disponible sábado y domingo',
 
   // Carrito y pedidos
   'carrito': 'Carrito de compras',
@@ -197,12 +198,18 @@ final Map<String, String> espanol = {
   'tus_avisos': 'Tus avisos',
   'borrar_notificaciones': 'Borrar notificaciones',
   'pregunta_borrar_notificaciones':
-      '¿Estás seguro de que deseas eliminar todas tus notificaciones? Esta acción no se puede deshacer.',
+      '¿Eliminar las notificaciones que ya leíste? Las que no has leído se quedan.',
   'borrar_todas': 'Borrar todas',
-  'notificaciones_eliminadas': 'Notificaciones eliminadas correctamente.',
+  'borrar_leidas': 'Borrar leídas',
+  'notificaciones_eliminadas': 'Notificaciones leídas eliminadas.',
   'hoy': 'Hoy',
   'leida': 'Leída',
-  'sin_leer_tocar': 'Sin leer · Toca para marcar',
+  'sin_leer_tocar': 'Sin leer · Toca para ver',
+  'tipo_bienvenida': 'Bienvenida',
+  'tipo_pedido': 'Pedido',
+  'tipo_estado_pedido': 'Estado del pedido',
+  'tipo_stock_bajo': 'Stock bajo',
+  'tipo_aviso': 'Aviso',
   'sin_notificaciones': 'No tienes notificaciones todavía.',
   'debes_iniciar_sesion_notificaciones':
       'Debes iniciar sesión para ver tus notificaciones.',
@@ -375,6 +382,7 @@ final Map<String, String> ingles = {
   'menu_gaseosas_descripcion': 'Soft drinks and cold beverages',
   'menu_fin_semana_titulo': 'Weekend',
   'menu_fin_semana_descripcion': 'Saturday and Sunday specials',
+  'menu_fin_semana_aviso': 'Available Saturday and Sunday',
 
   // Cart and orders
   'carrito': 'Shopping Cart',
@@ -443,12 +451,18 @@ final Map<String, String> ingles = {
   'tus_avisos': 'Your notifications',
   'borrar_notificaciones': 'Delete notifications',
   'pregunta_borrar_notificaciones':
-      'Are you sure you want to delete all your notifications? This action cannot be undone.',
+      'Delete the notifications you have already read? Unread ones will stay.',
   'borrar_todas': 'Delete all',
-  'notificaciones_eliminadas': 'Notifications deleted successfully.',
+  'borrar_leidas': 'Delete read',
+  'notificaciones_eliminadas': 'Read notifications deleted.',
   'hoy': 'Today',
   'leida': 'Read',
-  'sin_leer_tocar': 'Unread · Tap to mark as read',
+  'sin_leer_tocar': 'Unread · Tap to view',
+  'tipo_bienvenida': 'Welcome',
+  'tipo_pedido': 'Order',
+  'tipo_estado_pedido': 'Order status',
+  'tipo_stock_bajo': 'Low stock',
+  'tipo_aviso': 'Notice',
   'sin_notificaciones': 'You do not have any notifications yet.',
   'debes_iniciar_sesion_notificaciones':
       'You must sign in to view your notifications.',
@@ -621,6 +635,7 @@ final Map<String, String> portugues = {
   'menu_gaseosas_descripcion': 'Refrigerantes e bebidas geladas',
   'menu_fin_semana_titulo': 'Fim de semana',
   'menu_fin_semana_descripcion': 'Especiais de sábado e domingo',
+  'menu_fin_semana_aviso': 'Disponível sábado e domingo',
 
   // Carrinho e pedidos
   'carrito': 'Carrinho de compras',
@@ -690,12 +705,18 @@ final Map<String, String> portugues = {
   'tus_avisos': 'Seus avisos',
   'borrar_notificaciones': 'Excluir notificações',
   'pregunta_borrar_notificaciones':
-      'Tem certeza de que deseja excluir todas as suas notificações? Esta ação não pode ser desfeita.',
+      'Excluir as notificações que você já leu? As não lidas continuam aqui.',
   'borrar_todas': 'Excluir todas',
-  'notificaciones_eliminadas': 'Notificações excluídas com sucesso.',
+  'borrar_leidas': 'Excluir lidas',
+  'notificaciones_eliminadas': 'Notificações lidas excluídas.',
   'hoy': 'Hoje',
   'leida': 'Lida',
-  'sin_leer_tocar': 'Não lida · Toque para marcar como lida',
+  'sin_leer_tocar': 'Não lida · Toque para ver',
+  'tipo_bienvenida': 'Boas-vindas',
+  'tipo_pedido': 'Pedido',
+  'tipo_estado_pedido': 'Estado do pedido',
+  'tipo_stock_bajo': 'Estoque baixo',
+  'tipo_aviso': 'Aviso',
   'sin_notificaciones': 'Você ainda não tem notificações.',
   'debes_iniciar_sesion_notificaciones':
       'Você precisa entrar na sua conta para ver suas notificações.',

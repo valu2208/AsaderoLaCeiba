@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:asadero/core/transicion.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
@@ -124,7 +125,7 @@ class _PerfilState extends State<Perfil> {
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => pantalla),
+      rutaInstantanea(pantalla),
     );
   }
 

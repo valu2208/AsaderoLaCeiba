@@ -7,12 +7,19 @@ import 'package:asadero/core/dias_semana.dart';
 class BarraDias extends StatelessWidget {
   final String seleccionado;
   final ValueChanged<String> onCambio;
+  final List<String> dias; // por defecto solo de lunes a viernes
 
-  const BarraDias({super.key, required this.seleccionado, required this.onCambio});
+  const BarraDias({
+    super.key,
+    required this.seleccionado,
+    required this.onCambio,
+    this.dias = diasEntreSemana,
+  });
 
   // Del crema al rosado, un tono más por cada día
   Color _color(int indice) {
-    return Color.lerp(AppColors.goldSand, const Color(0xFFF2677A), indice / 6)!;
+    final fin = dias.length > 1 ? dias.length - 1 : 1;
+    return Color.lerp(AppColors.goldSand, const Color(0xFFF2677A), indice / fin)!;
   }
 
   @override
@@ -22,10 +29,10 @@ class BarraDias extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        itemCount: diasSemana.length,
+        itemCount: dias.length,
         separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (context, indice) {
-          final dia = diasSemana[indice];
+          final dia = dias[indice];
           final activo = dia == seleccionado;
 
           return GestureDetector(

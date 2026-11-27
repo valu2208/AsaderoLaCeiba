@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:asadero/core/transicion.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/idioma.dart';
@@ -355,22 +356,22 @@ class _HistorialState extends State<Historial> {
               if (indice == 0) {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (_) => const Home()),
+                  rutaInstantanea(const Home()),
                 );
               } else if (indice == 1) {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (_) => const Perfil()),
+                  rutaInstantanea(const Perfil()),
                 );
               } else if (indice == 2) {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (_) => const Productos()),
+                  rutaInstantanea(const Productos()),
                 );
               } else if (indice == 4) {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (_) => const Carrito()),
+                  rutaInstantanea(const Carrito()),
                 );
               }
             },

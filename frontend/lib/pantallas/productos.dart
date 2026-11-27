@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/core/dias_semana.dart';
 import 'package:asadero/core/idioma.dart';
 import 'package:asadero/core/traducciones.dart';
 import 'package:asadero/core/transicion.dart';
@@ -59,13 +60,14 @@ class Productos extends StatelessWidget {
       icono: Icons.celebration,
       color: const Color(0xFF4A2312),
       colorFin: const Color(0xFF1C0A0A),
+      aviso: esFinDeSemana() ? null : texto('menu_fin_semana_aviso'),
     ),
   ];
 
   void _ir(BuildContext context, Widget pantalla) {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => pantalla),
+      rutaInstantanea(pantalla),
     );
   }
 
@@ -84,6 +86,18 @@ class Productos extends StatelessWidget {
     }
 
     _ir(context, pantalla);
+  }
+
+  // Una opción con candado (Fin de semana entre semana) no abre los platos
+  void _abrir(BuildContext context, OpcionMenu opcion) {
+    if (opcion.aviso != null) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(opcion.aviso!)));
+      return;
+    }
+
+    Navigator.push(context, rutaSuave(MenuCategoria(opcion: opcion)));
   }
 
   // Flecha de volver: regresa al Home
@@ -125,10 +139,7 @@ class Productos extends StatelessWidget {
                     Expanded(
                       child: TarjetaOpcionMenu(
                         opcion: opcion,
-                        onTap: () => Navigator.push(
-                          context,
-                          rutaSuave(MenuCategoria(opcion: opcion)),
-                        ),
+                        onTap: () => _abrir(context, opcion),
                       ),
                     ),
                 ],

@@ -19,8 +19,9 @@ class GoogleAuthService {
         throw Exception('No se pudo obtener el token de Google');
       }
       return idToken;
-    } on GoogleSignInException {
-      throw Exception('No se pudo iniciar sesión con Google');
+    } on GoogleSignInException catch (e) {
+      // Se deja el código real de Google para saber por qué falló.
+      throw Exception('Google: ${e.code.name} ${e.description ?? ''}'.trim());
     }
   }
 }

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:asadero/componentes/carrito_vacio.dart';
 import 'package:asadero/componentes/item_carrito.dart';
@@ -93,7 +92,8 @@ class _CarritoState extends State<Carrito> {
 
   Widget _botonPedido() {
     return Container(
-      padding: const EdgeInsets.all(15),
+      // Deja espacio abajo para que la barra del celular no tape el botón
+      padding: EdgeInsets.fromLTRB(15, 15, 15, 15 + MediaQuery.of(context).viewPadding.bottom),
       color: AppColors.earthBrown,
       child: ElevatedButton(
         onPressed: _enviando ? null : _realizarPedido,

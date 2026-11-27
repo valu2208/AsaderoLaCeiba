@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:asadero/core/modo_admin.dart';
 import 'package:asadero/services/user_service.dart';
 import 'package:asadero/pantallas/home.dart';
 import 'package:asadero/pantallas/login.dart';
@@ -22,6 +23,7 @@ Widget pantallaPorRol(String rol) {
 
 // Lleva al usuario a su pantalla y borra el historial (no puede volver al login con "atrás")
 void irSegunRol(BuildContext context, String rol) {
+  ModoAdmin.viendoCliente.value = false;
   Navigator.pushAndRemoveUntil(
     context,
     MaterialPageRoute(builder: (_) => pantallaPorRol(rol)),
@@ -32,6 +34,7 @@ void irSegunRol(BuildContext context, String rol) {
 // Borra la sesión guardada y vuelve al login sin historial
 Future<void> cerrarSesionYSalir(BuildContext context) async {
   await UserService.cerrarSesion();
+  ModoAdmin.viendoCliente.value = false;
   if (!context.mounted) return;
   Navigator.pushAndRemoveUntil(
     context,

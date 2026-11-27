@@ -10,6 +10,7 @@ class OpcionMenu {
   final Color color; // inicio del degradado
   final Color colorFin; // final del degradado
   final bool porDia; // true = el cliente solo ve los platos de hoy
+  final String? aviso; // con texto: la opción se ve con candado y este aviso
 
   const OpcionMenu({
     required this.titulo,
@@ -20,6 +21,7 @@ class OpcionMenu {
     required this.color,
     required this.colorFin,
     this.porDia = false,
+    this.aviso,
   });
 
   // Nombres de las animaciones que unen la card con la barra de arriba

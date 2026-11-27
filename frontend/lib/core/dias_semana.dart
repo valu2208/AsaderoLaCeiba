@@ -32,3 +32,6 @@ const Map<String, String> nombresDias = {
 
 // El día de hoy, en el formato de la base de datos
 String diaDeHoy() => diasSemana[DateTime.now().weekday - 1];
+
+// true si hoy es sábado o domingo
+bool esFinDeSemana() => diasFinDeSemana.contains(diaDeHoy());

@@ -31,7 +31,8 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
   final _service = AdminProductService();
   late Future<List<ProductoModel>> _productos;
   String _categoria = 'desayuno';
-  String _dia = diaDeHoy();
+  // Sábado y domingo no están en Desayuno ni Almuerzo: ese día empieza en lunes
+  String _dia = diasEntreSemana.contains(diaDeHoy()) ? diaDeHoy() : 'lunes';
 
   // Solo desayuno y almuerzo cambian según el día
   bool get _usaDias => _categoria == 'desayuno' || _categoria == 'almuerzo';

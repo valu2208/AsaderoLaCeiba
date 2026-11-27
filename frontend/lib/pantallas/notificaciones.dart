@@ -1,13 +1,13 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/idioma.dart';
 import 'package:asadero/core/traducciones.dart';
-import 'package:asadero/services/api_config.dart';
-import 'package:asadero/services/user_service.dart';
+import 'package:asadero/componentes/dialogo_borrar_leidas.dart';
+import 'package:asadero/componentes/dialogo_notificacion.dart';
+import 'package:asadero/componentes/fondo_degradado.dart';
+import 'package:asadero/componentes/lista_notificaciones.dart';
+import 'package:asadero/services/notificaciones_service.dart';
 
 class Notificaciones extends StatefulWidget {
   const Notificaciones({super.key});
@@ -22,208 +22,78 @@ class _NotificacionesState extends State<Notificaciones> {
   bool eliminando = false;
   String? error;
 
+  bool get _hayLeidas => notificaciones.any((n) => n['leida'] == true);
+
   @override
   void initState() {
     super.initState();
-    _cargarNotificaciones();
+    _cargar();
   }
 
-  Future<void> _cargarNotificaciones() async {
+  String _clave(Object e) => e.toString().replaceFirst('Exception: ', '');
+
+  void _aviso(String mensaje) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mensaje)));
+  }
+
+  Future<void> _cargar() async {
     setState(() {
       cargando = true;
       error = null;
     });
 
     try {
-      final token = await UserService.getToken();
-
-      if (token == null || token.isEmpty) {
-        throw Exception('debes_iniciar_sesion_notificaciones');
-      }
-
-      final respuesta = await http.get(
-        Uri.parse('${ApiConfig.baseUrl}/notificaciones'),
-        headers: {...ApiConfig.headers, 'Authorization': 'Bearer $token'},
-      );
-
-      if (respuesta.statusCode != 200) {
-        throw Exception('error_cargar_notificaciones');
-      }
-
-      final List<dynamic> datos = jsonDecode(respuesta.body);
-
+      final datos = await NotificacionesService.listar();
       if (!mounted) return;
-
       setState(() {
-        notificaciones = datos
-            .map((item) => Map<String, dynamic>.from(item))
-            .toList();
+        notificaciones = datos;
         cargando = false;
       });
     } catch (e) {
       if (!mounted) return;
-
-      final clave = e.toString().replaceFirst('Exception: ', '');
-
       setState(() {
-        error = texto(clave);
+        error = texto(_clave(e));
         cargando = false;
       });
     }
   }
 
-  Future<void> _marcarComoLeida(Map<String, dynamic> notificacion) async {
+  // Abre la ventana de detalle y la marca como leída
+  Future<void> _abrir(Map<String, dynamic> notificacion) async {
+    showDialog(
+      context: context,
+      builder: (_) => DialogoNotificacion(notificacion: notificacion),
+    );
+
     if (notificacion['leida'] == true) return;
 
     try {
-      final token = await UserService.getToken();
-
-      if (token == null || token.isEmpty) {
-        throw Exception('debes_iniciar_sesion_nuevamente');
-      }
-
-      final respuesta = await http.patch(
-        Uri.parse(
-          '${ApiConfig.baseUrl}/notificaciones/${notificacion['id']}/leida',
-        ),
-        headers: {...ApiConfig.headers, 'Authorization': 'Bearer $token'},
-      );
-
-      if (respuesta.statusCode != 200) {
-        throw Exception('error_marcar_notificacion');
-      }
-
+      await NotificacionesService.marcarLeida('${notificacion['id']}');
       if (!mounted) return;
-
-      setState(() {
-        notificacion['leida'] = true;
-      });
+      setState(() => notificacion['leida'] = true);
     } catch (e) {
-      if (!mounted) return;
-
-      final clave = e.toString().replaceFirst('Exception: ', '');
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(texto(clave))),
-      );
+      if (mounted) _aviso(texto(_clave(e)));
     }
   }
 
-  Future<void> _confirmarEliminar() async {
-    final confirmar = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.asphalt,
-        title: Text(
-          texto('borrar_notificaciones'),
-          style: const TextStyle(color: AppColors.goldSand),
-        ),
-        content: Text(
-          texto('pregunta_borrar_notificaciones'),
-          style: const TextStyle(color: AppColors.goldSand),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(
-              texto('cancelar'),
-              style: const TextStyle(color: AppColors.goldSand),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(
-              texto('borrar_todas'),
-              style: const TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      ),
-    );
+  Future<void> _borrarLeidas() async {
+    if (!await confirmarBorrarLeidas(context)) return;
 
-    if (confirmar == true) {
-      await _eliminarNotificaciones();
-    }
-  }
-
-  Future<void> _eliminarNotificaciones() async {
-    setState(() {
-      eliminando = true;
-    });
+    setState(() => eliminando = true);
 
     try {
-      final token = await UserService.getToken();
-
-      if (token == null || token.isEmpty) {
-        throw Exception('debes_iniciar_sesion_nuevamente');
-      }
-
-      final respuesta = await http.delete(
-        Uri.parse('${ApiConfig.baseUrl}/notificaciones'),
-        headers: {...ApiConfig.headers, 'Authorization': 'Bearer $token'},
-      );
-
-      if (respuesta.statusCode != 200) {
-        throw Exception('error_eliminar_notificaciones');
-      }
-
+      await NotificacionesService.eliminarLeidas();
       if (!mounted) return;
-
       setState(() {
-        notificaciones.clear();
+        notificaciones.removeWhere((n) => n['leida'] == true);
         eliminando = false;
       });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(texto('notificaciones_eliminadas'))),
-      );
+      _aviso(texto('notificaciones_eliminadas'));
     } catch (e) {
       if (!mounted) return;
-
-      final clave = e.toString().replaceFirst('Exception: ', '');
-
-      setState(() {
-        eliminando = false;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(texto(clave))),
-      );
+      setState(() => eliminando = false);
+      _aviso(texto(_clave(e)));
     }
-  }
-
-  IconData _obtenerIcono(String tipo) {
-    switch (tipo) {
-      case 'bienvenida':
-        return Icons.restaurant_outlined;
-      case 'estado_pedido':
-        return Icons.local_dining_outlined;
-      case 'pedido':
-        return Icons.shopping_bag_outlined;
-      default:
-        return Icons.notifications_outlined;
-    }
-  }
-
-  String _formatearFecha(dynamic fecha) {
-    if (fecha == null) return '';
-
-    final date = DateTime.tryParse(fecha.toString());
-    if (date == null) return '';
-
-    final local = date.toLocal();
-    final ahora = DateTime.now();
-
-    if (local.year == ahora.year &&
-        local.month == ahora.month &&
-        local.day == ahora.day) {
-      return '${texto('hoy')} ${local.hour.toString().padLeft(2, '0')}:'
-          '${local.minute.toString().padLeft(2, '0')}';
-    }
-
-    return '${local.day.toString().padLeft(2, '0')}/'
-        '${local.month.toString().padLeft(2, '0')}/'
-        '${local.year}';
   }
 
   @override
@@ -237,178 +107,46 @@ class _NotificacionesState extends State<Notificaciones> {
             backgroundColor: AppColors.asphalt,
             foregroundColor: AppColors.goldSand,
             centerTitle: true,
-            title: Text(
-              texto('notificaciones'),
-              style: GoogleFonts.kronaOne(fontSize: 16),
-            ),
+            title: Text(texto('notificaciones'), style: GoogleFonts.kronaOne(fontSize: 16)),
             actions: [
               IconButton(
-                onPressed: cargando ? null : _cargarNotificaciones,
+                onPressed: cargando ? null : _cargar,
                 icon: const Icon(Icons.refresh),
                 tooltip: texto('actualizar'),
               ),
-              if (notificaciones.isNotEmpty)
+              if (_hayLeidas)
                 IconButton(
-                  onPressed: eliminando || cargando ? null : _confirmarEliminar,
+                  onPressed: eliminando || cargando ? null : _borrarLeidas,
                   icon: eliminando
                       ? const SizedBox(
                           width: 20,
                           height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: AppColors.goldSand,
-                          ),
+                          child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.goldSand),
                         )
                       : const Icon(Icons.delete_outline),
-                  tooltip: texto('borrar_todas'),
+                  tooltip: texto('borrar_leidas'),
                 ),
             ],
           ),
-          body: Container(
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [AppColors.goldSand, AppColors.redPrayerFlag],
-              ),
-            ),
+          body: FondoDegradado(
             child: RefreshIndicator(
-              onRefresh: _cargarNotificaciones,
+              onRefresh: _cargar,
               child: ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.all(16),
                 children: [
                   Text(
                     texto('tus_avisos'),
-                    style: GoogleFonts.kronaOne(
-                      fontSize: 17,
-                      color: AppColors.earthBrown,
-                    ),
+                    style: GoogleFonts.kronaOne(fontSize: 17, color: AppColors.earthBrown),
                   ),
                   const SizedBox(height: 16),
-                  if (cargando)
-                    const Padding(
-                      padding: EdgeInsets.all(30),
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.earthBrown,
-                        ),
-                      ),
-                    )
-                  else if (error != null)
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        children: [
-                          const Icon(
-                            Icons.error_outline,
-                            size: 45,
-                            color: AppColors.earthBrown,
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            error!,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(color: AppColors.earthBrown),
-                          ),
-                          const SizedBox(height: 12),
-                          ElevatedButton(
-                            onPressed: _cargarNotificaciones,
-                            child: Text(texto('reintentar')),
-                          ),
-                        ],
-                      ),
-                    )
-                  else if (notificaciones.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.all(30),
-                      child: Column(
-                        children: [
-                          const Icon(
-                            Icons.notifications_none,
-                            size: 55,
-                            color: AppColors.earthBrown,
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            texto('sin_notificaciones'),
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: AppColors.earthBrown,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  else
-                    ...notificaciones.map((notificacion) {
-                      final leida = notificacion['leida'] == true;
-
-                      return Card(
-                        color: AppColors.earthBrown,
-                        margin: const EdgeInsets.only(bottom: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: ListTile(
-                          onTap: () => _marcarComoLeida(notificacion),
-                          contentPadding: const EdgeInsets.all(14),
-                          leading: Icon(
-                            _obtenerIcono(
-                              notificacion['tipo']?.toString() ?? '',
-                            ),
-                            color: AppColors.goldSand,
-                            size: 30,
-                          ),
-                          title: Text(
-                            notificacion['titulo']?.toString() ?? '',
-                            style: TextStyle(
-                              color: AppColors.goldSand,
-                              fontWeight: leida
-                                  ? FontWeight.normal
-                                  : FontWeight.bold,
-                            ),
-                          ),
-                          subtitle: Padding(
-                            padding: const EdgeInsets.only(top: 6),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  notificacion['mensaje']?.toString() ?? '',
-                                  style: TextStyle(
-                                    color: AppColors.goldSand.withValues(
-                                      alpha: 0.85,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  leida
-                                      ? texto('leida')
-                                      : texto('sin_leer_tocar'),
-                                  style: TextStyle(
-                                    color: AppColors.goldSand.withValues(
-                                      alpha: 0.7,
-                                    ),
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          trailing: Text(
-                            _formatearFecha(notificacion['creado_en']),
-                            style: const TextStyle(
-                              color: AppColors.goldSand,
-                              fontSize: 11,
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
+                  ListaNotificaciones(
+                    cargando: cargando,
+                    error: error,
+                    notificaciones: notificaciones,
+                    onReintentar: _cargar,
+                    onAbrir: _abrir,
+                  ),
                 ],
               ),
             ),

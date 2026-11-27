@@ -33,6 +33,31 @@ class SelectorFecha extends StatelessWidget {
     return DateTime(fecha.year + delta, 1, 1);
   }
 
+  // Calendario para elegir la fecha directamente
+  Future<void> _abrirCalendario(BuildContext context) async {
+    final ahora = DateTime.now();
+    final hoy = DateTime(ahora.year, ahora.month, ahora.day);
+
+    final elegida = await showDatePicker(
+      context: context,
+      initialDate: fecha.isAfter(hoy) ? hoy : fecha,
+      firstDate: DateTime(2024),
+      lastDate: hoy,
+      initialDatePickerMode:
+          periodo == 'anio' ? DatePickerMode.year : DatePickerMode.day,
+      helpText: periodo == 'mes' ? 'Elige un día del mes' : null,
+    );
+    if (elegida == null) return;
+
+    if (periodo == 'mes') {
+      onCambio(DateTime(elegida.year, elegida.month, 1));
+    } else if (periodo == 'anio') {
+      onCambio(DateTime(elegida.year, 1, 1));
+    } else {
+      onCambio(DateTime(elegida.year, elegida.month, elegida.day));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final ahora = DateTime.now();
@@ -50,13 +75,32 @@ class SelectorFecha extends StatelessWidget {
             onPressed: () => onCambio(_mover(-1)),
           ),
           Expanded(
-            child: Text(
-              _etiqueta,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.josefinSans(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: TarjetaVidrio.colorTexto,
+            child: InkWell(
+              onTap: () => _abrirCalendario(context),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        _etiqueta,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.josefinSans(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: TarjetaVidrio.colorTexto,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(
+                      Icons.calendar_month,
+                      size: 20,
+                      color: TarjetaVidrio.colorTexto,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

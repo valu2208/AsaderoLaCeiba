@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/estilo_campo.dart';
+import 'package:asadero/core/formato_miles.dart';
 import '../models/producto_model.dart';
 import '../services/admin_product_service.dart';
 import 'admin_image_selector.dart';
 import 'boton_formulario.dart';
+import 'campo_precio.dart';
 import 'controlador_foto.dart';
 import 'selector_dias_plato.dart';
 
@@ -42,7 +44,7 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
   void initState() {
     super.initState();
     _nombreController = TextEditingController(text: widget.producto?.nombre ?? '');
-    _precioController = TextEditingController(text: widget.producto?.precio.toString() ?? '');
+    _precioController = TextEditingController(text: widget.producto == null ? '' : formatoMiles(widget.producto!.precio));
     _descripcionController = TextEditingController(text: widget.producto?.descripcion ?? '');
     _dias = [
       ...?widget.producto?.dias,
@@ -78,7 +80,7 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
       await AdminProductService().guardarProducto(
         id: widget.producto?.id,
         nombre: _nombreController.text.trim(),
-        precio: _precioController.text.trim(),
+        precio: soloDigitos(_precioController.text),
         descripcion: _descripcionController.text.trim(),
         imagen: imagen, // null = se conserva la foto actual
         categoria: widget.categoria,
@@ -119,12 +121,7 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
                 decoration: decoracionCampo('Nombre del plato'),
                 validator: (value) => (value ?? '').trim().isEmpty ? 'Campo requerido' : null,
               ),
-              TextFormField(
-                controller: _precioController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: decoracionCampo('Precio (\$)'),
-                validator: (value) => double.tryParse((value ?? '').trim()) == null ? 'Ingresa un número válido' : null,
-              ),
+              CampoPrecio(controller: _precioController),
               TextFormField(
                 controller: _descripcionController,
                 maxLines: 3,

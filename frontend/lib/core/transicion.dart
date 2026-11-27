@@ -15,3 +15,14 @@ Route<T> rutaSuave<T>(Widget pantalla) {
     },
   );
 }
+
+// Ruta sin animación: para cambiar entre las pestañas de la barra de abajo
+// sin que la barra "parpadee" al moverse junto con la pantalla
+Route<T> rutaInstantanea<T>(Widget pantalla) {
+  return PageRouteBuilder<T>(
+    opaque: true,
+    transitionDuration: Duration.zero,
+    reverseTransitionDuration: Duration.zero,
+    pageBuilder: (context, animacion, otra) => pantalla,
+  );
+}

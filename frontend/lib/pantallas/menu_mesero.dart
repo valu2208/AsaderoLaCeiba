@@ -25,6 +25,12 @@ class _MenuMeseroState extends State<MenuMesero> {
     'fin_de_semana': 'Fin de semana',
   };
 
+  // "Fin de semana" solo aparece sábado y domingo, para no confundir entre semana
+  Map<String, String> get _opciones => {
+    for (final e in _categorias.entries)
+      if (e.key != 'fin_de_semana' || esFinDeSemana()) e.key: e.value,
+  };
+
   late Future<List<ProductoModel>> _productos;
   String _categoria = 'desayuno';
 
@@ -102,7 +108,7 @@ class _MenuMeseroState extends State<MenuMesero> {
               ),
             ),
             FiltroChips(
-              opciones: _categorias,
+              opciones: _opciones,
               seleccionado: _categoria,
               onCambio: (valor) => setState(() {
                 _categoria = valor;

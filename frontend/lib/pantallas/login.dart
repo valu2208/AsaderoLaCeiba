@@ -6,6 +6,7 @@ import 'package:asadero/core/traducciones.dart';
 import 'package:asadero/core/navegacion_rol.dart';
 import 'package:asadero/models/user_model.dart';
 import 'package:asadero/services/user_service.dart';
+import 'package:asadero/services/credenciales_service.dart';
 import 'package:asadero/services/google_auth_service.dart';
 import 'package:asadero/componentes/barra_navegacion.dart';
 import 'package:asadero/componentes/campo_texto.dart';
@@ -29,6 +30,25 @@ class _LoginState extends State<Login> {
   bool mostrar = false;
   bool recordar = false;
   bool cargando = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarRecordados();
+  }
+
+  // Si la persona marcó "Recordarme" antes, llena el correo y la contraseña
+  Future<void> _cargarRecordados() async {
+    final guardadas = await CredencialesService.leer();
+
+    if (guardadas == null || !mounted) return;
+
+    setState(() {
+      correoController.text = guardadas[0];
+      contrasenaController.text = guardadas[1];
+      recordar = true;
+    });
+  }
 
   @override
   void dispose() {
@@ -64,9 +84,13 @@ class _LoginState extends State<Login> {
       } else {
         _mensaje(texto('error_iniciar_sesion'));
       }
-    } catch (_) {
+    } catch (e) {
       if (mounted) {
-        _mensaje(texto('error_iniciar_sesion'));
+        // Si el fallo viene de Google, se muestra su código para diagnosticarlo.
+        final error = e.toString().replaceFirst('Exception: ', '');
+        _mensaje(
+          error.startsWith('Google:') ? error : texto('error_iniciar_sesion'),
+        );
       }
     } finally {
       if (mounted) setState(() => cargando = false);
@@ -81,7 +105,11 @@ class _LoginState extends State<Login> {
       return _mensaje(texto('ingresa_correo_contrasena'));
     }
 
-    _entrar(() => UserService.loginUsuario(correo, clave));
+    _entrar(() async {
+      final usuario = await UserService.loginUsuario(correo, clave);
+      await CredencialesService.actualizar(recordar, correo, clave);
+      return usuario;
+    });
   }
 
   void iniciarSesionGoogle() {

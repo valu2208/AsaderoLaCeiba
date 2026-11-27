@@ -55,6 +55,27 @@ class TarjetaOpcionMenu extends StatelessWidget {
               fontSize: 14,
             ),
           ),
+          // Candado cuando la opción no está disponible hoy
+          if (opcion.aviso != null) ...[
+            const SizedBox(height: 6),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.lock_outline, size: 16, color: AppColors.goldSand),
+                const SizedBox(width: 4),
+                Flexible(
+                  child: Text(
+                    opcion.aviso!,
+                    style: GoogleFonts.josefinSans(
+                      color: AppColors.goldSand,
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );
@@ -62,6 +83,14 @@ class TarjetaOpcionMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Con candado la card se ve más clara, como "apagada"
+    return Opacity(
+      opacity: opcion.aviso != null ? 0.6 : 1,
+      child: _card(),
+    );
+  }
+
+  Widget _card() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: LayoutBuilder(

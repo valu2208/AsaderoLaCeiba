@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:asadero/componentes/boton_ayuda.dart';
 import 'package:asadero/core/colores.dart';
+import 'package:asadero/core/modo_admin.dart';
 import 'package:asadero/core/navegacion_rol.dart';
 import 'package:asadero/pantallas/admin_inventario_page.dart';
 import 'package:asadero/pantallas/admin_menu_page.dart';
@@ -65,6 +66,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
   // Muestra la carta tal como la ve el cliente (con "atrás" se vuelve al panel)
   void _verCartaCliente() {
     Navigator.pop(context);
+    ModoAdmin.viendoCliente.value = true; // la barra muestra "Volver al panel"
     Navigator.push(context, MaterialPageRoute(builder: (_) => const Home()));
   }
 
