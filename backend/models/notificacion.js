@@ -64,15 +64,64 @@ export const contarNotificacionesNoLeidas = async (usuario_id) => {
     return { count, error };
 };
 
-// Eliminar todas las notificaciones de un usuario.
+// Eliminar las notificaciones ya leídas de un usuario (las no leídas se quedan).
 export const eliminarNotificaciones = async (usuario_id) => {
     const { data, error } = await supabase
         .from('notificaciones')
         .delete()
         .eq('usuario_id', usuario_id)
+        .eq('leida', true)
         .select('id');
 
     return { data, error };
+};
+
+// Pedido al que apunta una notificación, con sus platos (foto, precio, cantidad).
+// Solo lo devuelve si la notificación es del usuario que pregunta.
+export const obtenerPedidoDeNotificacion = async (id, usuario_id) => {
+    const { data: notificacion, error } = await supabase
+        .from('notificaciones')
+        .select('pedido_id')
+        .eq('id', id)
+        .eq('usuario_id', usuario_id)
+        .maybeSingle();
+
+    if (error) return { error };
+    if (!notificacion) return { noEncontrada: true };
+    if (!notificacion.pedido_id) return { data: null };
+
+    const { data: pedido, error: errorPedido } = await supabase
+        .from('pedidos')
+        .select('id, estado, total, numero_mesa, notas, detalle_pedido(*)')
+        .eq('id', notificacion.pedido_id)
+        .maybeSingle();
+
+    if (errorPedido) return { error: errorPedido };
+    if (!pedido) return { data: null };
+
+    const ids = (pedido.detalle_pedido || []).map((d) => d.producto_id);
+    const { data: productos } = await supabase
+        .from('productos')
+        .select('id, nombre, imagen_url')
+        .in('id', ids);
+
+    const porId = new Map((productos || []).map((p) => [p.id, p]));
+
+    return {
+        data: {
+            id: pedido.id,
+            estado: pedido.estado,
+            total: pedido.total,
+            mesa: pedido.numero_mesa,
+            notas: pedido.notas,
+            items: (pedido.detalle_pedido || []).map((d) => ({
+                nombre: porId.get(d.producto_id)?.nombre || 'Plato',
+                imagen_url: porId.get(d.producto_id)?.imagen_url || null,
+                precio: d.precio_unitario,
+                cantidad: d.cantidad
+            }))
+        }
+    };
 };
 
 // Crear el mismo aviso para todos los usuarios de un rol.

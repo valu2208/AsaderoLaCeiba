@@ -1,4 +1,3 @@
-
 import { Router } from 'express';
 import { verificarToken } from '../middlewares/authMiddleware.js';
 
@@ -6,7 +5,8 @@ import {
     listarNotificaciones,
     leerNotificacion,
     contarNoLeidas,
-    borrarNotificaciones
+    borrarNotificaciones,
+    pedidoDeNotificacion
 } from '../controllers/notificacion.js';
 
 const router = Router();
@@ -20,7 +20,10 @@ router.get('/no-leidas', verificarToken, contarNoLeidas);
 // Marcar una notificación como leída.
 router.patch('/:id/leida', verificarToken, leerNotificacion);
 
-// Eliminar todas las notificaciones del usuario.
+// Pedido relacionado con una notificación.
+router.get('/:id/pedido', verificarToken, pedidoDeNotificacion);
+
+// Eliminar las notificaciones leídas del usuario.
 router.delete('/', verificarToken, borrarNotificaciones);
 
-export default router; 
+export default router;

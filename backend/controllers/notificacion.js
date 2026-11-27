@@ -1,9 +1,9 @@
-
 import {
     obtenerNotificaciones,
     marcarNotificacionLeida,
     contarNotificacionesNoLeidas,
-    eliminarNotificaciones
+    eliminarNotificaciones,
+    obtenerPedidoDeNotificacion
 } from '../models/notificacion.js';
 
 // Obtener las notificaciones del usuario autenticado.
@@ -100,12 +100,40 @@ export const borrarNotificaciones = async (req, res) => {
         }
 
         return res.status(200).json({
-            message: 'Notificaciones eliminadas correctamente',
+            message: 'Notificaciones leídas eliminadas correctamente',
             eliminadas: data?.length ?? 0
         });
     } catch (error) {
         return res.status(500).json({
             error: 'Error al eliminar las notificaciones'
+        });
+    }
+};
+
+// Pedido relacionado con una notificación (para la ventana de detalle).
+export const pedidoDeNotificacion = async (req, res) => {
+    try {
+        const { data, error, noEncontrada } = await obtenerPedidoDeNotificacion(
+            req.params.id,
+            req.usuario.id
+        );
+
+        if (error) {
+            return res.status(500).json({
+                error: 'No se pudo consultar el pedido'
+            });
+        }
+
+        if (noEncontrada) {
+            return res.status(404).json({
+                error: 'Notificación no encontrada'
+            });
+        }
+
+        return res.status(200).json({ pedido: data });
+    } catch (error) {
+        return res.status(500).json({
+            error: 'Error al consultar el pedido'
         });
     }
 };
