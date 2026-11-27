@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:asadero/componentes/boton_ayuda.dart';
+import 'package:asadero/componentes/encabezado_drawer.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/modo_admin.dart';
 import 'package:asadero/core/navegacion_rol.dart';
@@ -24,25 +24,6 @@ class AdminDrawer extends StatefulWidget {
 }
 
 class _AdminDrawerState extends State<AdminDrawer> {
-  String _nombre = 'Administrador';
-  String _email = '';
-
-  @override
-  void initState() {
-    super.initState();
-    _cargarDatosUsuario();
-  }
-
-  // Lee los datos guardados al iniciar sesión
-  Future<void> _cargarDatosUsuario() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (!mounted) return;
-    setState(() {
-      _nombre = prefs.getString('user_nombre') ?? 'Administrador';
-      _email = prefs.getString('user_email') ?? '';
-    });
-  }
-
   // Opción del menú: si ya estás en esa pantalla solo cierra el menú
   Widget _opcion(IconData icono, String titulo, String clave, Widget pagina) {
     final seleccionada = widget.actual == clave;
@@ -85,21 +66,9 @@ class _AdminDrawerState extends State<AdminDrawer> {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  UserAccountsDrawerHeader(
-                    accountName: Text(
-                      _nombre,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    accountEmail: Text(_email),
-                    currentAccountPicture: const CircleAvatar(
-                      backgroundColor: AppColors.goldSand,
-                      child: Icon(
-                        Icons.admin_panel_settings,
-                        size: 40,
-                        color: AppColors.redPrayerFlag,
-                      ),
-                    ),
-                    decoration: const BoxDecoration(color: AppColors.earthBrown),
+                  const EncabezadoDrawer(
+                    rol: 'admin',
+                    icono: Icons.admin_panel_settings,
                   ),
                   _opcion(Icons.fastfood, 'Gestionar Productos', 'productos',
                       const AdminProductListPage()),

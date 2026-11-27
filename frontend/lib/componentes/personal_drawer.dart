@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:asadero/componentes/boton_ayuda.dart';
+import 'package:asadero/componentes/encabezado_drawer.dart';
 import 'package:asadero/core/colores.dart';
 import 'package:asadero/core/navegacion_rol.dart';
-import 'package:asadero/core/roles.dart';
 import 'package:asadero/pantallas/cocina_inventario.dart';
 import 'package:asadero/pantallas/cocina_pedidos.dart';
 import 'package:asadero/pantallas/menu_mesero.dart';
@@ -22,25 +21,7 @@ class PersonalDrawer extends StatefulWidget {
 }
 
 class _PersonalDrawerState extends State<PersonalDrawer> {
-  String _nombre = '';
-  String _email = '';
-
   bool get _esCocinero => widget.rol == 'cocinero';
-
-  @override
-  void initState() {
-    super.initState();
-    _cargarDatosUsuario();
-  }
-
-  Future<void> _cargarDatosUsuario() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (!mounted) return;
-    setState(() {
-      _nombre = prefs.getString('user_nombre') ?? nombreRol(widget.rol);
-      _email = prefs.getString('user_email') ?? '';
-    });
-  }
 
   // Opción del menú: si ya estás en esa pantalla solo cierra el menú
   Widget _opcion(IconData icono, String titulo, String clave, Widget pagina) {
@@ -99,21 +80,9 @@ class _PersonalDrawerState extends State<PersonalDrawer> {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  UserAccountsDrawerHeader(
-                    accountName: Text(
-                      _nombre,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    accountEmail: Text(_email.isEmpty ? nombreRol(widget.rol) : _email),
-                    currentAccountPicture: CircleAvatar(
-                      backgroundColor: AppColors.goldSand,
-                      child: Icon(
-                        _esCocinero ? Icons.soup_kitchen : Icons.room_service,
-                        size: 36,
-                        color: AppColors.redPrayerFlag,
-                      ),
-                    ),
-                    decoration: const BoxDecoration(color: AppColors.earthBrown),
+                  EncabezadoDrawer(
+                    rol: widget.rol,
+                    icono: _esCocinero ? Icons.soup_kitchen : Icons.room_service,
                   ),
                   ..._opcionesPorRol(),
                   ListTile(

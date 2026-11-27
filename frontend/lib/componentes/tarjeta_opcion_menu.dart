@@ -25,58 +25,69 @@ class TarjetaOpcionMenu extends StatelessWidget {
   }
 
   Widget _textos(double derecha) {
+    // Si el texto es más alto que la card (por ejemplo con el aviso del candado
+    // en dos renglones), se achica un poco en vez de desbordarse
     return Padding(
       padding: EdgeInsets.fromLTRB(22, 0, derecha, 0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Si el título no cabe, se achica en vez de cortarse
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              opcion.titulo,
-              style: GoogleFonts.josefinSans(
-                color: AppColors.goldSand,
-                fontSize: 27,
-                fontWeight: FontWeight.bold,
-                shadows: const [Shadow(color: Colors.black38, blurRadius: 6)],
-              ),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            opcion.descripcion,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.josefinSans(
-              color: AppColors.goldSand.withValues(alpha: 0.9),
-              fontSize: 14,
-            ),
-          ),
-          // Candado cuando la opción no está disponible hoy
-          if (opcion.aviso != null) ...[
-            const SizedBox(height: 6),
-            Row(
+      child: LayoutBuilder(
+        builder: (context, medidas) => FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: SizedBox(
+            width: medidas.maxWidth,
+            child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.lock_outline, size: 16, color: AppColors.goldSand),
-                const SizedBox(width: 4),
-                Flexible(
+                // Si el título no cabe, se achica en vez de cortarse
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
                   child: Text(
-                    opcion.aviso!,
+                    opcion.titulo,
                     style: GoogleFonts.josefinSans(
                       color: AppColors.goldSand,
-                      fontSize: 13,
+                      fontSize: 27,
                       fontWeight: FontWeight.bold,
+                      shadows: const [Shadow(color: Colors.black38, blurRadius: 6)],
                     ),
                   ),
                 ),
+                const SizedBox(height: 4),
+                Text(
+                  opcion.descripcion,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.josefinSans(
+                    color: AppColors.goldSand.withValues(alpha: 0.9),
+                    fontSize: 14,
+                  ),
+                ),
+                // Candado cuando la opción no está disponible hoy
+                if (opcion.aviso != null) ...[
+                  const SizedBox(height: 6),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.lock_outline, size: 16, color: AppColors.goldSand),
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          opcion.aviso!,
+                          style: GoogleFonts.josefinSans(
+                            color: AppColors.goldSand,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ],
             ),
-          ],
-        ],
+          ),
+        ),
       ),
     );
   }
